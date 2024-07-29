@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>cn.spider-node</groupId>
+        <artifactId>spider-host-application</artifactId>
+        <version>1.0.0</version>
+    </parent>
+    <groupId>cn.spider-node</groupId>
+    <artifactId>host-application</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>host-application</name>
+    <description>Demo project for Spring Boot</description>
+    <properties>
+        <java.version>1.8</java.version>
+        <ark.version>2.0.0</ark.version>
+        <dashboard.client>1.0.0</dashboard.client>
+        <curator.version>2.9.1</curator.version>
+        <mybatis.version>3.5.2</mybatis.version>
+        <mysql.version>8.0.11</mysql.version>
+        <java.version>1.8</java.version>
+        <koupleless.runtime.version>1.2.3</koupleless.runtime.version>
+        <sofa.ark.version>2.2.12</sofa.ark.version>
+        <guice.version>6.0.0</guice.version>
+        <guava.version>32.1.3-jre</guava.version>
+        <curator.version>2.9.1</curator.version>
+        <mysql.version>5.1.46</mysql.version>
+        <license.maven.plugin>3.0</license.maven.plugin>
+        <maven.java.formatter.plugin>0.4</maven.java.formatter.plugin>
+        <maven.compiler.plugin>3.1</maven.compiler.plugin>
+        <maven.source.plugin>3.0.0</maven.source.plugin>
+        <maven.javadoc.plugin>3.2.0</maven.javadoc.plugin>
+        <maven.staging.plugin>1.6.13</maven.staging.plugin>
+        <maven.gpg.pluign>1.6</maven.gpg.pluign>
+        <jacoco.maven.plugin>0.8.11</jacoco.maven.plugin>
+        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+        <project.encoding>UTF-8</project.encoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--        引入 sofaboot 基础依赖      -->
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>runtime-sofa-boot-starter</artifactId>
+        </dependency>
+
+        <!-- 引入 基于 Koupleless 动态模块基础依赖 -->
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>runtime-sofa-boot-plugin</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alipay.sofa.koupleless</groupId>
+            <artifactId>koupleless-base-starter</artifactId>
+            <version>${koupleless.runtime.version}</version>
+        </dependency>
+
+
+        <!-- 引用ark web插件-->
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>web-ark-plugin</artifactId>
+            <version>${ark.version}</version>
+        </dependency>
+
+        <!-- 引用ark 配置推送扩展插件-->
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>config-ark-plugin</artifactId>
+            <version>${ark.version}</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>curator-client</artifactId>
+            <groupId>org.apache.curator</groupId>
+            <version>${curator.version}</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>curator-framework</artifactId>
+            <groupId>org.apache.curator</groupId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>sofa-ark-springboot-starter</artifactId>
+        </dependency>
+
+        <!-- spider -->
+        <dependency>
+            <groupId>cn.spider-node</groupId>
+            <artifactId>host-application-base</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.spider-node</groupId>
+            <artifactId>client</artifactId>
+            <version>2.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-oxm</artifactId>
+                </exclusion>
+                <exclusion>
+
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>cn.spider-node</groupId>
+                    <artifactId>spider-mybatis-plugin</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>cn.spider-node</groupId>
+                    <artifactId>spider-transaction</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>com.google.api.grpc</groupId>
+                    <artifactId>proto-google-common-protos</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>io.vertx</groupId>
+                    <artifactId>vertx-hazelcast</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>com.hazelcast</groupId>
+                    <artifactId>hazelcast</artifactId>
+
+                </exclusion>
+
+                <exclusion>
+                    <groupId>com.hazelcast</groupId>
+                    <artifactId>hazelcast-kubernetes</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>io.vertx</groupId>
+                    <artifactId>vertx-web-client</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>io.vertx</groupId>
+                    <artifactId>vertx-core</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>io.vertx</groupId>
+                    <artifactId>vertx-codegen</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>io.vertx</groupId>
+                    <artifactId>vertx-service-proxy</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>io.vertx</groupId>
+                    <artifactId>vertx-grpc</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>io.vertx</groupId>
+                    <artifactId>vertx-web</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>io.vertx</groupId>
+                    <artifactId>vertx-bridge-common</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>io.vertx</groupId>
+                    <artifactId>vertx-auth-common</artifactId>
+                </exclusion>
+
+                <exclusion>
+                    <groupId>org.redisson</groupId>
+                    <artifactId>redisson</artifactId>
+                </exclusion>
+
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-grpc</artifactId>
+            <version>4.3.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-core</artifactId>
+            <version>4.3.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-web-client</artifactId>
+            <version>4.3.7</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.alipay.sofa.koupleless</groupId>
+                <artifactId>koupleless-base-build-plugin</artifactId>
+                <version>${koupleless.runtime.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>add-patch</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
