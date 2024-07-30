@@ -24,7 +24,7 @@ mvn archetype:generate \
     -DarchetypeArtifactId=maven-archetype-quickstart \
     -DgroupId=$GROUP_ID \
     -DartifactId=$ARTIFACT_ID \
-    -Dversion=$VERSION
+    -Dversion=$VERSION \
     -Dpackage=$GROUP_ID \
     -DinteractiveMode=false
 

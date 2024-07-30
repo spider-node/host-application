@@ -7,7 +7,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # 获取传递给脚本的目录路径
-local project_dir="$1"
+local project_dir="$0"
 
 # 转移到指定的项目目录
 cd "$project_dir" || { echo "Directory not found: $project_dir"; exit 1; }

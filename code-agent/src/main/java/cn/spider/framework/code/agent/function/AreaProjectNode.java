@@ -20,12 +20,6 @@ public class AreaProjectNode {
         ShellUtil.runShell("generate_project.sh", shellParam);
     }
 
-    // 代码移动到对应的目录中
-    public void downloadJavaFile(String javaFileUrl, String targetDir, String className) {
-        String shellParam = javaFileUrl + " " + targetDir + " " + className;
-        ShellUtil.runShell("download_and_move_java_file.sh", shellParam);
-    }
-
     // 重新生成pom文件
     public void buildPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription){
         Map<String, Object> dataModel = new HashMap<>();
@@ -76,6 +70,42 @@ public class AreaProjectNode {
         dataModel.put("configPath",classPath);
         try {
             FltlUtil.generateFile(outPath, dataModel, "config.ftl");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (TemplateException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void buildServiceClass(String outPath,String serviceClass){
+        Map<String, Object> dataModel = new HashMap<>();
+        dataModel.put("serviceCode",serviceClass);
+        try {
+            FltlUtil.generateFile(outPath, dataModel, "service.ftl");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (TemplateException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void buildParamClass(String outPath,String paramClass){
+        Map<String, Object> dataModel = new HashMap<>();
+        dataModel.put("paramClass",paramClass);
+        try {
+            FltlUtil.generateFile(outPath, dataModel, "param.ftl");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (TemplateException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void buildParamResult(String outPath,String resultClass){
+        Map<String, Object> dataModel = new HashMap<>();
+        dataModel.put("resultClass",resultClass);
+        try {
+            FltlUtil.generateFile(outPath, dataModel, "result.ftl");
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (TemplateException e) {
