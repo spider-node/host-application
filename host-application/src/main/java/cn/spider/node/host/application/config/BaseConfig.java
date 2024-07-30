@@ -12,6 +12,7 @@ public class BaseConfig {
 
     @Bean
     public SourceManager buildSourceManager(IAreaDatasourceInfoService datasourceInfoService){
+
         return new SourceManager(datasourceInfoService);
     }
 
