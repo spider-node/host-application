@@ -21,6 +21,7 @@
         <druid.version>1.1.18</druid.version>
         <dependency.fastjson.version>1.2.83</dependency.fastjson.version>
         <koupleless.app.version>1.2.3</koupleless.app.version>
+
     </properties>
 
 

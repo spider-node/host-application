@@ -68,15 +68,4 @@ public class HostApplicationCenterConfig {
     public SpiderPluginManager buildSpiderPluginManager(){
         return new SpiderPluginManager();
     }
-
-    @Bean
-    public TaskPublish buildTaskPublish(ClientFactoryBean clientFactoryBean){
-        return new TaskPublish(clientFactoryBean);
-    }
-
-    @Bean
-    public ClientFactoryBean buildClientFactoryBean(){
-        return new ClientFactoryBean();
-    }
-
 }

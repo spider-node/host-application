@@ -31,7 +31,6 @@
         <module>code-agent</module>
         <module>host-application-base</module>
         <module>host-application</module>
-        <module>template-application</module>
     </modules>
 
 

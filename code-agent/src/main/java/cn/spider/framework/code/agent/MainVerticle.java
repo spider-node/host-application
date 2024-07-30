@@ -1,23 +1,11 @@
 package cn.spider.framework.code.agent;
 
-import io.vertx.core.AbstractVerticle;
-import io.vertx.core.Promise;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-public class MainVerticle extends AbstractVerticle {
-
-  @Override
-  public void start(Promise<Void> startPromise) throws Exception {
-    vertx.createHttpServer().requestHandler(req -> {
-      req.response()
-        .putHeader("content-type", "text/plain")
-        .end("Hello from Vert.x!");
-    }).listen(8888).onComplete(http -> {
-      if (http.succeeded()) {
-        startPromise.complete();
-        System.out.println("HTTP server started on port 8888");
-      } else {
-        startPromise.fail(http.cause());
-      }
-    });
+@SpringBootApplication
+public class MainVerticle{
+  public static void main(String[] args) {
+    SpringApplication.run(MainVerticle.class, args);
   }
 }
