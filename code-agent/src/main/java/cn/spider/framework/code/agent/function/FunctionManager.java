@@ -1,32 +1,45 @@
 package cn.spider.framework.code.agent.function;
 
+import cn.spider.framework.code.agent.data.DeployAreaFunctionParam;
 import cn.spider.framework.code.agent.spider.SpiderClient;
 import cn.spider.framework.code.agent.util.ClassUtil;
-import com.alipay.sofa.common.utils.StringUtil;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.nio.file.Path;
 
+@Component
 public class FunctionManager {
 
     // 项目的环境节点
+    @Value("${project.rootPath}")
     private String rootPath;
 
+    @Value("${project.pom.defaultGroupId}")
     private String defaultGroupId;
 
+    @Value("${project.pom.defaultVersion}")
     private String defaultVersion;
 
+    @Resource
     private AreaProjectNode areaProjectNode;
 
     // 其实就是"/"
-    private String directorySegmentation;
+    private final String directorySegmentation = "/";
 
-    private String startClassPath;
+    private final String startClassPath = "src/main/java";
 
+    @Resource
     private SpiderClient spiderClient;
 
 
-    public String buildProject(String serviceClass, String paramClass, String resultClass) {
+    public String buildProject(DeployAreaFunctionParam param) {
+        String serviceClass = param.getServiceClass();
+        String paramClass = param.getParamClass();
+        String resultClass = param.getResultClass();
         // 获取项目的名称 名称的命名为 area + functionName
         // 从 serviceClass中获取方法的名称
         try {
@@ -34,10 +47,11 @@ public class FunctionManager {
             String artifactId = className;
             String projectDir = artifactId;
             // 构建项目
-            areaProjectNode.generateProject(projectDir,this.defaultGroupId,artifactId,this.rootPath);
+            //String spiderAreaFunctionPath = rootPath+this.directorySegmentation+projectDir+this.directorySegmentation;
+            areaProjectNode.generateProject(projectDir,this.defaultGroupId,artifactId,this.rootPath,param.getAreaName());
             // 覆盖pom
             // 获取pom文件的路径
-            String pomPath = rootPath+this.directorySegmentation+projectDir+this.directorySegmentation;
+            /*String pomPath = rootPath+this.directorySegmentation+projectDir+this.directorySegmentation;
             areaProjectNode.buildPom(pomPath,this.defaultGroupId,artifactId,this.defaultVersion,projectDir,"area_function");
             // 新增启动类
             String projectPath = this.defaultGroupId.replace("\\.","/");
@@ -52,10 +66,10 @@ public class FunctionManager {
             areaProjectNode.buildParamClass(serviceClassPath,serviceClass);
             // 构建 param
             String paramClassPath = startClassPath+this.directorySegmentation+className+"/spider/data";
-            if(StringUtil.isNotEmpty(paramClass)){
+            if(!StringUtils.isEmpty(paramClass)){
                 areaProjectNode.buildParamClass(paramClassPath,paramClass);
             }
-            if(StringUtil.isNotEmpty(resultClass)){
+            if(!StringUtils.isEmpty(resultClass)){
                 areaProjectNode.buildParamResult(paramClassPath,resultClass);
             }
             String shellParam = pomPath;
@@ -64,9 +78,9 @@ public class FunctionManager {
             // 读取文件进行上传
             String jarPath = pomPath+this.directorySegmentation+"target";
             Path path = areaProjectNode.readJarFilesInDirectory(jarPath);
-            String url = spiderClient.uploadFile(path);
+            String url = spiderClient.uploadFile(path);*/
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         // 通过url进行部署到宿主机

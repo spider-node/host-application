@@ -15,8 +15,9 @@ import java.util.stream.Collectors;
 
 public class AreaProjectNode {
     // 基于模板项目进行构建项目
-    public void generateProject(String projectDir, String groupId, String artifactId, String rootPath) {
-        String shellParam = projectDir + " " + groupId + " " + artifactId + " " + rootPath;
+    public void generateProject(String projectDir, String groupId, String artifactId, String rootPath,String areaName) {
+        String groupPath = groupId.replace('.', '/');
+        String shellParam = projectDir + " " + groupId + " " + artifactId + " " + rootPath+ " "+groupPath+" "+ areaName;
         ShellUtil.runShell("generate_project.sh", shellParam);
     }
 

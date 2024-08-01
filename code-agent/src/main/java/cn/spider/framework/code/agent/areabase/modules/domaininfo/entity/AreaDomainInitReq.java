@@ -1,0 +1,17 @@
+package cn.spider.framework.code.agent.areabase.modules.domaininfo.entity;
+
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+@Data
+public class AreaDomainInitReq {
+    @NotBlank(message = "tableName不能为空")
+    String tableName;
+    @NotBlank(message = "packageName不能为空")
+    String packageName;
+    @NotNull(message = "datasourceId不能为空")
+    Integer datasourceId;
+
+}
