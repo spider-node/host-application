@@ -1,9 +1,9 @@
-package cn.spider.framework.code.agent.data;
+package cn.spider.framework.code.agent.project.factory.data;
 
 import lombok.Data;
 
 @Data
-public class DeployAreaFunctionParam {
+public class ProjectParam {
     /**
      * 业务功能类
      */

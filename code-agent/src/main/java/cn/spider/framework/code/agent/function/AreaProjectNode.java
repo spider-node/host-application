@@ -1,9 +1,11 @@
 package cn.spider.framework.code.agent.function;
+
 import cn.spider.framework.code.agent.util.FltlUtil;
 import cn.spider.framework.code.agent.util.ShellUtil;
 import com.google.common.base.Preconditions;
 import freemarker.template.TemplateException;
 import org.springframework.util.CollectionUtils;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,14 +17,16 @@ import java.util.stream.Collectors;
 
 public class AreaProjectNode {
     // 基于模板项目进行构建项目
-    public void generateProject(String projectDir, String groupId, String artifactId, String rootPath,String areaName) {
+
+
+    public void generateProject(String projectName, String groupId, String artifactId, String finalPath,String version,String javaFilePath) {
         String groupPath = groupId.replace('.', '/');
-        String shellParam = projectDir + " " + groupId + " " + artifactId + " " + rootPath+ " "+groupPath+" "+ areaName;
+        String shellParam = projectName + " " + groupId + " " + artifactId + " " + version + " " + groupPath + " " + finalPath + " " + javaFilePath;
         ShellUtil.runShell("generate_project.sh", shellParam);
     }
 
     // 重新生成pom文件
-    public void buildPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription){
+    public void buildPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("groupId", groupId);
         dataModel.put("artifactId", artifactId);
@@ -39,9 +43,9 @@ public class AreaProjectNode {
     }
 
     // 重新生成yml文件
-    public void buildYml(String outPath,String artifactId) {
+    public void buildYml(String outPath, String artifactId) {
         Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("applicationName",artifactId);
+        dataModel.put("applicationName", artifactId);
         try {
             FltlUtil.generateFile(outPath, dataModel, "function_pom.ftl");
         } catch (IOException e) {
@@ -52,10 +56,10 @@ public class AreaProjectNode {
     }
 
     // 构建启动类
-    public void buildStart(String outPath,String className,String classPath){
+    public void buildStart(String outPath, String className, String classPath) {
         Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("startPath",classPath);
-        dataModel.put("startClassName",className);
+        dataModel.put("startPath", classPath);
+        dataModel.put("startClassName", className);
         try {
             FltlUtil.generateFile(outPath, dataModel, "startClass.ftl");
         } catch (IOException e) {
@@ -66,9 +70,9 @@ public class AreaProjectNode {
     }
 
     // 构建配置类
-    public void buildConfig(String outPath,String classPath){
+    public void buildConfig(String outPath, String classPath) {
         Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("configPath",classPath);
+        dataModel.put("configPath", classPath);
         try {
             FltlUtil.generateFile(outPath, dataModel, "config.ftl");
         } catch (IOException e) {
@@ -78,9 +82,9 @@ public class AreaProjectNode {
         }
     }
 
-    public void buildServiceClass(String outPath,String serviceClass){
+    public void buildServiceClass(String outPath, String serviceClass) {
         Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("serviceCode",serviceClass);
+        dataModel.put("serviceCode", serviceClass);
         try {
             FltlUtil.generateFile(outPath, dataModel, "service.ftl");
         } catch (IOException e) {
@@ -90,9 +94,9 @@ public class AreaProjectNode {
         }
     }
 
-    public void buildParamClass(String outPath,String paramClass){
+    public void buildParamClass(String outPath, String paramClass) {
         Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("paramClass",paramClass);
+        dataModel.put("paramClass", paramClass);
         try {
             FltlUtil.generateFile(outPath, dataModel, "param.ftl");
         } catch (IOException e) {
@@ -102,9 +106,9 @@ public class AreaProjectNode {
         }
     }
 
-    public void buildParamResult(String outPath,String resultClass){
+    public void buildParamResult(String outPath, String resultClass) {
         Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("resultClass",resultClass);
+        dataModel.put("resultClass", resultClass);
         try {
             FltlUtil.generateFile(outPath, dataModel, "result.ftl");
         } catch (IOException e) {
@@ -119,6 +123,7 @@ public class AreaProjectNode {
     public void invokeMavenBuild(String directory) {
         ShellUtil.runShell("run_mvn_install.sh", directory);
     }
+
     // 获取到到.jar的包
     public Path readJarFilesInDirectory(String directoryPath) throws IOException {
         Path dirPath = Paths.get(directoryPath);
@@ -127,8 +132,8 @@ public class AreaProjectNode {
         List<Path> jarFiles = Files.walk(dirPath)
                 .filter(p -> p.toString().endsWith(".jar"))
                 .collect(Collectors.toList());
-        if(CollectionUtils.isEmpty(jarFiles)){
-            Preconditions.checkArgument(false,"mvn-install后没有找到对应的jar文件，请检查");
+        if (CollectionUtils.isEmpty(jarFiles)) {
+            Preconditions.checkArgument(false, "mvn-install后没有找到对应的jar文件，请检查");
         }
         return jarFiles.get(0);
     }

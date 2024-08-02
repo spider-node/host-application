@@ -8,16 +8,15 @@ PROJECT_DIR="$0"
 GROUP_ID="$1"
 # ARTIFACT_ID 参照 table名称GoodsOrderUpdateService
 ARTIFACT_ID="$2"
-# 项目的根目录
-ROOT_DIR="$3"
+# 版本
+VERSION="$3"
 # 分组拆分
 GROUP_PATH="$4"
 
-VERSION="$5"
+PROJECT_FINAL="$5"
 
-AREA_NAME="$6"
+JAVA_FILE_PATH="$6"
 
-PROJECT_FINAL="$ROOT_DIR/$AREA_NAME/$PROJECT_DIR/$VERSION"
 mkdir -p $PROJECT_FINAL
 # 删除旧项目，如果存在的话
 cd "$PROJECT_FINAL"
@@ -32,10 +31,10 @@ mvn archetype:generate \
     -DinteractiveMode=false
 
 # 创建spider方法的存放路径
-mkdir -p "$PROJECT_FINAL/$PROJECT_DIR/src/main/java/$GROUP_PATH/$PROJECT_DIR/spider/service"
+mkdir -p "$PROJECT_FINAL/$PROJECT_DIR/src/main/java/$GROUP_PATH/$JAVA_FILE_PATH/spider/service"
 # 创建spider方法的入参，出参方法路径
-mkdir -p "$PROJECT_FINAL/$PROJECT_DIR/src/main/java/$GROUP_PATH/$PROJECT_DIR/spider/data"
+mkdir -p "$PROJECT_FINAL/$PROJECT_DIR/src/main/java/$GROUP_PATH/$JAVA_FILE_PATH/spider/data"
 # 创建 spider配置类路径
-mkdir -p "$PROJECT_FINAL/$PROJECT_DIR/src/main/java/$GROUP_PATH/$PROJECT_DIR/config"
+mkdir -p "$PROJECT_FINAL/$PROJECT_DIR/src/main/java/$GROUP_PATH/$JAVA_FILE_PATH/config"
 # 创建spider的resource中的，配置文件路口
 mkdir -p "$PROJECT_FINAL/$PROJECT_DIR/src/main/resources"

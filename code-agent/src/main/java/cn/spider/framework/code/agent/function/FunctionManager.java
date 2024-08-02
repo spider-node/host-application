@@ -5,11 +5,9 @@ import cn.spider.framework.code.agent.spider.SpiderClient;
 import cn.spider.framework.code.agent.util.ClassUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.nio.file.Path;
+
 
 @Component
 public class FunctionManager {
@@ -35,7 +33,11 @@ public class FunctionManager {
     @Resource
     private SpiderClient spiderClient;
 
-
+    /**
+     * 目录结构为 root/数据源/领域表名/版本/ 这个空间就是进行mvn生成模板项目
+     * @param param
+     * @return
+     */
     public String buildProject(DeployAreaFunctionParam param) {
         String serviceClass = param.getServiceClass();
         String paramClass = param.getParamClass();
@@ -44,11 +46,15 @@ public class FunctionManager {
         // 从 serviceClass中获取方法的名称
         try {
             String className = ClassUtil.extractClassName(serviceClass);
-            String artifactId = className;
-            String projectDir = artifactId;
+            String artifactId = param.getTableName() + "_"+ClassUtil.camelToSnake(className);
+            String projectDir = ClassUtil.toLowerCamelCase(className);
             // 构建项目
+            String spiderProjectPath = this.rootPath + this.directorySegmentation + param.getDatasource();
+            // 本次构建项目的位置,作用在那个位置进行mvn install
+            String projectFinalPath = spiderProjectPath + this.directorySegmentation + param.getAreaName() + this.directorySegmentation + this.defaultVersion;
+
             //String spiderAreaFunctionPath = rootPath+this.directorySegmentation+projectDir+this.directorySegmentation;
-            areaProjectNode.generateProject(projectDir,this.defaultGroupId,artifactId,this.rootPath,param.getAreaName());
+            areaProjectNode.generateProject(projectDir,this.defaultGroupId,artifactId,spiderProjectPath,param.getAreaName());
             // 覆盖pom
             // 获取pom文件的路径
             /*String pomPath = rootPath+this.directorySegmentation+projectDir+this.directorySegmentation;
