@@ -33,8 +33,6 @@ public class ProjectFactory {
 
     public void createAreaProject(ProjectParam param) {
         String serviceClass = param.getServiceClass();
-        String paramClass = param.getParamClass();
-        String resultClass = param.getResultClass();
         String className = ClassUtil.extractClassName(serviceClass);
         ProjectPath projectPath = projectPathService.buildAreaProjectPath(param.getDatasource(),param.getTableName(),"",className);
         // 生成项目

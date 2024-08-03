@@ -35,5 +35,33 @@ public class ProjectPath {
      */
     private String javaFilePath;
 
+    /**
+     * 新项目的pomPath
+     */
+    private String pomPath;
 
+    /**
+     * 启动类的path
+     */
+    private String mainPath;
+
+    /**
+     * spider的业务方法类path
+     */
+    private String servicePath;
+
+    /**
+     * spider参数的路径path
+     */
+    private String dataPath;
+
+    /**
+     * 配置类的路径
+     */
+    private String propertiesPath;
+
+    /**
+     * 业务config类的路径 config主要是spring的配置类增加一些base信息
+     */
+    private String configPath;
 }

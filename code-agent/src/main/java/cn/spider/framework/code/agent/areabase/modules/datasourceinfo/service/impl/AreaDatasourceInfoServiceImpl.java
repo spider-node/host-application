@@ -5,7 +5,6 @@ import cn.spider.framework.code.agent.areabase.modules.datasourceinfo.entity.Are
 import cn.spider.framework.code.agent.areabase.modules.datasourceinfo.mapper.AreaDatasourceInfoMapper;
 import cn.spider.framework.code.agent.areabase.modules.datasourceinfo.service.AreaDatasourceInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
@@ -22,11 +21,10 @@ import java.util.List;
  */
 @Service
 public class AreaDatasourceInfoServiceImpl extends ServiceImpl<AreaDatasourceInfoMapper, AreaDatasourceInfo> implements AreaDatasourceInfoService {
-    @Autowired
-    private AreaDatasourceInfoService datasourceInfoService;
+
     @Override
     public List<String> getTableNames(Integer id) {
-        AreaDatasourceInfo datasourceInfo = datasourceInfoService.getById(id);
+        AreaDatasourceInfo datasourceInfo = super.getById(id);
         Assert.notNull(datasourceInfo,"当前查询数据源不存在");
         Connection connection = null;
         ResultSet tables = null;

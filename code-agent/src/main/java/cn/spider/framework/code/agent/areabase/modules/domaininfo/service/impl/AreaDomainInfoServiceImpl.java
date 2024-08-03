@@ -27,8 +27,6 @@ public class AreaDomainInfoServiceImpl extends ServiceImpl<AreaDomainInfoMapper,
 
     @Autowired
     private AreaDatasourceInfoService datasourceInfoService;
-    @Autowired
-    private AreaDomainInfoService domainInfoService;
 
     @Override
     public void areaInit(AreaDomainInitReq req) {
@@ -40,9 +38,9 @@ public class AreaDomainInfoServiceImpl extends ServiceImpl<AreaDomainInfoMapper,
         CodeGenerator3.initPom(req);
         // 组装areaDomainInfo
         AreaDomainInfo areaDomainInfo = CodeGenerator3.initAreaDomainInfo(areaDatasourceInfo, req);
-        AreaDomainInfo exitAreaDomainInfo = domainInfoService.lambdaQuery().eq(AreaDomainInfo::getTableName,req.getTableName()).eq(AreaDomainInfo::getDatasourceId,areaDatasourceInfo.getId()).one();
+        AreaDomainInfo exitAreaDomainInfo = super.lambdaQuery().eq(AreaDomainInfo::getTableName,req.getTableName()).eq(AreaDomainInfo::getDatasourceId,areaDatasourceInfo.getId()).one();
         // 如果存在就做修改否则新增
         if (exitAreaDomainInfo!=null) areaDomainInfo.setId(exitAreaDomainInfo.getId());
-        domainInfoService.saveOrUpdate(areaDomainInfo);
+        super.saveOrUpdate(areaDomainInfo);
     }
 }

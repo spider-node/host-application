@@ -1,6 +1,8 @@
 package cn.spider.framework.code.agent.function;
 
 import cn.spider.framework.code.agent.data.DeployAreaFunctionParam;
+import cn.spider.framework.code.agent.project.factory.ProjectFactory;
+import cn.spider.framework.code.agent.project.factory.data.ProjectParam;
 import cn.spider.framework.code.agent.spider.SpiderClient;
 import cn.spider.framework.code.agent.util.ClassUtil;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,17 +13,6 @@ import javax.annotation.Resource;
 
 @Component
 public class FunctionManager {
-
-    // 项目的环境节点
-    @Value("${project.rootPath}")
-    private String rootPath;
-
-    @Value("${project.pom.defaultGroupId}")
-    private String defaultGroupId;
-
-    @Value("${project.pom.defaultVersion}")
-    private String defaultVersion;
-
     @Resource
     private AreaProjectNode areaProjectNode;
 
@@ -33,28 +24,28 @@ public class FunctionManager {
     @Resource
     private SpiderClient spiderClient;
 
+    @Resource
+    private ProjectFactory projectFactory;
+
     /**
      * 目录结构为 root/数据源/领域表名/版本/ 这个空间就是进行mvn生成模板项目
      * @param param
      * @return
      */
     public String buildProject(DeployAreaFunctionParam param) {
-        String serviceClass = param.getServiceClass();
-        String paramClass = param.getParamClass();
-        String resultClass = param.getResultClass();
         // 获取项目的名称 名称的命名为 area + functionName
         // 从 serviceClass中获取方法的名称
         try {
-            String className = ClassUtil.extractClassName(serviceClass);
-            String artifactId = param.getTableName() + "_"+ClassUtil.camelToSnake(className);
-            String projectDir = ClassUtil.toLowerCamelCase(className);
-            // 构建项目
-            String spiderProjectPath = this.rootPath + this.directorySegmentation + param.getDatasource();
-            // 本次构建项目的位置,作用在那个位置进行mvn install
-            String projectFinalPath = spiderProjectPath + this.directorySegmentation + param.getAreaName() + this.directorySegmentation + this.defaultVersion;
+            ProjectParam projectParam = new ProjectParam();
+            projectParam.setParamClass(param.getParamClass());
+            projectParam.setServiceClass(param.getServiceClass());
+            projectParam.setDatasource("test_order");
+            projectParam.setAreaName("goods");
+            projectParam.setTableName("goods");
+            projectFactory.createAreaProject(projectParam);
 
             //String spiderAreaFunctionPath = rootPath+this.directorySegmentation+projectDir+this.directorySegmentation;
-            areaProjectNode.generateProject(projectDir,this.defaultGroupId,artifactId,spiderProjectPath,param.getAreaName());
+            //areaProjectNode.generateProject(projectDir,this.defaultGroupId,artifactId,spiderProjectPath,param.getAreaName());
             // 覆盖pom
             // 获取pom文件的路径
             /*String pomPath = rootPath+this.directorySegmentation+projectDir+this.directorySegmentation;

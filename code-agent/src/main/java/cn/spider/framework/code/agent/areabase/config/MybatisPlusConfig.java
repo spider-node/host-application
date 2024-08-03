@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@MapperScan("cn.spider.*")
+@MapperScan("cn.spider.framework.code.agent.areabase.modules.*.mapper")
 public class MybatisPlusConfig {
 
     /**

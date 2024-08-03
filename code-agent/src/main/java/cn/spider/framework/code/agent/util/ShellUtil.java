@@ -13,10 +13,10 @@ public class ShellUtil {
         Map<String,String> runResultInfo = new HashMap<>();
         try {
             // 构建脚本的完整路径
-            String scriptPath = Paths.get("resources", "shell", shell).toAbsolutePath().toString();
+            String scriptPath = Paths.get("conf", "shell", shell).toAbsolutePath().toString();
 
             // 调用Shell脚本
-            Process process = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", scriptPath +shellParam});
+            Process process = Runtime.getRuntime().exec(new String[]{"/bin/bash", "-c", scriptPath + " " + shellParam});
 
             // 等待脚本执行完成
             int exitCode = process.waitFor();
