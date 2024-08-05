@@ -2,7 +2,7 @@ package cn.spider.framework.code.agent.areabase.modules.domaininfo.controller;
 
 import cn.hutool.json.JSONUtil;
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInfo;
-import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInitReq;
+import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInitParam;
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainReq;
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainResp;
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.service.AreaDomainInfoService;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -34,7 +33,7 @@ public class AreaDomainInfoController {
     private AreaDomainInfoService domainInfoService;
 
     @PostMapping("/areaDomainInit")
-    public Wrapper<String> areaInit(@RequestBody @Valid AreaDomainInitReq req) {
+    public Wrapper<String> areaInit(@RequestBody @Valid AreaDomainInitParam req) {
         areaDomainInfoService.areaInit(req);
         return WrapMapper.ok("初始化成功");
     }

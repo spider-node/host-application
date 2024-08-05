@@ -26,7 +26,7 @@ public class AreaProjectNode {
     }
 
     // 重新生成pom文件
-    public void buildPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription) {
+    public void buildAreaPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("groupId", groupId);
         dataModel.put("artifactId", artifactId);
@@ -34,7 +34,22 @@ public class AreaProjectNode {
         dataModel.put("projectName", projectName);
         dataModel.put("projectDescription", projectDescription);
         try {
-            FltlUtil.generateFile(outPath, dataModel, "function_pom.ftl");
+            FltlUtil.generateFile(outPath, dataModel, "function_pom.ftl","pom.xml");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (TemplateException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // 重新生成pom文件
+    public void buildBasePom(String outPath, String groupId, String artifactId, String version) {
+        Map<String, Object> dataModel = new HashMap<>();
+        dataModel.put("groupId", groupId);
+        dataModel.put("artifactId", artifactId);
+        dataModel.put("version", version);
+        try {
+            FltlUtil.generateFile(outPath, dataModel, "base_pom.ftl","pom.xml");
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (TemplateException e) {
@@ -47,7 +62,7 @@ public class AreaProjectNode {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("applicationName", artifactId);
         try {
-            FltlUtil.generateFile(outPath, dataModel, "function_pom.ftl");
+            FltlUtil.generateFile(outPath, dataModel, "yml.ftl","application.properties");
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (TemplateException e) {
@@ -61,7 +76,7 @@ public class AreaProjectNode {
         dataModel.put("startPath", classPath);
         dataModel.put("startClassName", className);
         try {
-            FltlUtil.generateFile(outPath, dataModel, "startClass.ftl");
+            FltlUtil.generateFile(outPath, dataModel, "startClass.ftl",className+".java");
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (TemplateException e) {
@@ -74,7 +89,7 @@ public class AreaProjectNode {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("configPath", classPath);
         try {
-            FltlUtil.generateFile(outPath, dataModel, "config.ftl");
+            FltlUtil.generateFile(outPath, dataModel, "config.ftl","AreaApplicationConfig.java");
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (TemplateException e) {
@@ -82,11 +97,11 @@ public class AreaProjectNode {
         }
     }
 
-    public void buildServiceClass(String outPath, String serviceClass) {
+    public void buildServiceClass(String outPath, String serviceClass,String className) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("serviceCode", serviceClass);
         try {
-            FltlUtil.generateFile(outPath, dataModel, "service.ftl");
+            FltlUtil.generateFile(outPath, dataModel, "service.ftl",className + ".java");
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (TemplateException e) {
@@ -94,11 +109,11 @@ public class AreaProjectNode {
         }
     }
 
-    public void buildParamClass(String outPath, String paramClass) {
+    public void buildParamClass(String outPath, String paramClass,String className) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("paramClass", paramClass);
         try {
-            FltlUtil.generateFile(outPath, dataModel, "param.ftl");
+            FltlUtil.generateFile(outPath, dataModel, "param.ftl",className + ".java");
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (TemplateException e) {
@@ -106,21 +121,25 @@ public class AreaProjectNode {
         }
     }
 
-    public void buildParamResult(String outPath, String resultClass) {
+    public void buildParamResult(String outPath, String resultClass,String className) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("resultClass", resultClass);
         try {
-            FltlUtil.generateFile(outPath, dataModel, "result.ftl");
+            FltlUtil.generateFile(outPath, dataModel, "result.ftl",className + ".java");
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (TemplateException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void mkdirPath(String path){
+        ShellUtil.runShell("mkdir_area_base_path.sh", path);
     }
 
 
     // 进行mvn install
-    public void invokeMavenBuild(String directory) {
+    public void mvnInstall(String directory) {
         ShellUtil.runShell("run_mvn_install.sh", directory);
     }
 

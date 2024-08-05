@@ -3,7 +3,7 @@ package cn.spider.framework.code.agent.areabase.utils;
 import cn.hutool.core.io.file.FileReader;
 import cn.spider.framework.code.agent.areabase.modules.datasourceinfo.entity.AreaDatasourceInfo;
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInfo;
-import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInitReq;
+import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInitParam;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import freemarker.core.ParseException;
@@ -21,13 +21,7 @@ import java.util.stream.Collectors;
 
 public class CodeGenerator3 {
 
-    public static void main(String[] args) {
-        AreaDomainInitReq req = new AreaDomainInitReq();
-        req.setTableName("spider_area");
-        req.setPackageName("cn.fmc.axx");
-    }
-    public static void initCode(AreaDatasourceInfo datasourceInfo, AreaDomainInitReq areaInitReq) {
-        String outPath = baseJavaPath(areaInitReq.getTableName());
+    public static void initCode(AreaDatasourceInfo datasourceInfo, AreaDomainInitParam areaInitReq, String outPath) {
         FastAutoGenerator.create(datasourceInfo.getUrl(), datasourceInfo.getName(), datasourceInfo.getPassword())
                 .globalConfig(builder -> builder
                         .author("dds")
@@ -76,7 +70,7 @@ public class CodeGenerator3 {
         return Paths.get(System.getProperty("user.dir"), Arrays.copyOfRange(a, 0, a.length)).toString();
     }
 
-    public static AreaDomainInfo initAreaDomainInfo(AreaDatasourceInfo datasourceInfo, AreaDomainInitReq areaInitReq){
+    public static AreaDomainInfo initAreaDomainInfo(AreaDatasourceInfo datasourceInfo, AreaDomainInitParam areaInitReq){
         String outPath = baseJavaPath(areaInitReq.getTableName());
         //生成后就获取entity内容1.找到entity的path
         String[] packageStr = areaInitReq.getPackageName().split("\\.");
@@ -105,7 +99,7 @@ public class CodeGenerator3 {
         areaDomainInfo.setDomainObjectServiceImplPackage("package "+areaInitReq.getPackageName()+".service.impl");
         return areaDomainInfo;
     }
-    public static void initPom(AreaDomainInitReq areaInitReq)  {
+    public static void initPom(AreaDomainInitParam areaInitReq)  {
         PomInfo pomInfo = new PomInfo();
         pomInfo.setVersion("1.0.0");
         pomInfo.setArtifactId(StringUtils.convertToCamelCase(areaInitReq.getTableName()));
@@ -117,7 +111,7 @@ public class CodeGenerator3 {
             configuration.setDirectoryForTemplateLoading(new File("src/main/resources/templates"));
             // 设置模板文件使用的字符集
             configuration.setDefaultEncoding("utf-8");
-            Template template = configuration.getTemplate("pom.xml.ftl");
+            Template template = configuration.getTemplate("base_pom.ftl");
             out = new FileWriter(basePomPath(areaInitReq.getTableName()));
             template.process(pomInfo,out);
         } catch (TemplateException e) {

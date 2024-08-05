@@ -1,16 +1,11 @@
 #!/bin/bash
 
-# 检查是否提供了足够的参数
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <directory>"
-    exit 1
-fi
 
 # 获取传递给脚本的目录路径
-local project_dir="$0"
+local project_dir="$1"
 
 # 转移到指定的项目目录
-cd "$project_dir" || { echo "Directory not found: $project_dir"; exit 1; }
+cd $project_dir
 
 # 执行mvn install并捕获输出
 mvn install > install.log 2>&1

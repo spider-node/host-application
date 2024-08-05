@@ -46,6 +46,11 @@ public class ProjectPath {
     private String mainPath;
 
     /**
+     * service类
+     */
+    private String startClassPackagePath;
+
+    /**
      * spider的业务方法类path
      */
     private String servicePath;
@@ -64,4 +69,16 @@ public class ProjectPath {
      * 业务config类的路径 config主要是spring的配置类增加一些base信息
      */
     private String configPath;
+
+    private String configPackage;
+
+    /**
+     * 代码的根路径
+     */
+    private String codePath;
+
+    /**
+     * 跟节点的路径
+     */
+    private String rootPackagePath;
 }

@@ -3,19 +3,19 @@
 # 检查参数数量
 
 # 项目名称 参照 GoodsOrderUpdateService
-PROJECT_DIR="$0"
+PROJECT_DIR="$1"
 # pom中的 GROUP_ID cn.spider
-GROUP_ID="$1"
+GROUP_ID="$2"
 # ARTIFACT_ID 参照 table名称GoodsOrderUpdateService
-ARTIFACT_ID="$2"
+ARTIFACT_ID="$3"
 # 版本
-VERSION="$3"
+VERSION="$4"
 # 分组拆分
-GROUP_PATH="$4"
+GROUP_PATH="$5"
 
-PROJECT_FINAL="$5"
+PROJECT_FINAL="$6"
 
-JAVA_FILE_PATH="$6"
+JAVA_FILE_PATH="$7"
 
 mkdir -p $PROJECT_FINAL
 # 删除旧项目，如果存在的话

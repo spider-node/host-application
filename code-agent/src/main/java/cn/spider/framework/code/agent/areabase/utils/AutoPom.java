@@ -34,7 +34,7 @@ public class AutoPom {
 
         // 设置模板文件使用的字符集
         configuration.setDefaultEncoding("utf-8");
-        Template template = configuration.getTemplate("pom.xml.ftl");
+        Template template = configuration.getTemplate("base_pom.ftl");
         Writer out = new FileWriter(Paths.get(System.getProperty("user.dir"))+"/spiderarea/pom.xml");
         try {
             template.process(pomInfo,out);

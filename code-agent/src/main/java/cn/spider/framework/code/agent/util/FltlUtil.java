@@ -21,16 +21,17 @@ public class FltlUtil {
      * @throws IOException io的一场
      * @throws TemplateException 模板一场
      */
-    public static void generateFile(String outputPath,Map<String, Object> dataModel,String templateFtl) throws IOException, TemplateException {
+    public static void generateFile(String outputPath,Map<String, Object> dataModel,String templateFtl,String fileName) throws IOException, TemplateException {
         // 创建一个配置实例
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_31);
         // 设置模板路径
         cfg.setClassForTemplateLoading(FltlUtil.class, "/templates");
         // 获取模板
         Template template = cfg.getTemplate(templateFtl);
+        String realOutPath = outputPath.endsWith("/") ? outputPath : outputPath + "/";
+        String file =  realOutPath + fileName;
         // 渲染模板到文件
-        File pomFile = new File(outputPath);
-        try (FileWriter fileWriter = new FileWriter(pomFile)) { // 使用FileWriter自动覆盖已存在的文件
+        try (FileWriter fileWriter = new FileWriter(file)) { // 使用FileWriter自动覆盖已存在的文件
             template.process(dataModel, fileWriter);
         }
         log.info("Generated file path at: {}",outputPath);

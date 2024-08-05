@@ -6,10 +6,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class AreaDomainInitReq {
+public class AreaDomainInitParam {
     @NotBlank(message = "tableName不能为空")
     String tableName;
-    @NotBlank(message = "packageName不能为空")
     String packageName;
     @NotNull(message = "datasourceId不能为空")
     Integer datasourceId;

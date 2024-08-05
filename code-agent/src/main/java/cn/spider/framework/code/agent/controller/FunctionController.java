@@ -1,5 +1,6 @@
 package cn.spider.framework.code.agent.controller;
 
+import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInitParam;
 import cn.spider.framework.code.agent.data.DeployAreaFunctionParam;
 import cn.spider.framework.code.agent.function.FunctionManager;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,5 +20,10 @@ public class FunctionController {
     @PostMapping("/deploy")
     public void deployAreaFunction(@RequestBody DeployAreaFunctionParam param){
         functionManager.buildProject(param);
+    }
+
+    @PostMapping("/init_area_base")
+    public void initAreaBase(@RequestBody AreaDomainInitParam param){
+        functionManager.initBaseProject(param);
     }
 }

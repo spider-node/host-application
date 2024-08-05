@@ -22,36 +22,61 @@ public class ProjectPathService {
 
     private final String directorySegmentation = "/";
 
+    private final String startClassPath = "src/main/java";
+
 
     public ProjectPath buildAreaProjectPath(String database, String table, String version, String className) {
         version = StringUtils.isEmpty(version) ? defaultVersion : version;
         String projectRootPath = this.rootPath + this.directorySegmentation + database + this.directorySegmentation + table + this.directorySegmentation;
-        String projectFinalPath = projectRootPath +className + this.directorySegmentation + version + this.directorySegmentation;
-        String artifactId = table + "_"+ ClassUtil.camelToSnake(className);
-
+        String artifactId = table + "_" + ClassUtil.camelToSnake(className);
+        String projectFinalPath = projectRootPath + className + this.directorySegmentation + version + this.directorySegmentation;
+        String pomPath = projectFinalPath +artifactId + this.directorySegmentation;
+        String groupIdPath = this.defaultGroupId.replace(".", "/");
+        String artifactIdPath = ClassUtil.replaceUnderscoresWithSlashes(artifactId);
+        String mainPath = pomPath + this.startClassPath + this.directorySegmentation + groupIdPath + this.directorySegmentation + artifactIdPath;
+        String servicePath = mainPath + this.directorySegmentation + "spider/service";
+        String dataPath = mainPath + this.directorySegmentation + "spider/data";
+        String configPath = mainPath + this.directorySegmentation + "config";
+        String propertiesPath = pomPath + "src/main/resources";
+        String startClassPackagePath = defaultGroupId + "." + artifactId.replace("_",".");
+        String configPackage = startClassPackagePath + ".config";
         return ProjectPath.builder()
                 .projectAreaPath(projectFinalPath)
                 .projectRootPath(projectRootPath)
                 .artifactId(artifactId)
                 .version(version)
-                .javaFilePath(ClassUtil.replaceUnderscoresWithSlashes(artifactId))
+                .javaFilePath(artifactIdPath)
+                .pomPath(pomPath)
+                .configPath(configPath)
+                .servicePath(servicePath)
+                .propertiesPath(propertiesPath)
+                .dataPath(dataPath)
+                .startClassPackagePath(startClassPackagePath)
+                .configPackage(configPackage)
+                .mainPath(mainPath)
                 .build();
     }
 
     public ProjectPath buildBaseProjectPath(String database, String table, String version) {
         version = StringUtils.isEmpty(version) ? defaultVersion : version;
         String projectRootPath = this.rootPath + this.directorySegmentation + database + this.directorySegmentation + table + this.directorySegmentation;
-        String projectFinalPath = projectRootPath +"base" + this.directorySegmentation + version + this.directorySegmentation;
+        String projectFinalPath = projectRootPath + "base" + this.directorySegmentation;
+        String artifactId = database + "_" + table + "_base";
+        String pomPath = projectFinalPath + artifactId;
+        // 代码可以移动到这个目录下
+        String codePath = pomPath + this.directorySegmentation + this.startClassPath + this.directorySegmentation;
+        String rootPackagePath = this.defaultGroupId +  "." + artifactId.replace("_",".");
         return ProjectPath.builder()
                 .projectAreaPath(projectFinalPath)
                 .projectRootPath(projectRootPath)
-                .artifactId(table)
+                .artifactId(artifactId)
+                .groupId(this.defaultGroupId)
                 .version(version)
+                .codePath(codePath)
+                .rootPackagePath(rootPackagePath)
+                .pomPath(pomPath)
                 .build();
     }
-
-
-
 
 
 }
