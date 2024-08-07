@@ -66,6 +66,10 @@ public class ProjectPathService {
         // 代码可以移动到这个目录下
         String codePath = pomPath + this.directorySegmentation + this.startClassPath + this.directorySegmentation;
         String rootPackagePath = this.defaultGroupId +  "." + artifactId.replace("_",".");
+        String groupIdPath = this.defaultGroupId.replace(".", "/");
+        String artifactIdPath = ClassUtil.replaceUnderscoresWithSlashes(artifactId);
+        String mainPath = pomPath + this.directorySegmentation + this.startClassPath + this.directorySegmentation + groupIdPath + this.directorySegmentation + artifactIdPath;
+        String entityPath = mainPath + this.directorySegmentation + "entity";
         return ProjectPath.builder()
                 .projectAreaPath(projectFinalPath)
                 .projectRootPath(projectRootPath)
@@ -75,6 +79,7 @@ public class ProjectPathService {
                 .codePath(codePath)
                 .rootPackagePath(rootPackagePath)
                 .pomPath(pomPath)
+                .entityPath(entityPath)
                 .build();
     }
 

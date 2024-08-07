@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>cn.spider-node</groupId>
-        <artifactId>spider-host-application</artifactId>
-        <version>1.0.0</version>
+        <groupId>com.alipay.sofa</groupId>
+        <artifactId>sofaboot-dependencies</artifactId>
+        <version>3.21.0</version>
         <!-- lookup parent from repository -->
     </parent>
 

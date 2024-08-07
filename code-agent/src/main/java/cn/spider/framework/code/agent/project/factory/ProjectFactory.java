@@ -73,7 +73,7 @@ public class ProjectFactory {
         // mvn install
         areaProjectNode.mvnInstall(projectPath.getPomPath());
         // 更新信息到领域中
-        AreaDomainInfo areaDomainInfo = CodeGenerator3.initAreaDomainInfo(areaDatasourceInfo, param, projectPath.getCodePath());
+        AreaDomainInfo areaDomainInfo = CodeGenerator3.initAreaDomainInfo(areaDatasourceInfo, param, projectPath.getEntityPath());
         areaDomainInfo.setVersion(projectPath.getVersion());
         areaDomainInfo.setArtifactId(projectPath.getArtifactId());
         areaDomainInfo.setGroupId(projectPath.getGroupId());

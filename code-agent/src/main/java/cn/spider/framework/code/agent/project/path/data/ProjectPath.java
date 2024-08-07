@@ -81,4 +81,9 @@ public class ProjectPath {
      * 跟节点的路径
      */
     private String rootPackagePath;
+
+    /**
+     * 实体路径
+     */
+    private String entityPath;
 }
