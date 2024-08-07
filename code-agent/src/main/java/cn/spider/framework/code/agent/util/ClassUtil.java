@@ -1,5 +1,8 @@
 package cn.spider.framework.code.agent.util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class ClassUtil {
 
     // 获取一个类的，类名称
@@ -85,4 +88,21 @@ public class ClassUtil {
         return input.replace('_', '/');
     }
 
+    public static String incrementVersion(String version) {
+        Pattern pattern = Pattern.compile("(\\D*)(\\d+)$"); // 匹配非数字和末尾的数字
+        Matcher matcher = pattern.matcher(version);
+
+        if (matcher.find()) { // 如果找到了匹配项
+            String nonDigitPart = matcher.group(1); // 匹配的非数字部分
+            int digitPart = Integer.parseInt(matcher.group(2)); // 匹配的数字部分
+
+            // 将数字部分加1
+            digitPart++;
+
+            // 构建并返回新的版本号
+            return nonDigitPart + digitPart;
+        } else {
+            throw new IllegalArgumentException("Input string does not end with a digit.");
+        }
+    }
 }

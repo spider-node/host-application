@@ -70,8 +70,7 @@ public class CodeGenerator3 {
         return Paths.get(System.getProperty("user.dir"), Arrays.copyOfRange(a, 0, a.length)).toString();
     }
 
-    public static AreaDomainInfo initAreaDomainInfo(AreaDatasourceInfo datasourceInfo, AreaDomainInitParam areaInitReq){
-        String outPath = baseJavaPath(areaInitReq.getTableName());
+    public static AreaDomainInfo initAreaDomainInfo(AreaDatasourceInfo datasourceInfo, AreaDomainInitParam areaInitReq,String outPath){
         //生成后就获取entity内容1.找到entity的path
         String[] packageStr = areaInitReq.getPackageName().split("\\.");
         List<String> packageList = Arrays.stream(packageStr).collect(Collectors.toList());
@@ -98,40 +97,5 @@ public class CodeGenerator3 {
         //package cn.fmc.aax.service.impl;
         areaDomainInfo.setDomainObjectServiceImplPackage("package "+areaInitReq.getPackageName()+".service.impl");
         return areaDomainInfo;
-    }
-    public static void initPom(AreaDomainInitParam areaInitReq)  {
-        PomInfo pomInfo = new PomInfo();
-        pomInfo.setVersion("1.0.0");
-        pomInfo.setArtifactId(StringUtils.convertToCamelCase(areaInitReq.getTableName()));
-        pomInfo.setGroupId(areaInitReq.getPackageName());
-        Writer out = null;
-        try {
-            Configuration configuration = new Configuration(Configuration.VERSION_2_3_0);
-            // 指定模板文件所在的路径
-            configuration.setDirectoryForTemplateLoading(new File("src/main/resources/templates"));
-            // 设置模板文件使用的字符集
-            configuration.setDefaultEncoding("utf-8");
-            Template template = configuration.getTemplate("base_pom.ftl");
-            out = new FileWriter(basePomPath(areaInitReq.getTableName()));
-            template.process(pomInfo,out);
-        } catch (TemplateException e) {
-            throw new RuntimeException(e);
-        } catch (TemplateNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        } catch (MalformedTemplateNameException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (out!=null){
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
     }
 }

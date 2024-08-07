@@ -12,5 +12,4 @@ public class AreaDomainInitParam {
     String packageName;
     @NotNull(message = "datasourceId不能为空")
     Integer datasourceId;
-
 }

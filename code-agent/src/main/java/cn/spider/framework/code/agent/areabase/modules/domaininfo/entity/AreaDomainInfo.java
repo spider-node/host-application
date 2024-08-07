@@ -19,7 +19,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("area_domain_info")
+@TableName("area_domain_base_info")
 public class AreaDomainInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -29,6 +29,9 @@ public class AreaDomainInfo implements Serializable {
 
     @TableField("datasource_id")
     private Integer datasourceId;
+
+    @TableField("datasource_name")
+    private Integer datasourceName;
 
     @TableField("table_name")
     private String tableName;
@@ -54,12 +57,21 @@ public class AreaDomainInfo implements Serializable {
     @TableField("domain_object_service_impl_package")
     private String domainObjectServiceImplPackage;
 
-    @TableField("domain_object_business_class_package")
-    private String domainObjectBusinessClassPackage;
-
-    @TableField("domain_object_business_method_param_package")
-    private String domainObjectBusinessMethodParamPackage;
+    @TableField("version")
+    private String version;
 
     @TableField("create_time")
     private LocalDateTime createTime;
+
+    /**
+     * pom中的groupId
+     */
+    @TableField("group_id")
+    private String groupId;
+
+    /**
+     * pom中的artifactId
+     */
+    @TableField("artifact_id")
+    private String artifactId;
 }

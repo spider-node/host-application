@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.alipay.sofa</groupId>
-        <artifactId>sofaboot-dependencies</artifactId>
-        <version>3.21.0</version>
+        <groupId>cn.spider-node</groupId>
+        <artifactId>spider-host-application</artifactId>
+        <version>1.0.0</version>
         <!-- lookup parent from repository -->
     </parent>
 
@@ -26,11 +26,19 @@
     </properties>
 
     <dependencies>
-        <!-- Example dependency -->
+        <!-- 功能插件的基础包 -->
         <dependency>
             <groupId>cn.spider-node</groupId>
             <artifactId>host-application-base</artifactId>
             <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- 归属问题 -->
+        <dependency>
+            <groupId>${baseGroupId}</groupId>
+            <artifactId>${baseArtifactId}</artifactId>
+            <version>${baseVersion}</version>
         </dependency>
     </dependencies>
 

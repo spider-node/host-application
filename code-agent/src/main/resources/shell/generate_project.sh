@@ -20,6 +20,20 @@ JAVA_FILE_PATH="$7"
 mkdir -p $PROJECT_FINAL
 # 删除旧项目，如果存在的话
 cd "$PROJECT_FINAL"
+
+
+if [ -d "$ARTIFACT_ID" ]; then
+    # 如果目录存在，使用 'rm' 命令删除目录及其内容
+    cd $ARTIFACT_ID
+    mvn clean
+    cd "../"
+    rm -rf "$ARTIFACT_ID"
+    echo "Directory $ARTIFACT_ID has been deleted."
+else
+    # 如果目录不存在，输出一条消息
+    echo "Directory $ARTIFACT_ID does not exist."
+fi
+
 # 使用Maven archetype生成项目
 mvn archetype:generate \
     -DarchetypeGroupId=org.apache.maven.archetypes \

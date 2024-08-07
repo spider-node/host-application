@@ -26,13 +26,16 @@ public class AreaProjectNode {
     }
 
     // 重新生成pom文件
-    public void buildAreaPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription) {
+    public void buildAreaPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription,String baseGroupId,String baseArtifactId,String baseVersion) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("groupId", groupId);
         dataModel.put("artifactId", artifactId);
         dataModel.put("version", version);
         dataModel.put("projectName", projectName);
         dataModel.put("projectDescription", projectDescription);
+        dataModel.put("baseGroupId",baseGroupId);
+        dataModel.put("baseArtifactId",baseArtifactId);
+        dataModel.put("baseVersion",baseVersion);
         try {
             FltlUtil.generateFile(outPath, dataModel, "function_pom.ftl","pom.xml");
         } catch (IOException e) {

@@ -32,4 +32,9 @@ public class ProjectParam {
      * 数据源
      */
     private String datasource;
+
+    /**
+     * 功能描述
+     */
+    private String desc;
 }

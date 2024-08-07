@@ -1,11 +1,8 @@
 package cn.spider.framework.host.application.base.plugin.config;
-import cn.spider.framework.host.application.base.base.ClientFactoryBean;
 import cn.spider.framework.host.application.base.host.mysql.DataSourceService;
-import cn.spider.framework.host.application.base.plugin.TaskPublish;
 import cn.spider.framework.host.application.base.plugin.TaskService;
 import cn.spider.framework.host.application.base.plugin.task.SpiderPluginManager;
 import cn.spider.framework.host.application.base.plugin.task.TaskServiceImpl;
-import cn.spider.framework.host.application.base.util.UrlUtil;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
