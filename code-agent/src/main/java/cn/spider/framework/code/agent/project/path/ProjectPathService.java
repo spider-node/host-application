@@ -44,6 +44,7 @@ public class ProjectPathService {
                 .projectAreaPath(projectFinalPath)
                 .projectRootPath(projectRootPath)
                 .artifactId(artifactId)
+                .groupId(this.defaultGroupId)
                 .version(version)
                 .javaFilePath(artifactIdPath)
                 .pomPath(pomPath)

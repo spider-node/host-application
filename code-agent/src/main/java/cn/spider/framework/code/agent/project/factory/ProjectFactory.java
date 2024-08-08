@@ -120,6 +120,7 @@ public class ProjectFactory {
         areaDomainFunctionInfoNew.setGroupId(projectPath.getGroupId());
         areaDomainFunctionInfoNew.setDatasourceId(areaDomain.getDatasourceId());
         areaDomainFunctionInfoNew.setArtifactId(projectPath.getArtifactId());
+        areaDomainFunctionInfoNew.setBaseVersion(areaDomain.getVersion());
 
         try {
             log.info("createAreaProject {}", JSON.toJSONString(projectPath));

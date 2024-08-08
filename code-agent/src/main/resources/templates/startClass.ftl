@@ -1,4 +1,4 @@
-package ${startPath}
+package ${startPath};
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
