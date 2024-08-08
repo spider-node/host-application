@@ -35,7 +35,7 @@ public class HostApplicationCenterConfig {
         return  new TransactionTemplate(transactionManager);
     }
 
-    @Bean(name = "mysqlSqlFactory")
+    @Bean(name = "sqlFactory")
     public SqlSessionFactoryBean mysqlSqlFactory() throws IOException {
         //数据源不能申明成模块spring上下文中的bean，因为模块卸载时会触发close方法
         DataSourceService dataSourceService = (DataSourceService) getBaseBean("dataSourceService");

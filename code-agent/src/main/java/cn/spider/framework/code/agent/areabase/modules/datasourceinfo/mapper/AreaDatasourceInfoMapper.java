@@ -11,6 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @author ATu
  * @since 2024-07-25
  */
+@Mapper
 public interface AreaDatasourceInfoMapper extends BaseMapper<AreaDatasourceInfo> {
 
 }

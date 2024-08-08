@@ -1,38 +1,38 @@
-package cn.spider.framework.host.application.base.plugin.task;
+package cn.spider.node.host.application.test;
 
-import cn.spider.framework.annotation.CustomRole;
 import cn.spider.framework.annotation.TaskComponent;
 import cn.spider.framework.annotation.TaskService;
 import cn.spider.framework.host.application.base.plugin.task.data.SpiderPlugin;
 import cn.spider.framework.host.application.base.util.ProxyUtil;
+import cn.spider.node.host.application.timer.SystemTimer;
 import com.alipay.sofa.common.utils.AssertUtil;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.DefaultParameterNameDiscoverer;
+import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ReflectionUtils;
 
+import javax.annotation.Resource;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-@Order(1000)
 @Component
-public class SpiderPluginManager {
-    /**
-     * 插件中的方法管理
-     */
-    private Map<String, SpiderPlugin> methodMap;
-
+public class InitComponent {
+    @Resource
     private ApplicationContext applicationContext;
+
+    private static final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
     public void init(){
         Map<String, Object> beansOfClassAnnotation = applicationContext.getBeansWithAnnotation(TaskComponent.class);
@@ -53,9 +53,10 @@ public class SpiderPluginManager {
                 TaskService annotation = method.getAnnotation(TaskService.class);
                 AssertUtil.notNull(annotation);
                 String taskServiceName = annotation.name();
-                String key = taskComponentName + "_" + taskServiceName;
-                SpiderPlugin spiderPlugin = new SpiderPlugin(method,item,key);
-                register(key,spiderPlugin);
+                String[] parameterNames = parameterNameDiscoverer.getParameterNames(method);
+                Object[] params = new Object[parameterNames.length];
+                params[0] = "12555";
+                ReflectionUtils.invokeMethod(method, item, params);
             });
         });
     }
@@ -111,18 +112,4 @@ public class SpiderPluginManager {
         }
         return left + sign + right;
     }
-
-    public SpiderPluginManager(){
-        this.methodMap = new ConcurrentHashMap<>();
-    }
-
-    public SpiderPlugin get(String key){
-        return methodMap.get(key);
-    }
-
-    public void register(String key,SpiderPlugin spiderPlugin) {
-        methodMap.put(key,spiderPlugin);
-    }
-
-
 }
