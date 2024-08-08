@@ -26,11 +26,10 @@ public class FunctionManager {
             ProjectParam projectParam = new ProjectParam();
             projectParam.setParamClass(param.getParamClass());
             projectParam.setServiceClass(param.getServiceClass());
-            projectParam.setDatasource("test_order");
-            projectParam.setAreaName("goods");
-            projectParam.setTableName("goods");
+            projectParam.setDatasource(param.getDatasource());
+            projectParam.setAreaName(param.getAreaName());
+            projectParam.setTableName(param.getTableName());
             projectFactory.createAreaProject(projectParam);
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

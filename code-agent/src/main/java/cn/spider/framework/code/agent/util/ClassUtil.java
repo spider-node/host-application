@@ -89,20 +89,19 @@ public class ClassUtil {
     }
 
     public static String incrementVersion(String version) {
-        Pattern pattern = Pattern.compile("(\\D*)(\\d+)$"); // 匹配非数字和末尾的数字
+        // 正则表达式匹配版本号的最后一个数字
+        Pattern pattern = Pattern.compile("^(.*?)(\\d+)$");
         Matcher matcher = pattern.matcher(version);
 
-        if (matcher.find()) { // 如果找到了匹配项
-            String nonDigitPart = matcher.group(1); // 匹配的非数字部分
-            int digitPart = Integer.parseInt(matcher.group(2)); // 匹配的数字部分
-
-            // 将数字部分加1
-            digitPart++;
-
-            // 构建并返回新的版本号
-            return nonDigitPart + digitPart;
+        if (matcher.find()) {
+            String prefix = matcher.group(1);
+            int number = Integer.parseInt(matcher.group(2));
+            // 递增数字
+            number++;
+            // 返回新的版本号
+            return prefix + number;
         } else {
-            throw new IllegalArgumentException("Input string does not end with a digit.");
+            throw new IllegalArgumentException("Invalid version format: " + version);
         }
     }
 }

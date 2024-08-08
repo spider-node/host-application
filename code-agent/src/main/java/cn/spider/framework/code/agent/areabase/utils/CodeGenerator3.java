@@ -5,17 +5,12 @@ import cn.spider.framework.code.agent.areabase.modules.datasourceinfo.entity.Are
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInfo;
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInitParam;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
+import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
-import freemarker.core.ParseException;
-import freemarker.template.*;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +30,7 @@ public class CodeGenerator3 {
                         .mapper("mapper")
                         .service("service")
                         .serviceImpl("service.impl")
+                        .pathInfo(Collections.singletonMap(OutputFile.controller, null))
                         .xml("mapper.xml")
                 )
                 .strategyConfig(builder -> builder
@@ -43,7 +39,10 @@ public class CodeGenerator3 {
                         .enableLombok()
                         .enableTableFieldAnnotation() // 启用字段注解
                         .controllerBuilder()
-                        .serviceBuilder().formatServiceFileName("%sService").build()
+                        .serviceBuilder()
+                        .formatServiceFileName("%sService")
+                        .controllerBuilder().disable()
+                        .build()
 
                 )
                 .templateEngine(new FreemarkerTemplateEngine())

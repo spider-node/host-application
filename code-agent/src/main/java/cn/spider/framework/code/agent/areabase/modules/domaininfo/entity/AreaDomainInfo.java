@@ -31,7 +31,7 @@ public class AreaDomainInfo implements Serializable {
     private Integer datasourceId;
 
     @TableField("datasource_name")
-    private Integer datasourceName;
+    private String datasourceName;
 
     @TableField("table_name")
     private String tableName;

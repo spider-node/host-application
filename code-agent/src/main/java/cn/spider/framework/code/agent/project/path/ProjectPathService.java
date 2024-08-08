@@ -60,7 +60,7 @@ public class ProjectPathService {
     public ProjectPath buildBaseProjectPath(String database, String table, String version) {
         version = StringUtils.isEmpty(version) ? defaultVersion : version;
         String projectRootPath = this.rootPath + this.directorySegmentation + database + this.directorySegmentation + table + this.directorySegmentation;
-        String projectFinalPath = projectRootPath + "base" + this.directorySegmentation;
+        String projectFinalPath = projectRootPath + "base" + this.directorySegmentation + version + this.directorySegmentation;
         String artifactId = database + "_" + table + "_base";
         String pomPath = projectFinalPath + artifactId;
         // 代码可以移动到这个目录下

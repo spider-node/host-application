@@ -52,12 +52,11 @@ public class ProjectFactory {
         AreaDatasourceInfo areaDatasourceInfo = datasourceInfoService.getBaseMapper().selectById(param.getDatasourceId());
         Assert.notNull(areaDatasourceInfo, "当前数据源信息不存在，请核实后在请求");
         ProjectPath projectPath = projectPathService.buildBaseProjectPath(areaDatasourceInfo.getName(), param.getTableName(), "");
-
         AreaDomainInfo areaDomain = areaDomainInfoService.lambdaQuery()
                 .eq(AreaDomainInfo::getDatasourceId, param.getDatasourceId())
                 .eq(AreaDomainInfo::getTableName, param.getTableName())
                 .eq(AreaDomainInfo::getVersion, projectPath.getVersion())
-                .last("limit 1").one();
+                .last(" order by create_time desc limit 1").one();
 
         if(Objects.nonNull(areaDomain)){
             String finalVersion = ClassUtil.incrementVersion(areaDomain.getVersion());
@@ -73,10 +72,11 @@ public class ProjectFactory {
         // mvn install
         areaProjectNode.mvnInstall(projectPath.getPomPath());
         // 更新信息到领域中
-        AreaDomainInfo areaDomainInfo = CodeGenerator3.initAreaDomainInfo(areaDatasourceInfo, param, projectPath.getEntityPath());
+        AreaDomainInfo areaDomainInfo = CodeGenerator3.initAreaDomainInfo(areaDatasourceInfo, param, projectPath.getCodePath());
         areaDomainInfo.setVersion(projectPath.getVersion());
         areaDomainInfo.setArtifactId(projectPath.getArtifactId());
         areaDomainInfo.setGroupId(projectPath.getGroupId());
+        areaDomainInfo.setDatasourceName(areaDatasourceInfo.getName());
         areaDomainInfoService.save(areaDomainInfo);
     }
 
@@ -86,6 +86,13 @@ public class ProjectFactory {
      * @param param
      */
     public void createAreaProject(ProjectParam param) {
+        // 使用最新的基础版本
+        AreaDomainInfo areaDomain = areaDomainInfoService.lambdaQuery()
+                .eq(AreaDomainInfo::getDatasourceName, param.getDatasource())
+                .eq(AreaDomainInfo::getTableName, param.getTableName())
+                .last(" order by create_time desc limit 1").one();
+
+        Preconditions.checkArgument(Objects.nonNull(areaDomain),"没有领域基础信息,请初始化领域基础信息");
         String serviceClass = param.getServiceClass();
         String className = ClassUtil.extractClassName(serviceClass);
         ProjectPath projectPath = projectPathService.buildAreaProjectPath(param.getDatasource(), param.getTableName(), "", className);
@@ -111,6 +118,7 @@ public class ProjectFactory {
         areaDomainFunctionInfoNew.setVersion(projectPath.getVersion());
         areaDomainFunctionInfoNew.setStatus(AreaFunctionStatus.INIT);
         areaDomainFunctionInfoNew.setGroupId(projectPath.getGroupId());
+        areaDomainFunctionInfoNew.setDatasourceId(areaDomain.getDatasourceId());
         areaDomainFunctionInfoNew.setArtifactId(projectPath.getArtifactId());
 
         try {
@@ -123,13 +131,6 @@ public class ProjectFactory {
             areaProjectNode.buildParamClass(projectPath.getServicePath(), serviceClass, className);
             // 现在配置类
             areaProjectNode.buildConfig(projectPath.getConfigPath(), projectPath.getConfigPackage());
-            // 使用最新的基础版本
-            AreaDomainInfo areaDomain = areaDomainInfoService.lambdaQuery()
-                    .eq(AreaDomainInfo::getDatasourceName, param.getDatasource())
-                    .eq(AreaDomainInfo::getTableName, param.getTableName())
-                    .last(" order by create_time desc limit 1").one();
-
-            Preconditions.checkArgument(Objects.nonNull(areaDomain),"没有领域基础信息,请初始化领域基础信息");
 
             // 更新pom文件
             areaProjectNode.buildAreaPom(projectPath.getPomPath(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getVersion(), className, "",areaDomain.getGroupId(),areaDomain.getArtifactId(),areaDomain.getVersion());

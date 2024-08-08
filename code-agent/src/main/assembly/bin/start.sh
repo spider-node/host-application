@@ -15,6 +15,8 @@ STDOUT_FILE=$LOG_DIR/stdout.log
 
 PID_FILE=./logs/${SERVER_NAME}.pid
 
+SHLLE_DIR=./conf/shell
+
 # 创建日志目录
 mkdir -p "$LOG_DIR"
 
@@ -38,7 +40,10 @@ start_app() {
     nohup "java" $JAVA_OPTS -jar $DEPLOY_DIR/lib/$JAR_FILE > $STDOUT_FILE 2>&1 &
     echo $! > "$PID_FILE"
     echo "Application started with PID $(cat "$PID_FILE")"
-    tail -f $DEPLOY_DIR/logs/stdout.log
+    cd $SHLLE_DIR
+    chmod 755 generate_project.sh
+    chmod 755 mkdir_area_base_path.sh
+    chmod 755 run_mvn_install.sh
 }
 
 # 主函数
