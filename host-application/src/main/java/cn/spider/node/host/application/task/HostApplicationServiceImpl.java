@@ -1,4 +1,4 @@
-package cn.spider.node.host.application.task;
+/*package cn.spider.node.host.application.task;
 import cn.spider.framework.host.application.base.plugin.TaskService;
 import cn.spider.framework.host.application.base.plugin.data.TaskRequest;
 import cn.spider.framework.linker.client.host.HostApplicationService;
@@ -23,4 +23,4 @@ public class HostApplicationServiceImpl implements HostApplicationService {
         BeanUtils.copyProperties(requestParam,taskRequest);
         return taskService.runTask(taskRequest);
     }
-}
+}*/
