@@ -5,6 +5,7 @@ import cn.spider.framework.host.application.base.plugin.TaskService;
 import cn.spider.framework.host.application.base.plugin.data.TaskRequest;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.util.ReflectionUtils;
@@ -14,10 +15,13 @@ import java.lang.reflect.Parameter;
 import java.util.Map;
 import java.util.Objects;
 
+@Slf4j
 public class TaskServiceImpl implements TaskService {
     private SpiderPluginManager pluginManager;
 
-    private static final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
+    private final String heart_info = "Heartbeat detection";
+
+    private final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
     public TaskServiceImpl(SpiderPluginManager pluginManager) {
         this.pluginManager = pluginManager;
@@ -26,13 +30,18 @@ public class TaskServiceImpl implements TaskService {
     // 注意,需要后续新增事务功能
     @Override
     public Object runTask(TaskRequest request) {
-        String domainFunctionKey = request.getComponentName()+request.getServiceName();
+        String domainFunctionKey = request.getDomainFunctionKey();
         SpiderPlugin plugin = pluginManager.get(domainFunctionKey);
-        if(Objects.isNull(plugin)){
-            Preconditions.checkArgument(false,"没有找打对应的业务方法请检查");
+        if (Objects.isNull(plugin)) {
+            Preconditions.checkArgument(false, "没有找打对应的业务方法请检查");
         }
         Object[] params = buildParam(request.getParam(), plugin.getMethod());
         return ReflectionUtils.invokeMethod(plugin.getMethod(), plugin.getTagertObject(), params);
+    }
+
+    @Override
+    public void heart() {
+        log.error(this.heart_info);
     }
 
     public Object[] buildParam(Map<String, Object> paramMap, Method method) {

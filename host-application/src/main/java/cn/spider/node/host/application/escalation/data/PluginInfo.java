@@ -1,6 +1,6 @@
 package cn.spider.node.host.application.escalation.data;
 
-import cn.spider.framework.host.application.base.host.data.EscalationInfo;
+import cn.spider.framework.host.application.base.heart.EscalationInfo;
 import cn.spider.framework.host.application.base.plugin.TaskService;
 
 public class PluginInfo {

@@ -95,6 +95,7 @@ public class ProjectFactory {
         Preconditions.checkArgument(Objects.nonNull(areaDomain),"没有领域基础信息,请初始化领域基础信息");
         String serviceClass = param.getServiceClass();
         String className = ClassUtil.extractClassName(serviceClass);
+        String mapperPath = areaDomain.getDomainObjectServicePackage().replaceAll("service$", "mapper");
         ProjectPath projectPath = projectPathService.buildAreaProjectPath(param.getDatasource(), param.getTableName(), "", className);
         AreaDomainFunctionInfo areaDomainFunctionInfo = areaDomainFunctionInfoService.lambdaQuery()
                 .eq(AreaDomainFunctionInfo::getDatasourceName, param.getDatasource())
@@ -127,7 +128,7 @@ public class ProjectFactory {
             // 生成项目
             areaProjectNode.generateProject(projectPath.getArtifactId(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getProjectAreaPath(), projectPath.getVersion(), projectPath.getJavaFilePath());
             // 生成java启动类
-            areaProjectNode.buildStart(projectPath.getMainPath(), className + "Start", projectPath.getStartClassPackagePath());
+            areaProjectNode.buildStart(projectPath.getMainPath(), className + "Start", projectPath.getStartClassPackagePath(),mapperPath);
             // 生成java 业务类
             areaProjectNode.buildParamClass(projectPath.getServicePath(), serviceClass, className);
             // 现在配置类

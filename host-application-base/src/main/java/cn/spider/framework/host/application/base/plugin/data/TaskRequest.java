@@ -25,20 +25,14 @@ public class TaskRequest {
     private String branchId;
 
     /**
+     * 插件版本
+     */
+    private String version;
+
+    /**
      * 请求参数
      */
-    private Map<String,Object> param;
-
-    // 宿主机判断如何调用插件
-    private String uniqueId;
-
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
+    private Map<String, Object> param;
 
     public String getRequestId() {
         return requestId;
@@ -94,5 +88,17 @@ public class TaskRequest {
 
     public void setParam(Map<String, Object> param) {
         this.param = param;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getDomainFunctionKey() {
+        return this.componentName + this.serviceName;
     }
 }

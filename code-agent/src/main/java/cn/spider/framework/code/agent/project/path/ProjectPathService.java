@@ -40,6 +40,7 @@ public class ProjectPathService {
         String propertiesPath = pomPath + "src/main/resources";
         String startClassPackagePath = defaultGroupId + "." + artifactId.replace("_",".");
         String configPackage = startClassPackagePath + ".config";
+
         return ProjectPath.builder()
                 .projectAreaPath(projectFinalPath)
                 .projectRootPath(projectRootPath)

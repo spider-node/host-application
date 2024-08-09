@@ -15,11 +15,13 @@ public class DatasourceConfig {
 
     private String password;
 
-    private int initialSize;
+    private Integer initialSize;
 
-    private int minIdle;
+    private Integer minIdle;
 
-    private int maxIdle;
+    private Integer maxIdle;
+
+    private Integer maxActive;
 
     private String driverClassName;
 }

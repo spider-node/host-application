@@ -1,13 +1,10 @@
 package cn.spider.node.host.application.escalation;
 
-import cn.spider.framework.host.application.base.host.data.EscalationInfo;
+import cn.spider.framework.host.application.base.heart.EscalationInfo;
 import cn.spider.framework.host.application.base.host.heart.HostService;
 import cn.spider.framework.host.application.base.plugin.TaskService;
 import cn.spider.node.host.application.escalation.data.PluginInfo;
 import com.alipay.sofa.koupleless.common.api.SpringServiceFinder;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 /**

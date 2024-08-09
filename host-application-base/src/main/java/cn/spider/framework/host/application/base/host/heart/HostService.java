@@ -1,6 +1,6 @@
 package cn.spider.framework.host.application.base.host.heart;
 
-import cn.spider.framework.host.application.base.host.data.EscalationInfo;
+import cn.spider.framework.host.application.base.heart.EscalationInfo;
 
 /**
  * 用于-插件与宿主机通信

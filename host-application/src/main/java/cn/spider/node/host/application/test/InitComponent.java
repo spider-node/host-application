@@ -2,25 +2,19 @@ package cn.spider.node.host.application.test;
 
 import cn.spider.framework.annotation.TaskComponent;
 import cn.spider.framework.annotation.TaskService;
-import cn.spider.framework.host.application.base.plugin.task.data.SpiderPlugin;
 import cn.spider.framework.host.application.base.util.ProxyUtil;
-import cn.spider.node.host.application.timer.SystemTimer;
 import com.alipay.sofa.common.utils.AssertUtil;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
-
 import javax.annotation.Resource;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -32,7 +26,7 @@ public class InitComponent {
     @Resource
     private ApplicationContext applicationContext;
 
-    private static final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
+    private final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
     public void init(){
         Map<String, Object> beansOfClassAnnotation = applicationContext.getBeansWithAnnotation(TaskComponent.class);

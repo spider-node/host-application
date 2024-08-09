@@ -1,6 +1,4 @@
 package cn.spider.framework.host.application.base.plugin.task;
-
-import cn.spider.framework.annotation.CustomRole;
 import cn.spider.framework.annotation.TaskComponent;
 import cn.spider.framework.annotation.TaskService;
 import cn.spider.framework.host.application.base.plugin.task.data.SpiderPlugin;
@@ -13,19 +11,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-@Order(1000)
-@Component
 public class SpiderPluginManager {
     /**
      * 插件中的方法管理
@@ -33,6 +22,11 @@ public class SpiderPluginManager {
     private Map<String, SpiderPlugin> methodMap;
 
     private ApplicationContext applicationContext;
+
+    public SpiderPluginManager(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+        this.methodMap = new HashMap<>();
+    }
 
     public void init(){
         Map<String, Object> beansOfClassAnnotation = applicationContext.getBeansWithAnnotation(TaskComponent.class);
@@ -53,8 +47,8 @@ public class SpiderPluginManager {
                 TaskService annotation = method.getAnnotation(TaskService.class);
                 AssertUtil.notNull(annotation);
                 String taskServiceName = annotation.name();
-                String key = taskComponentName + "_" + taskServiceName;
-                SpiderPlugin spiderPlugin = new SpiderPlugin(method,item,key);
+                String key = taskComponentName+taskServiceName;
+                SpiderPlugin spiderPlugin = new SpiderPlugin(method,item,key,taskComponentName,taskServiceName,method.getName());
                 register(key,spiderPlugin);
             });
         });
@@ -112,12 +106,12 @@ public class SpiderPluginManager {
         return left + sign + right;
     }
 
-    public SpiderPluginManager(){
-        this.methodMap = new ConcurrentHashMap<>();
-    }
-
     public SpiderPlugin get(String key){
         return methodMap.get(key);
+    }
+
+    public List<SpiderPlugin> allPlugin(){
+        return new ArrayList<>(methodMap.values());
     }
 
     public void register(String key,SpiderPlugin spiderPlugin) {

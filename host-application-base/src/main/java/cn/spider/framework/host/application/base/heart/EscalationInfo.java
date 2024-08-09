@@ -1,4 +1,4 @@
-package cn.spider.framework.host.application.base.host.data;
+package cn.spider.framework.host.application.base.heart;
 
 /**
  * 插件上报的信息
@@ -16,10 +16,6 @@ public class EscalationInfo {
      * 方法名称
      */
     private String methodName;
-    /**
-     * 标识id
-     */
-    private String uniqueId;
 
     /**
      * pom中的artifactId
@@ -75,7 +71,4 @@ public class EscalationInfo {
         return this.componentName + this.serviceName;
     }
 
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
 }

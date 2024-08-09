@@ -74,10 +74,11 @@ public class AreaProjectNode {
     }
 
     // 构建启动类
-    public void buildStart(String outPath, String className, String classPath) {
+    public void buildStart(String outPath, String className, String classPath,String mapperPath) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("startPath", classPath);
         dataModel.put("startClassName", className);
+        dataModel.put("mapperPath",mapperPath);
         try {
             FltlUtil.generateFile(outPath, dataModel, "startClass.ftl",className+".java");
         } catch (IOException e) {
