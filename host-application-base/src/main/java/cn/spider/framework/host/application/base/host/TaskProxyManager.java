@@ -1,10 +1,6 @@
 package cn.spider.framework.host.application.base.host;
-
-import cn.spider.framework.host.application.base.base.ClientFactoryBean;
 import cn.spider.framework.host.application.base.plugin.TaskService;
 import com.alipay.sofa.koupleless.common.api.SpringServiceFinder;
-import com.alipay.sofa.runtime.api.client.ReferenceClient;
-import com.alipay.sofa.runtime.api.client.param.ReferenceParam;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
