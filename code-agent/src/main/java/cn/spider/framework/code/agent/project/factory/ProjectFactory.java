@@ -95,7 +95,7 @@ public class ProjectFactory {
         Preconditions.checkArgument(Objects.nonNull(areaDomain),"没有领域基础信息,请初始化领域基础信息");
         String serviceClass = param.getServiceClass();
         String className = ClassUtil.extractClassName(serviceClass);
-        String mapperPath = areaDomain.getDomainObjectServicePackage().replaceAll("service$", "mapper");
+        String mapperPath = areaDomain.getDomainObjectServicePackage().replaceAll("service$", "mapper").replaceAll("^package\\s+", "");
         ProjectPath projectPath = projectPathService.buildAreaProjectPath(param.getDatasource(), param.getTableName(), "", className);
         AreaDomainFunctionInfo areaDomainFunctionInfo = areaDomainFunctionInfoService.lambdaQuery()
                 .eq(AreaDomainFunctionInfo::getDatasourceName, param.getDatasource())
