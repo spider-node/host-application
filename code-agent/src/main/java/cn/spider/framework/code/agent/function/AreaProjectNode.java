@@ -61,11 +61,14 @@ public class AreaProjectNode {
     }
 
     // 重新生成yml文件
-    public void buildYml(String outPath, String artifactId) {
+    public void buildYml(String outPath, String artifactId,String version,String datasourceName) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("applicationName", artifactId);
+        dataModel.put("artifactId",artifactId);
+        dataModel.put("version",version);
+        dataModel.put("datasourceName",datasourceName);
         try {
-            FltlUtil.generateFile(outPath, dataModel, "yml.ftl","application.properties");
+            FltlUtil.generateFile(outPath, dataModel, "application.properties.ftl","application.properties");
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (TemplateException e) {

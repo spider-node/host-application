@@ -1,6 +1,7 @@
-/*package cn.spider.node.host.application.task;
+package cn.spider.node.host.application.task;
 import cn.spider.framework.host.application.base.plugin.TaskService;
 import cn.spider.framework.host.application.base.plugin.data.TaskRequest;
+import cn.spider.framework.host.application.base.util.ComponentUtil;
 import cn.spider.framework.linker.client.host.HostApplicationService;
 import cn.spider.framework.linker.sdk.data.FunctionRequest;
 import cn.spider.framework.linker.sdk.data.LinkerServerRequest;
@@ -17,10 +18,10 @@ public class HostApplicationServiceImpl implements HostApplicationService {
     @Override
     public Object runFunction(LinkerServerRequest request) {
         FunctionRequest requestParam = request.getFunctionRequest();
-        String pluginKey = requestParam.getComponentName() + requestParam.getServiceName();
+        String pluginKey = ComponentUtil.buildComponentKey(requestParam.getComponentName(),requestParam.getServiceName());
         TaskService taskService =escalationManager.queryTaskService(pluginKey);
         TaskRequest taskRequest = new TaskRequest();
         BeanUtils.copyProperties(requestParam,taskRequest);
         return taskService.runTask(taskRequest);
     }
-}*/
+}

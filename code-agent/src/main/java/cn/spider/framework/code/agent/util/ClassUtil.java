@@ -1,5 +1,6 @@
 package cn.spider.framework.code.agent.util;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,19 +90,22 @@ public class ClassUtil {
     }
 
     public static String incrementVersion(String version) {
-        // 正则表达式匹配版本号的最后一个数字
-        Pattern pattern = Pattern.compile("^(.*?)(\\d+)$");
-        Matcher matcher = pattern.matcher(version);
+        String[] parts = version.split("\\.");
+        int lastIndex = parts.length - 1;
+        int lastPart = Integer.parseInt(parts[lastIndex]);
 
-        if (matcher.find()) {
-            String prefix = matcher.group(1);
-            int number = Integer.parseInt(matcher.group(2));
-            // 递增数字
-            number++;
-            // 返回新的版本号
-            return prefix + number;
+        if (lastPart == 0 && lastIndex > 0 && parts[lastIndex - 1].isEmpty()) {
+            // 版本号以"."结尾的情况
+            parts = Arrays.copyOf(parts, parts.length - 1);
+            lastIndex--;
+            lastPart = Integer.parseInt(parts[lastIndex]);
+            parts[lastIndex] = String.valueOf(lastPart + 1);
+            parts = Arrays.copyOf(parts, parts.length + 1);
+            parts[lastIndex + 1] = "0";
         } else {
-            throw new IllegalArgumentException("Invalid version format: " + version);
+            parts[lastIndex] = String.valueOf(lastPart + 1);
         }
+
+        return String.join(".", parts);
     }
 }

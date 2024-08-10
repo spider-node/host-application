@@ -137,7 +137,7 @@ public class ProjectFactory {
             // 更新pom文件
             areaProjectNode.buildAreaPom(projectPath.getPomPath(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getVersion(), className, "",areaDomain.getGroupId(),areaDomain.getArtifactId(),areaDomain.getVersion());
             // 新增yml配置
-            areaProjectNode.buildYml(projectPath.getPropertiesPath(), projectPath.getArtifactId());
+            areaProjectNode.buildYml(projectPath.getPropertiesPath(), projectPath.getArtifactId(),projectPath.getVersion(),param.getDatasource());
 
             // 生成参数类
             if (!StringUtils.isEmpty(param.getParamClass())) {

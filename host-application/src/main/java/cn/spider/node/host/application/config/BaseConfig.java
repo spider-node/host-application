@@ -2,11 +2,13 @@ package cn.spider.node.host.application.config;
 import cn.spider.framework.host.application.base.host.TaskProxyManager;
 import cn.spider.framework.host.application.base.host.heart.HostService;
 import cn.spider.framework.host.application.base.host.mysql.DataSourceService;
+import cn.spider.framework.linker.client.host.HostApplicationService;
 import cn.spider.node.host.application.escalation.EscalationManager;
 import cn.spider.node.host.application.escalation.HostServiceImpl;
 import cn.spider.node.host.application.source.DataSourceServiceImpl;
 import cn.spider.node.host.application.source.SourceManager;
 import cn.spider.node.host.application.source.service.IAreaDatasourceInfoService;
+import cn.spider.node.host.application.task.HostApplicationServiceImpl;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -123,5 +125,10 @@ public class BaseConfig {
     @Bean
     public EscalationManager buildEscalationManager(){
         return new EscalationManager();
+    }
+
+    @Bean
+    public HostApplicationService buildHostApplicationService(EscalationManager escalationManager){
+        return new HostApplicationServiceImpl(escalationManager);
     }
 }
