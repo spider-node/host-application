@@ -2,6 +2,7 @@ package cn.spider.node.host.application.source;
 
 import cn.spider.node.host.application.source.entity.AreaDatasourceInfo;
 import cn.spider.node.host.application.source.service.IAreaDatasourceInfoService;
+import cn.spider.node.host.application.util.JdbcUtil;
 import com.alibaba.druid.pool.DruidDataSource;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +30,7 @@ public class SourceManager {
             if(dataSourceMap.containsKey(datasourceInfo.getUrl())){
                 continue;
             }
-            dataSourceMap.put(datasourceInfo.getUrl(),dataSource(datasourceInfo));
+            dataSourceMap.put(JdbcUtil.queryDatabaseName(datasourceInfo.getUrl()),dataSource(datasourceInfo));
         }
     }
     // 提供获取 mysql数据源的能力

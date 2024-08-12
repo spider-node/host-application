@@ -1,4 +1,5 @@
 package cn.spider.framework.host.application.base.plugin.task;
+
 import cn.spider.framework.annotation.TaskComponent;
 import cn.spider.framework.annotation.TaskService;
 import cn.spider.framework.host.application.base.plugin.param.RefreshAreaModel;
@@ -12,6 +13,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
+
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -35,19 +37,19 @@ public class SpiderPluginManager {
         this.areaFunctionParam = new RefreshAreaParam();
     }
 
-    public void init(){
+    public void init() {
         Map<String, Object> beansOfClassAnnotation = applicationContext.getBeansWithAnnotation(TaskComponent.class);
-        if(beansOfClassAnnotation.isEmpty()){
+        if (beansOfClassAnnotation.isEmpty()) {
             return;
         }
         Map<String, Map<String, Object>> refreshAreaParam = new HashMap<>();
-        beansOfClassAnnotation.values().forEach(item->{
+        beansOfClassAnnotation.values().forEach(item -> {
             Class<?> targetClass = ProxyUtil.noneProxyClass(item);
             TaskComponent taskComponent = AnnotationUtils.findAnnotation(targetClass, TaskComponent.class);
             String taskComponentName = taskComponent.name();
             // 获取到所有的方法
             Method[] taskServiceMethods = MethodUtils.getMethodsWithAnnotation(targetClass, TaskService.class, false, false);
-            List<Method> taskServiceMethodList = analysisClass.filterTaskServiceMethods(taskServiceMethods, targetClass,true);
+            List<Method> taskServiceMethodList = analysisClass.filterTaskServiceMethods(taskServiceMethods, targetClass, true);
             if (CollectionUtils.isEmpty(taskServiceMethodList)) {
                 return;
             }
@@ -55,10 +57,10 @@ public class SpiderPluginManager {
                 TaskService annotation = method.getAnnotation(TaskService.class);
                 AssertUtil.notNull(annotation);
                 String taskServiceName = annotation.name();
-                String key = taskComponentName+taskServiceName;
+                String key = taskComponentName + taskServiceName;
                 // 解析出，入参，出参
-                SpiderPlugin spiderPlugin = new SpiderPlugin(method,item,key,taskComponentName,taskServiceName,method.getName());
-                register(key,spiderPlugin);
+                SpiderPlugin spiderPlugin = new SpiderPlugin(method, item, key, taskComponentName, taskServiceName, method.getName());
+                register(key, spiderPlugin);
             });
             Map<String, Map<String, Object>> params = analysisClass.doInit(targetClass);
             refreshAreaParam.putAll(params);
@@ -82,16 +84,20 @@ public class SpiderPluginManager {
 
     }
 
-    public SpiderPlugin get(String key){
+    public SpiderPlugin get(String key) {
         return methodMap.get(key);
     }
 
-    public List<SpiderPlugin> allPlugin(){
+    public List<SpiderPlugin> allPlugin() {
         return new ArrayList<>(methodMap.values());
     }
 
-    public void register(String key,SpiderPlugin spiderPlugin) {
-        methodMap.put(key,spiderPlugin);
+    public void register(String key, SpiderPlugin spiderPlugin) {
+        methodMap.put(key, spiderPlugin);
+    }
+
+    public RefreshAreaParam queryRefreshAreaParam() {
+        return this.areaFunctionParam;
     }
 
 

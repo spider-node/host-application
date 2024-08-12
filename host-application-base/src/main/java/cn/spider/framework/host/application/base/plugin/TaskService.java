@@ -7,9 +7,4 @@ import cn.spider.framework.host.application.base.plugin.data.TaskRequest;
  */
 public interface TaskService {
     Object runTask(TaskRequest request);
-
-    /**
-     * 心跳检测
-     */
-    void heart();
 }

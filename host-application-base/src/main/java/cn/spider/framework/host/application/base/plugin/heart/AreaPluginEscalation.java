@@ -2,6 +2,7 @@ package cn.spider.framework.host.application.base.plugin.heart;
 
 import cn.spider.framework.host.application.base.heart.EscalationInfo;
 import cn.spider.framework.host.application.base.host.heart.HostService;
+import cn.spider.framework.host.application.base.plugin.param.RefreshAreaParam;
 import cn.spider.framework.host.application.base.plugin.task.SpiderPluginManager;
 import cn.spider.framework.host.application.base.plugin.task.data.SpiderPlugin;
 
@@ -38,7 +39,11 @@ public class AreaPluginEscalation {
             escalationInfo.setComponentName(spiderPlugin.getComponentName());
             escalationInfo.setServiceName(spiderPlugin.getServiceName());
             escalationInfo.setMethodName(spiderPlugin.getMethodName());
+            // 调用宿主的service进行注册
             hostService.escalationPlugInInfo(escalationInfo);
         }
+        // 上传参数信息
+        RefreshAreaParam refreshAreaParam = spiderPluginManager.queryRefreshAreaParam();
+        hostService.escalationPlugInParam(refreshAreaParam);
     }
 }

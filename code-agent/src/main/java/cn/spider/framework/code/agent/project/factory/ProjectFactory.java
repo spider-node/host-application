@@ -101,7 +101,7 @@ public class ProjectFactory {
                 .eq(AreaDomainFunctionInfo::getDatasourceName, param.getDatasource())
                 .eq(AreaDomainFunctionInfo::getFunctionName, className)
                 .eq(AreaDomainFunctionInfo::getVersion, projectPath.getVersion())
-                .last("limit 1").one();
+                .last("order by create_time limit 1").one();
         // 存在就升级版本
         if(Objects.nonNull(areaDomainFunctionInfo)){
             String finalVersion = ClassUtil.incrementVersion(projectPath.getVersion());
@@ -131,8 +131,8 @@ public class ProjectFactory {
             areaProjectNode.buildStart(projectPath.getMainPath(), className + "Start", projectPath.getStartClassPackagePath(),mapperPath);
             // 生成java 业务类
             areaProjectNode.buildParamClass(projectPath.getServicePath(), serviceClass, className);
-            // 现在配置类
-            areaProjectNode.buildConfig(projectPath.getConfigPath(), projectPath.getConfigPackage());
+            // 现在配置类- 配置 扫描base的路径,
+            areaProjectNode.buildConfig(projectPath.getConfigPath(), projectPath.getConfigPackage(),areaDomain.getDomainObjectServicePackage(),projectPath.getStartClassPackagePath());
 
             // 更新pom文件
             areaProjectNode.buildAreaPom(projectPath.getPomPath(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getVersion(), className, "",areaDomain.getGroupId(),areaDomain.getArtifactId(),areaDomain.getVersion());

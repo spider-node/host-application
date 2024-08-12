@@ -39,11 +39,6 @@ public class TaskServiceImpl implements TaskService {
         return ReflectionUtils.invokeMethod(plugin.getMethod(), plugin.getTagertObject(), params);
     }
 
-    @Override
-    public void heart() {
-        log.error(this.heart_info);
-    }
-
     public Object[] buildParam(Map<String, Object> paramMap, Method method) {
         Parameter[] parameters = method.getParameters();
         String[] parameterNames = parameterNameDiscoverer.getParameterNames(method);

@@ -15,6 +15,11 @@ public class HostApplicationServiceImpl implements HostApplicationService {
         this.escalationManager = escalationManager;
     }
 
+    /**
+     * 调用插件应用
+     * @param request
+     * @return 执行后领域对象返回的参数
+     */
     @Override
     public Object runFunction(LinkerServerRequest request) {
         FunctionRequest requestParam = request.getFunctionRequest();

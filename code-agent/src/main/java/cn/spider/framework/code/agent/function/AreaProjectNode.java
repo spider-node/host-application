@@ -92,9 +92,11 @@ public class AreaProjectNode {
     }
 
     // 构建配置类
-    public void buildConfig(String outPath, String classPath) {
+    public void buildConfig(String outPath, String classPath,String baseScanPath,String bizScanPath) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("configPath", classPath);
+        dataModel.put("baseScanPackage", baseScanPath);
+        dataModel.put("bizScanPackage", baseScanPath);
         try {
             FltlUtil.generateFile(outPath, dataModel, "config.ftl","AreaApplicationConfig.java");
         } catch (IOException e) {

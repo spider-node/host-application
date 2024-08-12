@@ -15,21 +15,19 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
-
-import java.io.IOException;
-
 import static com.alipay.sofa.koupleless.common.api.SpringBeanFinder.getBaseBean;
 
 /**
  * 获取宿主容器的上下文data
  */
 @Configuration
+@EnableTransactionManagement
 public class HostApplicationCenterConfig {
 
     @Bean(name = "transactionManager")

@@ -24,12 +24,12 @@ import javax.sql.DataSource;
 
 @Configuration
 public class BaseConfig {
-    @Bean
+    @Bean("sourceManager")
     public SourceManager buildSourceManager(IAreaDatasourceInfoService datasourceInfoService){
         return new SourceManager(datasourceInfoService);
     }
 
-    @Bean
+    @Bean("dataSourceService")
     public DataSourceService buildDataSourceService(SourceManager sourceManager){
         return new DataSourceServiceImpl(sourceManager);
     }
@@ -117,12 +117,12 @@ public class BaseConfig {
         };
     }
 
-    @Bean
+    @Bean("hostService")
     public HostService buildHostService(EscalationManager escalationManager){
         return new HostServiceImpl(escalationManager);
     }
 
-    @Bean
+    @Bean("escalationManager")
     public EscalationManager buildEscalationManager(){
         return new EscalationManager();
     }
