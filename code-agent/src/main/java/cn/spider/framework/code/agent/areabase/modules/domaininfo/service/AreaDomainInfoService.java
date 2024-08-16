@@ -2,6 +2,7 @@ package cn.spider.framework.code.agent.areabase.modules.domaininfo.service;
 
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInfo;
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInitParam;
+import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.QueryDomainParam;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -14,6 +15,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface AreaDomainInfoService extends IService<AreaDomainInfo> {
 
-    void areaInit(AreaDomainInitParam req);
+    AreaDomainInfo queryAreaDomainInfo(QueryDomainParam param);
 
 }

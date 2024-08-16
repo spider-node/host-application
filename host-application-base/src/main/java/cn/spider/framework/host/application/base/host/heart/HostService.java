@@ -11,4 +11,10 @@ public interface HostService {
     void escalationPlugInInfo(EscalationInfo escalationInfo);
 
     void escalationPlugInParam(RefreshAreaParam areaFunctionParam);
+
+    void unloadPlugin(String key);
+
+    void escalationPlugInAll();
+
+    void init();
 }

@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 @MapperScan(basePackages = {"${mapperPath}"},
 sqlSessionTemplateRef = "sqlSessionTemplate")
-@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, DruidDataSourceAutoConfigure.class })
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, DruidDataSourceAutoConfigure.class})
 public class ${startClassName}{
     public static void main(String[] args) {
     SpringApplication.run(${startClassName}.class, args);

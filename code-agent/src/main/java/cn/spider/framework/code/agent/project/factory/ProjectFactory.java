@@ -9,6 +9,8 @@ import cn.spider.framework.code.agent.areabase.modules.domaininfo.service.AreaDo
 import cn.spider.framework.code.agent.areabase.modules.function.entity.AreaDomainFunctionInfo;
 import cn.spider.framework.code.agent.areabase.modules.function.entity.enums.AreaFunctionStatus;
 import cn.spider.framework.code.agent.areabase.modules.function.service.IAreaDomainFunctionInfoService;
+import cn.spider.framework.code.agent.areabase.modules.sonarea.entity.SpiderSonArea;
+import cn.spider.framework.code.agent.areabase.modules.sonarea.service.ISpiderSonAreaService;
 import cn.spider.framework.code.agent.areabase.utils.CodeGenerator3;
 import cn.spider.framework.code.agent.function.AreaProjectNode;
 import cn.spider.framework.code.agent.project.factory.data.ProjectParam;
@@ -46,21 +48,29 @@ public class ProjectFactory {
     @Resource
     private IAreaDomainFunctionInfoService areaDomainFunctionInfoService;
 
+    @Resource
+    private ISpiderSonAreaService spiderSonAreaService;
+
 
     public void createBaseProject(AreaDomainInitParam param) {
+        SpiderSonArea sonArea = spiderSonAreaService.lambdaQuery()
+                .eq(SpiderSonArea :: getAreaName,param.getAreaName())
+                .eq(SpiderSonArea :: getSonAreaName,param.getSonAreaName()).one();
+        Assert.notNull(sonArea, "子域不存在,请校验领域的设置");
+        param.setTableName(sonArea.getTableName());
         // 获取各种路径
-        AreaDatasourceInfo areaDatasourceInfo = datasourceInfoService.getBaseMapper().selectById(param.getDatasourceId());
+        AreaDatasourceInfo areaDatasourceInfo = datasourceInfoService.lambdaQuery().eq(AreaDatasourceInfo :: getDatasource,sonArea.getDatasource()).one();
         Assert.notNull(areaDatasourceInfo, "当前数据源信息不存在，请核实后在请求");
-        ProjectPath projectPath = projectPathService.buildBaseProjectPath(areaDatasourceInfo.getName(), param.getTableName(), "");
+        ProjectPath projectPath = projectPathService.buildBaseProjectPath(areaDatasourceInfo.getDatasource(), sonArea.getTableName(), "");
         AreaDomainInfo areaDomain = areaDomainInfoService.lambdaQuery()
-                .eq(AreaDomainInfo::getDatasourceId, param.getDatasourceId())
-                .eq(AreaDomainInfo::getTableName, param.getTableName())
+                .eq(AreaDomainInfo::getDatasourceId, areaDatasourceInfo.getId())
+                .eq(AreaDomainInfo::getTableName, sonArea.getTableName())
                 .eq(AreaDomainInfo::getVersion, projectPath.getVersion())
                 .last(" order by create_time desc limit 1").one();
 
         if(Objects.nonNull(areaDomain)){
             String finalVersion = ClassUtil.incrementVersion(areaDomain.getVersion());
-            projectPath = projectPathService.buildBaseProjectPath(areaDatasourceInfo.getName(), param.getTableName(), finalVersion);
+            projectPath = projectPathService.buildBaseProjectPath(areaDatasourceInfo.getDatasource(), param.getTableName(), finalVersion);
         }
         log.info("createAreaProject {}", JSON.toJSONString(projectPath));
         // 通过shell脚本进行，项目根路径
@@ -76,7 +86,8 @@ public class ProjectFactory {
         areaDomainInfo.setVersion(projectPath.getVersion());
         areaDomainInfo.setArtifactId(projectPath.getArtifactId());
         areaDomainInfo.setGroupId(projectPath.getGroupId());
-        areaDomainInfo.setDatasourceName(areaDatasourceInfo.getName());
+        areaDomainInfo.setDatasourceName(areaDatasourceInfo.getDatasource());
+        areaDomainInfo.setDatasourceId(areaDatasourceInfo.getId());
         areaDomainInfoService.save(areaDomainInfo);
     }
 

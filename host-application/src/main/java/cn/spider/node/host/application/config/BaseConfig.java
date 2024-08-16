@@ -2,7 +2,12 @@ package cn.spider.node.host.application.config;
 import cn.spider.framework.host.application.base.host.TaskProxyManager;
 import cn.spider.framework.host.application.base.host.heart.HostService;
 import cn.spider.framework.host.application.base.host.mysql.DataSourceService;
+import cn.spider.framework.linker.client.config.CommonConfig;
+import cn.spider.framework.linker.client.config.GrpcConfig;
+import cn.spider.framework.linker.client.escalation.AreaInfoService;
 import cn.spider.framework.linker.client.host.HostApplicationService;
+import cn.spider.framework.linker.client.socket.SocketManager;
+import cn.spider.node.host.application.area.AreaInfoServiceImpl;
 import cn.spider.node.host.application.escalation.EscalationManager;
 import cn.spider.node.host.application.escalation.HostServiceImpl;
 import cn.spider.node.host.application.source.DataSourceServiceImpl;
@@ -15,13 +20,16 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import javax.sql.DataSource;
 
+@Import({CommonConfig.class, GrpcConfig.class})
 @Configuration
 public class BaseConfig {
     @Bean("sourceManager")
@@ -107,10 +115,11 @@ public class BaseConfig {
      * @return ApplicationRunner
      */
     @Bean
-    public ApplicationRunner runner(SourceManager sourceManager) {
+    public ApplicationRunner runner(SourceManager sourceManager,HostService hostService) {
         return new ApplicationRunner() {
             @Override
             public void run(ApplicationArguments args) throws Exception {
+                hostService.init();
                 // 在这里执行你的初始化代码
                 sourceManager.initDataSource();
             }
@@ -118,8 +127,8 @@ public class BaseConfig {
     }
 
     @Bean("hostService")
-    public HostService buildHostService(EscalationManager escalationManager){
-        return new HostServiceImpl(escalationManager);
+    public HostService buildHostService(EscalationManager escalationManager, ApplicationContext applicationContext){
+        return new HostServiceImpl(escalationManager,applicationContext);
     }
 
     @Bean("escalationManager")
@@ -130,5 +139,10 @@ public class BaseConfig {
     @Bean
     public HostApplicationService buildHostApplicationService(EscalationManager escalationManager){
         return new HostApplicationServiceImpl(escalationManager);
+    }
+
+    @Bean
+    public AreaInfoService buildAreaInfoService(HostService hostService){
+        return new AreaInfoServiceImpl(hostService);
     }
 }

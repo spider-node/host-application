@@ -1,16 +1,16 @@
 package cn.spider.framework.code.agent.areabase.modules.domaininfo.service.impl;
-
-import cn.hutool.core.lang.Assert;
-import cn.spider.framework.code.agent.areabase.modules.datasourceinfo.entity.AreaDatasourceInfo;
-import cn.spider.framework.code.agent.areabase.modules.datasourceinfo.service.AreaDatasourceInfoService;
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInfo;
-import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInitParam;
+import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.QueryDomainParam;
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.mapper.AreaDomainInfoMapper;
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.service.AreaDomainInfoService;
-import cn.spider.framework.code.agent.areabase.utils.CodeGenerator3;
+import cn.spider.framework.code.agent.areabase.modules.sonarea.entity.SpiderSonArea;
+import cn.spider.framework.code.agent.areabase.modules.sonarea.service.ISpiderSonAreaService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.google.common.base.Preconditions;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Objects;
 
 /**
  * <p>
@@ -23,22 +23,21 @@ import org.springframework.stereotype.Service;
 @Service
 public class AreaDomainInfoServiceImpl extends ServiceImpl<AreaDomainInfoMapper, AreaDomainInfo> implements AreaDomainInfoService {
 
-    @Autowired
-    private AreaDatasourceInfoService datasourceInfoService;
+    @Resource
+    private ISpiderSonAreaService spiderSonAreaService;
 
     @Override
-    public void areaInit(AreaDomainInitParam req) {
-       /* AreaDatasourceInfo areaDatasourceInfo = datasourceInfoService.getBaseMapper().selectById(req.getDatasourceId());
-        Assert.notNull(areaDatasourceInfo,"当前数据源信息不存在，请核实后在请求");
-        // 生成代码
-        //CodeGenerator3.initCode(areaDatasourceInfo,req);
-        // 生成pom文件
-        CodeGenerator3.initPom(req);
-        // 组装areaDomainInfo
-        AreaDomainInfo areaDomainInfo = CodeGenerator3.initAreaDomainInfo(areaDatasourceInfo, req);
-        AreaDomainInfo exitAreaDomainInfo = super.lambdaQuery().eq(AreaDomainInfo::getTableName,req.getTableName()).eq(AreaDomainInfo::getDatasourceId,areaDatasourceInfo.getId()).one();
-        // 如果存在就做修改否则新增
-        if (exitAreaDomainInfo!=null) areaDomainInfo.setId(exitAreaDomainInfo.getId());
-        super.saveOrUpdate(areaDomainInfo);*/
+    public AreaDomainInfo queryAreaDomainInfo(QueryDomainParam param) {
+        // 查询 子域的信息
+        SpiderSonArea sonArea = spiderSonAreaService.lambdaQuery()
+                .eq(SpiderSonArea :: getAreaName,param.getAreaName())
+                .eq(SpiderSonArea :: getSonAreaName,param.getSonAreaName())
+                .one();
+        Preconditions.checkArgument(Objects.nonNull(sonArea),"子域的配置不存在,请新增子域");
+        AreaDomainInfo areaDomainInfo = super.lambdaQuery()
+                .eq(AreaDomainInfo :: getDatasourceName,sonArea.getDatasource())
+                .eq(AreaDomainInfo :: getTableName,sonArea.getTableName()).one();
+        return areaDomainInfo;
     }
+
 }

@@ -1,11 +1,11 @@
 package cn.spider.framework.host.application.base.plugin.task;
-
 import cn.spider.framework.annotation.TaskComponent;
 import cn.spider.framework.annotation.TaskService;
 import cn.spider.framework.host.application.base.plugin.param.RefreshAreaModel;
 import cn.spider.framework.host.application.base.plugin.param.RefreshAreaParam;
 import cn.spider.framework.host.application.base.plugin.param.analysis.AnalysisClass;
 import cn.spider.framework.host.application.base.plugin.task.data.SpiderPlugin;
+import cn.spider.framework.host.application.base.util.PluginKeyUtil;
 import cn.spider.framework.host.application.base.util.ProxyUtil;
 import com.alipay.sofa.common.utils.AssertUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -30,11 +30,17 @@ public class SpiderPluginManager {
 
     private AnalysisClass analysisClass;
 
-    public SpiderPluginManager(ApplicationContext applicationContext) {
+    private String bizName;
+
+    private String version;
+
+    public SpiderPluginManager(ApplicationContext applicationContext,String bizName,String version) {
         this.applicationContext = applicationContext;
         this.methodMap = new HashMap<>();
         this.analysisClass = new AnalysisClass();
         this.areaFunctionParam = new RefreshAreaParam();
+        this.bizName = bizName;
+        this.version = version;
     }
 
     public void init() {
@@ -78,6 +84,7 @@ public class SpiderPluginManager {
                 areaModelList.add(refreshAreaModel);
             });
             areaFunctionParam.setAreaModelList(areaModelList);
+            areaFunctionParam.setPluginKey(PluginKeyUtil.buildPluginKey(this.bizName,this.version));
         } catch (Exception e) {
             log.error("获取参数失败");
         }
@@ -99,6 +106,4 @@ public class SpiderPluginManager {
     public RefreshAreaParam queryRefreshAreaParam() {
         return this.areaFunctionParam;
     }
-
-
 }

@@ -7,9 +7,21 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class AreaDomainInitParam {
-    @NotBlank(message = "tableName不能为空")
-    String tableName;
+    /**
+     * 主领域
+     */
+    String areaName;
+    /**
+     * 子领域
+     */
+    String sonAreaName;
+    /**
+     * 包名称 自动生成
+     */
     String packageName;
-    @NotNull(message = "datasourceId不能为空")
-    Integer datasourceId;
+
+    /**
+     * 表名称
+     */
+    String tableName;
 }

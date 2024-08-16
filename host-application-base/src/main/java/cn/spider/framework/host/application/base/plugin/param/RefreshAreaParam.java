@@ -5,6 +5,16 @@ import java.util.List;
 public class RefreshAreaParam {
     private List<RefreshAreaModel> areaModelList;
 
+    private String pluginKey;
+
+    public String getPluginKey() {
+        return pluginKey;
+    }
+
+    public void setPluginKey(String pluginKey) {
+        this.pluginKey = pluginKey;
+    }
+
     public List<RefreshAreaModel> getAreaModelList() {
         return areaModelList;
     }

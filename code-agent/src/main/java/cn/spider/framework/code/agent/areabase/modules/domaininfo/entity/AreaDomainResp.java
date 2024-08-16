@@ -7,12 +7,14 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class AreaDomainResp {
-    String domain_object;
-    String domain_object_package;
-    String domain_object_entity_name;
-    String domain_object_service_name;
-    String domain_object_service_package;
-    String domain_object_service_impl_name;
-    String domain_object_service_impl_package;
-
+    private String domain_object;
+    private String domain_object_package;
+    private String domain_object_entity_name;
+    private  String domain_object_service_name;
+    private String domain_object_service_package;
+    private  String domain_object_service_impl_name;
+    private String domain_object_service_impl_package;
+    private String group_Id;
+    private String table_Name;
+    private String datasource;
 }

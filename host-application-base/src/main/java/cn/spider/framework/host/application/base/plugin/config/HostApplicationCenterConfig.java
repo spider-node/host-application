@@ -72,8 +72,8 @@ public class HostApplicationCenterConfig {
      * @return
      */
     @Bean
-    public SpiderPluginManager buildSpiderPluginManager(ApplicationContext applicationContext){
-        return new SpiderPluginManager(applicationContext);
+    public SpiderPluginManager buildSpiderPluginManager(ApplicationContext applicationContext,@Value("${spring.application.name}") String bizName,@Value("${spider.pom.version}") String version){
+        return new SpiderPluginManager(applicationContext,bizName,version);
     }
 
     /**
