@@ -3,6 +3,7 @@ package cn.spider.framework.code.agent.function;
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInitParam;
 import cn.spider.framework.code.agent.data.DeployAreaFunctionParam;
 import cn.spider.framework.code.agent.project.factory.ProjectFactory;
+import cn.spider.framework.code.agent.project.factory.data.CreateProjectResult;
 import cn.spider.framework.code.agent.project.factory.data.ProjectParam;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,7 @@ public class FunctionManager {
      *
      * @param param
      */
-    public void buildProject(DeployAreaFunctionParam param) {
+    public CreateProjectResult buildProject(DeployAreaFunctionParam param) {
         // 获取项目的名称 名称的命名为 area + functionName
         // 从 serviceClass中获取方法的名称
         try {
@@ -29,7 +30,7 @@ public class FunctionManager {
             projectParam.setDatasource(param.getDatasource());
             projectParam.setAreaName(param.getAreaName());
             projectParam.setTableName(param.getTableName());
-            projectFactory.createAreaProject(projectParam);
+            return projectFactory.createAreaProject(projectParam);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -50,5 +50,8 @@ public class SpiderSonArea implements Serializable {
      */
     private String datasource;
 
+    /**
+     * 创建事件
+     */
     private LocalDateTime createTime;
 }

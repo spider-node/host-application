@@ -1,11 +1,17 @@
 package cn.spider.framework.code.agent.spider;
 
+import cn.spider.framework.code.agent.spider.data.DeployPluginParam;
+import cn.spider.framework.code.agent.spider.data.DeployPluginResult;
 import cn.spider.framework.code.agent.spider.data.RegisterAreaFunctionParam;
 import cn.spider.framework.code.agent.spider.data.UploadFileResult;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Preconditions;
 import okhttp3.*;
+
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -14,12 +20,15 @@ public class SpiderClient {
 
     private String registerAreaFunctionUrl;
 
+    private String deployUrl;
+
     private OkHttpClient client;
 
-    public SpiderClient(String spiderHost, int spiderPort, String requestFileUrl, String registerAreaFunctionUrl, OkHttpClient client) {
+    public SpiderClient(String spiderHost, int spiderPort, String requestFileUrl, String registerAreaFunctionUrl, OkHttpClient client, String deployUrl) {
         String httpPrefix = "http://" + spiderHost + ":" + spiderPort + "/";
         this.requestFileUrl = httpPrefix + requestFileUrl;
         this.registerAreaFunctionUrl = httpPrefix + registerAreaFunctionUrl;
+        this.deployUrl = httpPrefix = deployUrl;
         this.client = client;
     }
 
@@ -32,7 +41,7 @@ public class SpiderClient {
 
         // 创建Request对象
         Request request = new Request.Builder()
-                .url(requestFileUrl)
+                .url(this.requestFileUrl)
                 .post(requestBody)
                 .build();
 
@@ -48,44 +57,52 @@ public class SpiderClient {
         return patch.getPatch();
     }
 
-    public void registerAreaFunction(RegisterAreaFunctionParam param) {
-        param.setServiceTaskType("NORMAL");
-        param.setStatus("START");
-        try {
-            sendJsonData(JSONObject.parseObject(JSON.toJSONString(param)));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public DeployPluginResult deployPluginToApplication(DeployPluginParam param) {
+        return sendJsonData(JSON.toJSONString(param),this.deployUrl, DeployPluginResult.class);
     }
 
 
-    public void sendJsonData(JSONObject json) throws IOException {
+    public <R> R sendJsonData(String param,String url,Class<R> resutClass) {
         OkHttpClient client = new OkHttpClient();
-
-        // 将JSON对象转换为字符串
-        String jsonData = json.toString();
 
         // 创建RequestBody对象
         RequestBody requestBody = RequestBody.create(
                 MediaType.parse("application/json; charset=utf-8"),
-                jsonData
+                param
         );
 
         // 创建Request对象
         Request request = new Request.Builder()
-                .url(this.registerAreaFunctionUrl)
+                .url(url)
                 .post(requestBody)
                 .build();
+        okio.Buffer buffer = null;
+        Charset charset = null;
 
-        // 发送请求
-        Response response = client.newCall(request).execute();
+        try {
+            // 发送请求
+            Response response = client.newCall(request).execute();
 
-        // 处理响应
-        if (!response.isSuccessful()) {
-            throw new IOException("Unexpected code " + response);
+            // 处理响应
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+            ResponseBody responseBody = response.body();
+            okio.BufferedSource source = responseBody.source();
+            source.request(Long.MAX_VALUE); // Buffer the entire body.
+            buffer = source.buffer();
+
+            charset = StandardCharsets.UTF_8;
+            MediaType contentType = responseBody.contentType();
+            if (contentType != null) {
+                charset = contentType.charset(StandardCharsets.UTF_8);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+
         }
-        System.out.println("Response body: " + response.body().string());
+        JSONObject response = JSONObject.parseObject(buffer.clone().readString(charset));
+
+        return response.getObject("data",resutClass);
     }
-
-
 }

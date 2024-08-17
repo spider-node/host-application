@@ -74,4 +74,16 @@ public class AreaDomainInfo implements Serializable {
      */
     @TableField("artifact_id")
     private String artifactId;
+
+    /**
+     * 领域id
+     */
+    @TableField("area_id")
+    private String areaId;
+
+    /**
+     * 领域id
+     */
+    @TableField("area_name")
+    private String areaName;
 }

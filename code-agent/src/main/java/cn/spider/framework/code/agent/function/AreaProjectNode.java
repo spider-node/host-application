@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import freemarker.template.TemplateException;
 import org.springframework.util.CollectionUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -61,12 +62,14 @@ public class AreaProjectNode {
     }
 
     // 重新生成yml文件
-    public void buildYml(String outPath, String artifactId,String version,String datasourceName) {
+    public void buildYml(String outPath, String artifactId,String version,String datasourceName,String areaName,String areaId) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("applicationName", artifactId);
         dataModel.put("artifactId",artifactId);
         dataModel.put("version",version);
         dataModel.put("datasourceName",datasourceName);
+        dataModel.put("areaId",areaId);
+        dataModel.put("areaName",areaName);
         try {
             FltlUtil.generateFile(outPath, dataModel, "application.properties.ftl","application.properties");
         } catch (IOException e) {
@@ -158,7 +161,7 @@ public class AreaProjectNode {
 
         // 列出目录中的所有文件
         List<Path> jarFiles = Files.walk(dirPath)
-                .filter(p -> p.toString().endsWith(".jar"))
+                .filter(p -> p.toString().endsWith("-ark-biz.jar"))
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(jarFiles)) {
             Preconditions.checkArgument(false, "mvn-install后没有找到对应的jar文件，请检查");

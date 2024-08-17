@@ -7,7 +7,6 @@ import cn.spider.framework.host.application.base.plugin.task.SpiderPluginManager
 import cn.spider.framework.host.application.base.plugin.task.TaskServiceImpl;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
@@ -72,8 +71,10 @@ public class HostApplicationCenterConfig {
      * @return
      */
     @Bean
-    public SpiderPluginManager buildSpiderPluginManager(ApplicationContext applicationContext,@Value("${spring.application.name}") String bizName,@Value("${spider.pom.version}") String version){
-        return new SpiderPluginManager(applicationContext,bizName,version);
+    public SpiderPluginManager buildSpiderPluginManager(ApplicationContext applicationContext,@Value("${spring.application.name}") String bizName,
+                                                        @Value("${spider.pom.version}") String version,
+                                                        @Value("${spider.area.id}")String areaId){
+        return new SpiderPluginManager(applicationContext,bizName,version,areaId);
     }
 
     /**
@@ -84,7 +85,8 @@ public class HostApplicationCenterConfig {
      * @return
      */
     @Bean
-    public AreaPluginEscalation buildAreaPluginEscalation(SpiderPluginManager spiderPluginManager, @Value("${spider.pom.artifactId}") String moduleName, @Value("${spider.pom.version}")String moduleVersion){
+    public AreaPluginEscalation buildAreaPluginEscalation(SpiderPluginManager spiderPluginManager, @Value("${spider.pom.artifactId}") String moduleName,
+                                                          @Value("${spider.pom.version}")String moduleVersion){
         HostService hostService = (HostService)getBaseBean("hostService");
         return new AreaPluginEscalation(hostService,spiderPluginManager,moduleName,moduleVersion);
     }

@@ -86,4 +86,11 @@ public class ProjectPath {
      * 实体路径
      */
     private String entityPath;
+
+    /**
+     * 生成好的jar包文件路径path
+     */
+    private String jarFilePath;
+
+    private String jarFileName;
 }

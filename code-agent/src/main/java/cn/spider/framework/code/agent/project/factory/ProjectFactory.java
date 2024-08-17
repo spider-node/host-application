@@ -13,9 +13,14 @@ import cn.spider.framework.code.agent.areabase.modules.sonarea.entity.SpiderSonA
 import cn.spider.framework.code.agent.areabase.modules.sonarea.service.ISpiderSonAreaService;
 import cn.spider.framework.code.agent.areabase.utils.CodeGenerator3;
 import cn.spider.framework.code.agent.function.AreaProjectNode;
+import cn.spider.framework.code.agent.project.factory.data.CreateProjectResult;
 import cn.spider.framework.code.agent.project.factory.data.ProjectParam;
+import cn.spider.framework.code.agent.project.factory.data.enums.CreateProjectStatus;
 import cn.spider.framework.code.agent.project.path.ProjectPathService;
 import cn.spider.framework.code.agent.project.path.data.ProjectPath;
+import cn.spider.framework.code.agent.spider.SpiderClient;
+import cn.spider.framework.code.agent.spider.data.DeployPluginParam;
+import cn.spider.framework.code.agent.spider.data.DeployPluginResult;
 import cn.spider.framework.code.agent.util.ClassUtil;
 import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
@@ -24,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
+import java.nio.file.Path;
 import java.util.Objects;
 
 @Slf4j
@@ -50,6 +56,9 @@ public class ProjectFactory {
 
     @Resource
     private ISpiderSonAreaService spiderSonAreaService;
+
+    @Resource
+    private SpiderClient spiderClient;
 
 
     public void createBaseProject(AreaDomainInitParam param) {
@@ -88,6 +97,8 @@ public class ProjectFactory {
         areaDomainInfo.setGroupId(projectPath.getGroupId());
         areaDomainInfo.setDatasourceName(areaDatasourceInfo.getDatasource());
         areaDomainInfo.setDatasourceId(areaDatasourceInfo.getId());
+        areaDomainInfo.setAreaId(sonArea.getAreaId());
+        areaDomainInfo.setAreaName(sonArea.getAreaName());
         areaDomainInfoService.save(areaDomainInfo);
     }
 
@@ -96,7 +107,7 @@ public class ProjectFactory {
      *
      * @param param
      */
-    public void createAreaProject(ProjectParam param) {
+    public CreateProjectResult createAreaProject(ProjectParam param) {
         // 使用最新的基础版本
         AreaDomainInfo areaDomain = areaDomainInfoService.lambdaQuery()
                 .eq(AreaDomainInfo::getDatasourceName, param.getDatasource())
@@ -133,7 +144,7 @@ public class ProjectFactory {
         areaDomainFunctionInfoNew.setDatasourceId(areaDomain.getDatasourceId());
         areaDomainFunctionInfoNew.setArtifactId(projectPath.getArtifactId());
         areaDomainFunctionInfoNew.setBaseVersion(areaDomain.getVersion());
-
+        CreateProjectResult projectResult = new CreateProjectResult();
         try {
             log.info("createAreaProject {}", JSON.toJSONString(projectPath));
             // 生成项目
@@ -144,12 +155,10 @@ public class ProjectFactory {
             areaProjectNode.buildParamClass(projectPath.getServicePath(), serviceClass, className);
             // 现在配置类- 配置 扫描base的路径,
             areaProjectNode.buildConfig(projectPath.getConfigPath(), projectPath.getConfigPackage(),areaDomain.getDomainObjectServicePackage(),projectPath.getStartClassPackagePath());
-
             // 更新pom文件
             areaProjectNode.buildAreaPom(projectPath.getPomPath(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getVersion(), className, "",areaDomain.getGroupId(),areaDomain.getArtifactId(),areaDomain.getVersion());
             // 新增yml配置
-            areaProjectNode.buildYml(projectPath.getPropertiesPath(), projectPath.getArtifactId(),projectPath.getVersion(),param.getDatasource());
-
+            areaProjectNode.buildYml(projectPath.getPropertiesPath(), projectPath.getArtifactId(),projectPath.getVersion(),param.getDatasource(),areaDomain.getAreaName(),areaDomain.getAreaId());
             // 生成参数类
             if (!StringUtils.isEmpty(param.getParamClass())) {
                 String paramClassName = ClassUtil.extractClassName(param.getParamClass());
@@ -160,11 +169,26 @@ public class ProjectFactory {
                 areaProjectNode.buildParamResult(projectPath.getDataPath(), param.getResultClass(), resultClassName);
             }
             areaProjectNode.mvnInstall(projectPath.getPomPath());
+
+            // 读取文件目录下的jar包
+            Path jar = areaProjectNode.readJarFilesInDirectory(projectPath.getJarFilePath());
+            String url = spiderClient.uploadFile(jar);
+            DeployPluginParam deployPluginParam = new DeployPluginParam();
+            deployPluginParam.setBizVersion(projectPath.getVersion());
+            deployPluginParam.setBizName(projectPath.getArtifactId());
+            deployPluginParam.setBizUrl(url);
+            DeployPluginResult deployPluginResult = spiderClient.deployPluginToApplication(deployPluginParam);
+            projectResult.setStatus(deployPluginResult.getCode().equals("CMD_PROCESS_INTERNAL_ERROR") ? CreateProjectStatus.DEPLOY_FAIL : CreateProjectStatus.SUSS);
+            projectResult.setErrorStackTrace(deployPluginResult.getErrorStackTrace());
+            // 进行部署到宿主应用中
             areaDomainFunctionInfoNew.setStatus(AreaFunctionStatus.INIT_SUSS);
         } catch (Exception e) {
             areaDomainFunctionInfoNew.setStatus(AreaFunctionStatus.INIT_FAIL);
             log.error("init_area_function_fail {}",e.getMessage());
+            projectResult.setStatus(CreateProjectStatus.INIT_FAIL);
+            projectResult.setErrorStackTrace(e.getMessage());
         }
         areaDomainFunctionInfoService.save(areaDomainFunctionInfoNew);
+        return projectResult;
     }
 }

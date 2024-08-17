@@ -20,6 +20,7 @@ public class AreaPluginEscalation {
 
     private String moduleVersion;
 
+
     public AreaPluginEscalation(HostService hostService, SpiderPluginManager spiderPluginManager, String moduleName, String moduleVersion) {
         this.hostService = hostService;
         this.spiderPluginManager = spiderPluginManager;

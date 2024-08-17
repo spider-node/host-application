@@ -34,13 +34,16 @@ public class SpiderPluginManager {
 
     private String version;
 
-    public SpiderPluginManager(ApplicationContext applicationContext,String bizName,String version) {
+    private String areaId;
+
+    public SpiderPluginManager(ApplicationContext applicationContext,String bizName,String version,String areaId) {
         this.applicationContext = applicationContext;
         this.methodMap = new HashMap<>();
         this.analysisClass = new AnalysisClass();
         this.areaFunctionParam = new RefreshAreaParam();
         this.bizName = bizName;
         this.version = version;
+        this.areaId = areaId;
     }
 
     public void init() {
@@ -81,6 +84,7 @@ public class SpiderPluginManager {
                 refreshAreaModel.setTaskComponent(assembly[0]);
                 refreshAreaModel.setTaskService(assembly[1]);
                 refreshAreaModel.setParmMap(value);
+                refreshAreaModel.setAreaId(this.areaId);
                 areaModelList.add(refreshAreaModel);
             });
             areaFunctionParam.setAreaModelList(areaModelList);

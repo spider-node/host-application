@@ -30,7 +30,7 @@ public class ProjectPathService {
         String projectRootPath = this.rootPath + this.directorySegmentation + database + this.directorySegmentation + table + this.directorySegmentation;
         String artifactId = table + "_" + ClassUtil.camelToSnake(className);
         String projectFinalPath = projectRootPath + className + this.directorySegmentation + version + this.directorySegmentation;
-        String pomPath = projectFinalPath +artifactId + this.directorySegmentation;
+        String pomPath = projectFinalPath + artifactId + this.directorySegmentation;
         String groupIdPath = this.defaultGroupId.replace(".", "/");
         String artifactIdPath = ClassUtil.replaceUnderscoresWithSlashes(artifactId);
         String mainPath = pomPath + this.startClassPath + this.directorySegmentation + groupIdPath + this.directorySegmentation + artifactIdPath;
@@ -38,9 +38,10 @@ public class ProjectPathService {
         String dataPath = mainPath + this.directorySegmentation + "spider/data";
         String configPath = mainPath + this.directorySegmentation + "config";
         String propertiesPath = pomPath + "src/main/resources";
-        String startClassPackagePath = defaultGroupId + "." + artifactId.replace("_",".");
+        String startClassPackagePath = defaultGroupId + "." + artifactId.replace("_", ".");
         String configPackage = startClassPackagePath + ".config";
-
+        String jarFilePath = pomPath + this.directorySegmentation + "target/";
+        String jarFileName = artifactId + "-" + version + "-ark-biz.jar";
         return ProjectPath.builder()
                 .projectAreaPath(projectFinalPath)
                 .projectRootPath(projectRootPath)
@@ -56,6 +57,8 @@ public class ProjectPathService {
                 .startClassPackagePath(startClassPackagePath)
                 .configPackage(configPackage)
                 .mainPath(mainPath)
+                .jarFilePath(jarFilePath)
+                .jarFileName(jarFileName)
                 .build();
     }
 
@@ -67,7 +70,7 @@ public class ProjectPathService {
         String pomPath = projectFinalPath + artifactId;
         // 代码可以移动到这个目录下
         String codePath = pomPath + this.directorySegmentation + this.startClassPath + this.directorySegmentation;
-        String rootPackagePath = this.defaultGroupId +  "." + artifactId.replace("_",".");
+        String rootPackagePath = this.defaultGroupId + "." + artifactId.replace("_", ".");
         String groupIdPath = this.defaultGroupId.replace(".", "/");
         String artifactIdPath = ClassUtil.replaceUnderscoresWithSlashes(artifactId);
         String mainPath = pomPath + this.directorySegmentation + this.startClassPath + this.directorySegmentation + groupIdPath + this.directorySegmentation + artifactIdPath;
