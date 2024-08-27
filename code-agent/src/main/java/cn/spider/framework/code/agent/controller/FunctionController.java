@@ -5,6 +5,7 @@ import cn.spider.framework.code.agent.areabase.utils.Wrapper;
 import cn.spider.framework.code.agent.data.DeployAreaFunctionParam;
 import cn.spider.framework.code.agent.function.FunctionManager;
 import cn.spider.framework.code.agent.project.factory.data.CreateProjectResult;
+import cn.spider.framework.code.agent.project.factory.data.InitAreaBaseResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,7 @@ public class FunctionController {
     @Resource
     private FunctionManager functionManager;
 
-    @PostMapping("/deploy")
+    @PostMapping("/build_area_plugin")
     public Wrapper<CreateProjectResult> deployAreaFunction(@RequestBody DeployAreaFunctionParam param) {
         try {
             CreateProjectResult result = functionManager.buildProject(param);
@@ -31,7 +32,9 @@ public class FunctionController {
     }
 
     @PostMapping("/init_area_base")
-    public void initAreaBase(@RequestBody AreaDomainInitParam param) {
-        functionManager.initBaseProject(param);
+    public Wrapper<InitAreaBaseResult> initAreaBase(@RequestBody AreaDomainInitParam param) {
+        return WrapMapper.ok(functionManager.initBaseProject(param));
     }
+
+
 }

@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     public Wrapper<String> runtimeException(RuntimeException e) {
         e.printStackTrace();
         log.error("error:",e);
-        return WrapMapper.wrap(500,"内部错误",getStackTrace(e));
+        return WrapMapper.wrap(500,getStackTrace(e),null);
     }
 
 

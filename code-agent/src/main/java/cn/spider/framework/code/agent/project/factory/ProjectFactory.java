@@ -14,6 +14,7 @@ import cn.spider.framework.code.agent.areabase.modules.sonarea.service.ISpiderSo
 import cn.spider.framework.code.agent.areabase.utils.CodeGenerator3;
 import cn.spider.framework.code.agent.function.AreaProjectNode;
 import cn.spider.framework.code.agent.project.factory.data.CreateProjectResult;
+import cn.spider.framework.code.agent.project.factory.data.InitAreaBaseResult;
 import cn.spider.framework.code.agent.project.factory.data.ProjectParam;
 import cn.spider.framework.code.agent.project.factory.data.enums.CreateProjectStatus;
 import cn.spider.framework.code.agent.project.path.ProjectPathService;
@@ -28,6 +29,7 @@ import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import javax.annotation.Resource;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -60,15 +62,29 @@ public class ProjectFactory {
     @Resource
     private SpiderClient spiderClient;
 
-
-    public void createBaseProject(AreaDomainInitParam param) {
+    /**
+     *
+     * @param param 创建 子域信息与生成base内容
+     * @return
+     */
+    public InitAreaBaseResult initBaseProject(AreaDomainInitParam param) {
+        InitAreaBaseResult initAreaBaseResult = new InitAreaBaseResult();
         SpiderSonArea sonArea = spiderSonAreaService.lambdaQuery()
-                .eq(SpiderSonArea :: getAreaName,param.getAreaName())
-                .eq(SpiderSonArea :: getSonAreaName,param.getSonAreaName()).one();
-        Assert.notNull(sonArea, "子域不存在,请校验领域的设置");
+                .eq(SpiderSonArea::getAreaName, param.getAreaName())
+                .eq(SpiderSonArea::getSonAreaName, param.getSonAreaName()).one();
+        if (Objects.isNull(sonArea)) {
+            sonArea = new SpiderSonArea();
+            sonArea.setAreaId(param.getAreaId());
+            sonArea.setAreaName(param.getAreaName());
+            sonArea.setSonAreaName(param.getSonAreaName());
+            sonArea.setTableName(param.getTableName());
+            sonArea.setDatasource(param.getDatasource());
+            spiderSonAreaService.save(sonArea);
+            initAreaBaseResult.setSonArea(sonArea);
+        }
         param.setTableName(sonArea.getTableName());
         // 获取各种路径
-        AreaDatasourceInfo areaDatasourceInfo = datasourceInfoService.lambdaQuery().eq(AreaDatasourceInfo :: getDatasource,sonArea.getDatasource()).one();
+        AreaDatasourceInfo areaDatasourceInfo = datasourceInfoService.lambdaQuery().eq(AreaDatasourceInfo::getDatasource, sonArea.getDatasource()).one();
         Assert.notNull(areaDatasourceInfo, "当前数据源信息不存在，请核实后在请求");
         ProjectPath projectPath = projectPathService.buildBaseProjectPath(areaDatasourceInfo.getDatasource(), sonArea.getTableName(), "");
         AreaDomainInfo areaDomain = areaDomainInfoService.lambdaQuery()
@@ -77,7 +93,7 @@ public class ProjectFactory {
                 .eq(AreaDomainInfo::getVersion, projectPath.getVersion())
                 .last(" order by create_time desc limit 1").one();
 
-        if(Objects.nonNull(areaDomain)){
+        if (Objects.nonNull(areaDomain)) {
             String finalVersion = ClassUtil.incrementVersion(areaDomain.getVersion());
             projectPath = projectPathService.buildBaseProjectPath(areaDatasourceInfo.getDatasource(), param.getTableName(), finalVersion);
         }
@@ -100,6 +116,9 @@ public class ProjectFactory {
         areaDomainInfo.setAreaId(sonArea.getAreaId());
         areaDomainInfo.setAreaName(sonArea.getAreaName());
         areaDomainInfoService.save(areaDomainInfo);
+        initAreaBaseResult.setAreaDomainInfo(areaDomainInfo);
+        // 调用spider-加载-areaDomainInfo
+        return initAreaBaseResult;
     }
 
     /**
@@ -114,7 +133,7 @@ public class ProjectFactory {
                 .eq(AreaDomainInfo::getTableName, param.getTableName())
                 .last(" order by create_time desc limit 1").one();
 
-        Preconditions.checkArgument(Objects.nonNull(areaDomain),"没有领域基础信息,请初始化领域基础信息");
+        Preconditions.checkArgument(Objects.nonNull(areaDomain), "没有领域基础信息,请初始化领域基础信息");
         String serviceClass = param.getServiceClass();
         String className = ClassUtil.extractClassName(serviceClass);
         String mapperPath = areaDomain.getDomainObjectServicePackage().replaceAll("service$", "mapper").replaceAll("^package\\s+", "");
@@ -125,7 +144,7 @@ public class ProjectFactory {
                 .eq(AreaDomainFunctionInfo::getVersion, projectPath.getVersion())
                 .last("order by create_time limit 1").one();
         // 存在就升级版本
-        if(Objects.nonNull(areaDomainFunctionInfo)){
+        if (Objects.nonNull(areaDomainFunctionInfo)) {
             String finalVersion = ClassUtil.incrementVersion(projectPath.getVersion());
             areaDomainFunctionInfo.setVersion(finalVersion);
             projectPath = projectPathService.buildAreaProjectPath(param.getDatasource(), param.getTableName(), finalVersion, className);
@@ -150,15 +169,15 @@ public class ProjectFactory {
             // 生成项目
             areaProjectNode.generateProject(projectPath.getArtifactId(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getProjectAreaPath(), projectPath.getVersion(), projectPath.getJavaFilePath());
             // 生成java启动类
-            areaProjectNode.buildStart(projectPath.getMainPath(), className + "Start", projectPath.getStartClassPackagePath(),mapperPath);
+            areaProjectNode.buildStart(projectPath.getMainPath(), className + "Start", projectPath.getStartClassPackagePath(), mapperPath);
             // 生成java 业务类
             areaProjectNode.buildParamClass(projectPath.getServicePath(), serviceClass, className);
             // 现在配置类- 配置 扫描base的路径,
-            areaProjectNode.buildConfig(projectPath.getConfigPath(), projectPath.getConfigPackage(),areaDomain.getDomainObjectServicePackage(),projectPath.getStartClassPackagePath());
+            areaProjectNode.buildConfig(projectPath.getConfigPath(), projectPath.getConfigPackage(), areaDomain.getDomainObjectServicePackage(), projectPath.getStartClassPackagePath());
             // 更新pom文件
-            areaProjectNode.buildAreaPom(projectPath.getPomPath(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getVersion(), className, "",areaDomain.getGroupId(),areaDomain.getArtifactId(),areaDomain.getVersion());
+            areaProjectNode.buildAreaPom(projectPath.getPomPath(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getVersion(), className, "", areaDomain.getGroupId(), areaDomain.getArtifactId(), areaDomain.getVersion());
             // 新增yml配置
-            areaProjectNode.buildYml(projectPath.getPropertiesPath(), projectPath.getArtifactId(),projectPath.getVersion(),param.getDatasource(),areaDomain.getAreaName(),areaDomain.getAreaId());
+            areaProjectNode.buildYml(projectPath.getPropertiesPath(), projectPath.getArtifactId(), projectPath.getVersion(), param.getDatasource(), areaDomain.getAreaName(), areaDomain.getAreaId());
             // 生成参数类
             if (!StringUtils.isEmpty(param.getParamClass())) {
                 String paramClassName = ClassUtil.extractClassName(param.getParamClass());
@@ -184,11 +203,13 @@ public class ProjectFactory {
             areaDomainFunctionInfoNew.setStatus(AreaFunctionStatus.INIT_SUSS);
         } catch (Exception e) {
             areaDomainFunctionInfoNew.setStatus(AreaFunctionStatus.INIT_FAIL);
-            log.error("init_area_function_fail {}",e.getMessage());
+            log.error("init_area_function_fail {}", e.getMessage());
             projectResult.setStatus(CreateProjectStatus.INIT_FAIL);
             projectResult.setErrorStackTrace(e.getMessage());
         }
         areaDomainFunctionInfoService.save(areaDomainFunctionInfoNew);
+        projectResult.setPluginInfo(areaDomainFunctionInfoNew);
+        // 调用spider-加载数据
         return projectResult;
     }
 }

@@ -1,5 +1,7 @@
 package cn.spider.framework.code.agent.spider;
 
+import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInfo;
+import cn.spider.framework.code.agent.areabase.modules.function.entity.AreaDomainFunctionInfo;
 import cn.spider.framework.code.agent.spider.data.DeployPluginParam;
 import cn.spider.framework.code.agent.spider.data.DeployPluginResult;
 import cn.spider.framework.code.agent.spider.data.RegisterAreaFunctionParam;
@@ -18,17 +20,14 @@ import java.nio.file.Path;
 public class SpiderClient {
     private String requestFileUrl;
 
-    private String registerAreaFunctionUrl;
-
     private String deployUrl;
 
     private OkHttpClient client;
 
-    public SpiderClient(String spiderHost, int spiderPort, String requestFileUrl, String registerAreaFunctionUrl, OkHttpClient client, String deployUrl) {
+    public SpiderClient(String spiderHost, int spiderPort, String requestFileUrl, OkHttpClient client, String deployUrl) {
         String httpPrefix = "http://" + spiderHost + ":" + spiderPort + "/";
         this.requestFileUrl = httpPrefix + requestFileUrl;
-        this.registerAreaFunctionUrl = httpPrefix + registerAreaFunctionUrl;
-        this.deployUrl = httpPrefix = deployUrl;
+        this.deployUrl = httpPrefix + deployUrl;
         this.client = client;
     }
 
@@ -57,10 +56,14 @@ public class SpiderClient {
         return patch.getPatch();
     }
 
+    /**
+     * 部署插件
+     * @param param 部署插件需要的信息
+     * @return 部署的结果
+     */
     public DeployPluginResult deployPluginToApplication(DeployPluginParam param) {
         return sendJsonData(JSON.toJSONString(param),this.deployUrl, DeployPluginResult.class);
     }
-
 
     public <R> R sendJsonData(String param,String url,Class<R> resutClass) {
         OkHttpClient client = new OkHttpClient();

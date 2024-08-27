@@ -36,6 +36,12 @@ public class AreaDomainInfo implements Serializable {
     @TableField("table_name")
     private String tableName;
 
+    /**
+     * 子域名称
+     */
+    @TableField("son_area_name")
+    private String sonAreaName;
+
     @TableField("domain_object")
     private String domainObject;
 

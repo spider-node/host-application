@@ -26,10 +26,9 @@ public class CodeAgentConfig {
     public SpiderClient buildSpiderClient(@Value("${spider.server.ip}") String spiderHost,
                                           @Value("${spider.server.port}") String spiderPort,
                                           @Value("${spider.server.requestFileUrl}") String requestFileUrl,
-                                          @Value("${spider.server.registerAreaFunctionUrl}") String registerAreaFunctionUrl,
                                           @Value("${spider.server.deployUrl}") String deployUrl,
                                           OkHttpClient client){
-        return new SpiderClient(spiderHost,Integer.parseInt(spiderPort),requestFileUrl,registerAreaFunctionUrl,client,deployUrl);
+        return new SpiderClient(spiderHost,Integer.parseInt(spiderPort),requestFileUrl,client,deployUrl);
     }
 
     @Bean

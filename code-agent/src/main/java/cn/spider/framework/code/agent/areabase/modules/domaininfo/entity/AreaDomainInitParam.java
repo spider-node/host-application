@@ -24,4 +24,14 @@ public class AreaDomainInitParam {
      * 表名称
      */
     String tableName;
+
+    /**
+     * 数据源名称
+     */
+    private String datasource;
+
+    /**
+     * 领域id
+     */
+    private String areaId;
 }

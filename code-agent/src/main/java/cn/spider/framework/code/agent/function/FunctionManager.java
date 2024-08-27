@@ -4,6 +4,7 @@ import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDom
 import cn.spider.framework.code.agent.data.DeployAreaFunctionParam;
 import cn.spider.framework.code.agent.project.factory.ProjectFactory;
 import cn.spider.framework.code.agent.project.factory.data.CreateProjectResult;
+import cn.spider.framework.code.agent.project.factory.data.InitAreaBaseResult;
 import cn.spider.framework.code.agent.project.factory.data.ProjectParam;
 import org.springframework.stereotype.Component;
 
@@ -37,11 +38,7 @@ public class FunctionManager {
         // 通过url进行部署到宿主机
     }
 
-    public void initBaseProject(AreaDomainInitParam param) {
-        projectFactory.createBaseProject(param);
+    public InitAreaBaseResult initBaseProject(AreaDomainInitParam param) {
+        return projectFactory.initBaseProject(param);
     }
-
-    // 卸载功能
-
-    // 替换功能
 }
