@@ -37,4 +37,14 @@ public class ProjectParam {
      * 功能描述
      */
     private String desc;
+
+    /**
+     * 组件
+     */
+    private String taskComponent;
+
+    /**
+     * 组件功能
+     */
+    private String taskService;
 }

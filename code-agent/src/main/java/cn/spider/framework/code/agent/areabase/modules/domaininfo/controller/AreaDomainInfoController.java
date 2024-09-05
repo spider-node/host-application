@@ -89,7 +89,15 @@ public class AreaDomainInfoController {
         return WrapMapper.ok(allAreaInfo);
     }
 
-    // 初始化base
+    // 查询base信息
+    @PostMapping("/query_base_info")
+    public Wrapper<AreaDomainInfo> queryBaseInfo(@RequestBody QueryBaseInfoParam param){
+        AreaDomainInfo domainInfo = domainInfoService.lambdaQuery()
+                .eq(AreaDomainInfo::getAreaName, param.getArea())
+                .eq(AreaDomainInfo :: getSonAreaName,param.getSonArea())
+                .one();
+        return WrapMapper.ok(domainInfo);
+    }
 
 
 }

@@ -84,6 +84,7 @@ public class SpiderPluginManager {
                 refreshAreaModel.setTaskComponent(assembly[0]);
                 refreshAreaModel.setTaskService(assembly[1]);
                 refreshAreaModel.setParmMap(value);
+                refreshAreaModel.setVersion(this.version);
                 refreshAreaModel.setAreaId(this.areaId);
                 areaModelList.add(refreshAreaModel);
             });

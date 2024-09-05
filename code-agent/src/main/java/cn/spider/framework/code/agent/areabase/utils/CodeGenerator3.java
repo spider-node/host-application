@@ -4,6 +4,9 @@ import cn.hutool.core.io.file.FileReader;
 import cn.spider.framework.code.agent.areabase.modules.datasourceinfo.entity.AreaDatasourceInfo;
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInfo;
 import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDomainInitParam;
+import cn.spider.framework.code.agent.util.ClassUtil;
+import cn.spider.framework.code.agent.util.FieldInfo;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
@@ -86,7 +89,7 @@ public class CodeGenerator3 {
         AreaDomainInfo areaDomainInfo = new AreaDomainInfo();
         areaDomainInfo.setTableName(areaInitReq.getTableName());
         areaDomainInfo.setDatasourceId(datasourceInfo.getId());
-        areaDomainInfo.setDomainObject(entityStr);
+        areaDomainInfo.setDomainObject(JSON.toJSONString(ClassUtil.parseFieldInfo(entityStr)));
         // package cn.fmc.aax.entity;
         areaDomainInfo.setDomainObjectPackage("package "+areaInitReq.getPackageName()+".entity");
         areaDomainInfo.setDomainObjectEntityName(objectTableName);

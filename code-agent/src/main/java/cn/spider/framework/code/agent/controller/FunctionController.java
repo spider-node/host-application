@@ -4,8 +4,8 @@ import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.AreaDom
 import cn.spider.framework.code.agent.areabase.utils.Wrapper;
 import cn.spider.framework.code.agent.data.DeployAreaFunctionParam;
 import cn.spider.framework.code.agent.function.FunctionManager;
-import cn.spider.framework.code.agent.project.factory.data.CreateProjectResult;
 import cn.spider.framework.code.agent.project.factory.data.InitAreaBaseResult;
+import cn.spider.node.framework.code.agent.sdk.data.CreateProjectResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

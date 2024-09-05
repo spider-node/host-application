@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import org.apache.tomcat.util.net.jsse.PEMFile;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -92,4 +93,34 @@ public class AreaDomainFunctionInfo implements Serializable {
      * pom中的artifactId
      */
     private String artifactId;
+
+    /**
+     * 领域id
+     */
+    private String areaId;
+
+    /**
+     * 领域名称
+     */
+    private String areaName;
+
+    /**
+     * 子域id
+     */
+    private Integer sonAreaId;
+
+    /**
+     * 子域名称
+     */
+    private String sonAreaName;
+
+    /**
+     * 组件
+     */
+    private String taskComponent;
+
+    /**
+     * 组件功能
+     */
+    private String taskService;
 }

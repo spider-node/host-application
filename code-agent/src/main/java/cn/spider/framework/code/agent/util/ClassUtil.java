@@ -1,6 +1,6 @@
 package cn.spider.framework.code.agent.util;
 
-import java.util.Arrays;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,5 +107,86 @@ public class ClassUtil {
         }
 
         return String.join(".", parts);
+    }
+
+
+    public static String updateVersion(String version, UpgradeType upgradeType) {
+        String[] parts = version.split("\\.");
+        int major = Integer.parseInt(parts[0]);
+        int minor = Integer.parseInt(parts[1]);
+        int patch = Integer.parseInt(parts[2]);
+
+        switch (upgradeType) {
+            case MAJOR:
+                major++;
+                minor = 0;
+                patch = 0;
+                break;
+            case MINOR:
+                minor++;
+                patch = 0;
+                break;
+            case PATCH:
+                patch++;
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported upgrade type: " + upgradeType);
+        }
+        return String.format("%d.%d.%d", major, minor, patch);
+    }
+
+    public static List<FieldInfo> extractFieldsWithComments(String entityClassString) {
+        // 正则表达式匹配注释和private字段
+        String regex = "(?s)(?:^|\\n)\\s*\\/\\*\\*(.*?)\\*\\/(\\s*private\\s+\\w+\\s+\\w+;)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(entityClassString);
+        List<FieldInfo> fields = new ArrayList<>();
+        while (matcher.find()) {
+            String comment = matcher.group(1).trim(); // 注释
+            String fieldInfo = matcher.group(2).trim(); // 字段信息
+            String[] parts = fieldInfo.split("\\s+");
+            String fieldType = parts[1]; // 类型
+            String fieldName = parts[2].replace(";", ""); // 名称
+            fields.add(new FieldInfo(fieldName, fieldType, comment));
+        }
+
+        return fields;
+    }
+
+    /**
+     * 从给定的类定义字符串中解析字段信息
+     *
+     * @param classDefinition 包含类定义的字符串
+     * @return 字段名和类型/描述的映射
+     */
+    public static Set<String> parseFieldInfo(String classDefinition) {
+        Map<String, Map<String, String>> fieldInfo = new HashMap<>();
+        Pattern pattern = Pattern.compile(
+                "(?m)^\\s*private\\s+(\\w+)\\s+(\\w+)\\s*;.*?" + // 匹配私有字段声明
+                        "\\s*\\/\\*\\*\\s*(.*?)\\s*\\*\\/"
+                , Pattern.DOTALL);
+
+        Matcher matcher = pattern.matcher(classDefinition);
+
+        while (matcher.find()) {
+            String fieldType = matcher.group(1); // 字段类型
+            String fieldName = matcher.group(2); // 字段名
+            String description = matcher.group(3).trim(); // 字段描述
+
+            Map<String, String> info = new HashMap<>();
+            info.put("type", fieldType);
+            info.put("description", description);
+
+            fieldInfo.put(fieldName, info);
+        }
+        Set<String> fileds = new HashSet<>();
+        // 打印结果
+        for (Map.Entry<String, Map<String, String>> entry : fieldInfo.entrySet()) {
+            String fieldName = entry.getKey();
+            Map<String, String> info = entry.getValue();
+            fileds.add("字段: " + fieldName + ", 类型: " + info.get("type") + ", 描述: " + info.get("description"));
+        }
+
+        return fileds;
     }
 }
