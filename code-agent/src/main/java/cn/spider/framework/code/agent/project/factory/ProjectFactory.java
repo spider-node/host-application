@@ -212,6 +212,7 @@ public class ProjectFactory {
             projectResult.setErrorStackTrace(e.getMessage());
         }
         areaDomainFunctionInfoService.save(areaDomainFunctionInfoNew);
+        projectResult.setId(areaDomainFunctionInfoNew.getId());
         // 调用spider-加载数据
         return projectResult;
     }
