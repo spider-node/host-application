@@ -14,4 +14,11 @@ public class InitAreaBaseResult {
      * 领域base信息
      */
     private AreaDomainInfo areaDomainInfo;
+
+    /**
+     * 编译异常
+     */
+    private String initFail;
+
+    private String initCode;
 }

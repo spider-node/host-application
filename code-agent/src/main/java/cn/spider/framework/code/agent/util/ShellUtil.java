@@ -35,7 +35,10 @@ public class ShellUtil {
             runResultInfo.put("stdout",stdout);
             runResultInfo.put("stderr",stderr);
             runResultInfo.put("code","200");
-            log.info("执行错误的信为 {}",stderr);
+            if(stdout.contains("failed")){
+                runResultInfo.put("code","400");
+            }
+            log.info("shell返回的信息为 {}",stdout);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             runResultInfo.put("code","500");

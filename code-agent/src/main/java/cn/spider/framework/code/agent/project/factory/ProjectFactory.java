@@ -12,6 +12,7 @@ import cn.spider.framework.code.agent.areabase.modules.function.service.IAreaDom
 import cn.spider.framework.code.agent.areabase.modules.sonarea.entity.SpiderSonArea;
 import cn.spider.framework.code.agent.areabase.modules.sonarea.service.ISpiderSonAreaService;
 import cn.spider.framework.code.agent.areabase.utils.CodeGenerator3;
+import cn.spider.framework.code.agent.areabase.utils.ExceptionMessage;
 import cn.spider.framework.code.agent.function.AreaProjectNode;
 import cn.spider.framework.code.agent.project.factory.data.InitAreaBaseResult;
 import cn.spider.framework.code.agent.project.factory.data.ProjectParam;
@@ -30,6 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Objects;
@@ -63,7 +65,6 @@ public class ProjectFactory {
     private SpiderClient spiderClient;
 
     /**
-     *
      * @param param 创建 子域信息与生成base内容
      * @return
      */
@@ -98,26 +99,37 @@ public class ProjectFactory {
             projectPath = projectPathService.buildBaseProjectPath(areaDatasourceInfo.getDatasource(), param.getTableName(), finalVersion);
         }
         log.info("createAreaProject {}", JSON.toJSONString(projectPath));
-        // 通过shell脚本进行，项目根路径
-        areaProjectNode.mkdirPath(projectPath.getCodePath());
-        param.setPackageName(projectPath.getRootPackagePath());
-        CodeGenerator3.initCode(areaDatasourceInfo, param, projectPath.getCodePath());
-        // 构建pom文件
-        areaProjectNode.buildBasePom(projectPath.getPomPath(), projectPath.getGroupId(), projectPath.getArtifactId(), projectPath.getVersion());
-        // mvn install
-        areaProjectNode.mvnInstall(projectPath.getPomPath());
-        // 更新信息到领域中
-        AreaDomainInfo areaDomainInfo = CodeGenerator3.initAreaDomainInfo(areaDatasourceInfo, param, projectPath.getCodePath());
-        areaDomainInfo.setVersion(projectPath.getVersion());
-        areaDomainInfo.setArtifactId(projectPath.getArtifactId());
-        areaDomainInfo.setGroupId(projectPath.getGroupId());
-        areaDomainInfo.setDatasourceName(areaDatasourceInfo.getDatasource());
-        areaDomainInfo.setDatasourceId(areaDatasourceInfo.getId());
-        areaDomainInfo.setAreaId(sonArea.getAreaId());
-        areaDomainInfo.setAreaName(sonArea.getAreaName());
-        areaDomainInfo.setSonAreaName(sonArea.getSonAreaName());
-        areaDomainInfoService.save(areaDomainInfo);
-        initAreaBaseResult.setAreaDomainInfo(areaDomainInfo);
+        try {
+            // 通过shell脚本进行，项目根路径
+            areaProjectNode.mkdirPath(projectPath.getCodePath());
+            param.setPackageName(projectPath.getRootPackagePath());
+            CodeGenerator3.initCode(areaDatasourceInfo, param, projectPath.getCodePath());
+            // 构建pom文件
+            areaProjectNode.buildBasePom(projectPath.getPomPath(), projectPath.getGroupId(), projectPath.getArtifactId(), projectPath.getVersion());
+            // mvn install
+            Map<String, String> mvnInstallInfo = areaProjectNode.mvnInstall(projectPath.getPomPath());
+            if (!mvnInstallInfo.get("code").equals("200")) {
+                initAreaBaseResult.setInitFail(mvnInstallInfo.get("mvnInstallError"));
+                initAreaBaseResult.setInitCode("400");
+                return initAreaBaseResult;
+            }
+            // 更新信息到领域中
+            AreaDomainInfo areaDomainInfo = CodeGenerator3.initAreaDomainInfo(areaDatasourceInfo, param, projectPath.getCodePath());
+            areaDomainInfo.setVersion(projectPath.getVersion());
+            areaDomainInfo.setArtifactId(projectPath.getArtifactId());
+            areaDomainInfo.setGroupId(projectPath.getGroupId());
+            areaDomainInfo.setDatasourceName(areaDatasourceInfo.getDatasource());
+            areaDomainInfo.setDatasourceId(areaDatasourceInfo.getId());
+            areaDomainInfo.setAreaId(sonArea.getAreaId());
+            areaDomainInfo.setAreaName(sonArea.getAreaName());
+            areaDomainInfo.setSonAreaName(sonArea.getSonAreaName());
+            areaDomainInfoService.save(areaDomainInfo);
+            initAreaBaseResult.setAreaDomainInfo(areaDomainInfo);
+            initAreaBaseResult.setInitCode("200");
+        } catch (IOException e) {
+            initAreaBaseResult.setInitFail(ExceptionMessage.getStackTrace(e));
+            initAreaBaseResult.setInitCode("400");
+        }
         // 调用spider-加载-areaDomainInfo
         return initAreaBaseResult;
     }
@@ -193,8 +205,12 @@ public class ProjectFactory {
                 String resultClassName = ClassUtil.extractClassName(param.getResultClass());
                 areaProjectNode.buildParamResult(projectPath.getDataPath(), param.getResultClass(), resultClassName);
             }
-            areaProjectNode.mvnInstall(projectPath.getPomPath());
-
+            Map<String, String> mvnInstallInfo = areaProjectNode.mvnInstall(projectPath.getPomPath());
+            if (!mvnInstallInfo.get("code").equals("200")) {
+                projectResult.setErrorStackTrace(mvnInstallInfo.get("mvnInstallError"));
+                projectResult.setStatus(CreateProjectStatus.INIT_FAIL.name());
+                return projectResult;
+            }
             // 读取文件目录下的jar包
             Path jar = areaProjectNode.readJarFilesInDirectory(projectPath.getJarFilePath());
             String url = spiderClient.uploadFile(jar);
@@ -203,7 +219,7 @@ public class ProjectFactory {
             projectResult.setBizUrl(url);
             // 进行部署到宿主应用中
             areaDomainFunctionInfoNew.setStatus(AreaFunctionStatus.INIT_SUSS);
-            if(Objects.nonNull(areaDomainFunctionInfo)){
+            if (Objects.nonNull(areaDomainFunctionInfo)) {
                 areaDomainFunctionInfoNew.setBaseVersion(areaDomainFunctionInfo.getVersion());
             }
         } catch (Exception e) {

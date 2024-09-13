@@ -27,6 +27,7 @@ public class FunctionManager {
         try {
             ProjectParam projectParam = new ProjectParam();
             projectParam.setParamClass(param.getParamClass());
+            projectParam.setResultClass(param.getResultClass());
             projectParam.setServiceClass(param.getServiceClass());
             projectParam.setDatasource(param.getDatasource());
             projectParam.setAreaName(param.getAreaName());
