@@ -1,4 +1,5 @@
 package cn.spider.node.host.application.task;
+
 import cn.spider.framework.host.application.base.plugin.TaskService;
 import cn.spider.framework.host.application.base.plugin.data.TaskRequest;
 import cn.spider.framework.host.application.base.util.ComponentUtil;
@@ -17,16 +18,17 @@ public class HostApplicationServiceImpl implements HostApplicationService {
 
     /**
      * 调用插件应用
+     *
      * @param request
      * @return 执行后领域对象返回的参数
      */
     @Override
     public Object runFunction(LinkerServerRequest request) {
         FunctionRequest requestParam = request.getFunctionRequest();
-        String pluginKey = ComponentUtil.buildComponentKey(requestParam.getComponentName(),requestParam.getServiceName());
-        TaskService taskService =escalationManager.queryTaskService(pluginKey);
+        String pluginKey = ComponentUtil.buildComponentKey(requestParam.getComponentName(), requestParam.getServiceName());
+        TaskService taskService = escalationManager.queryTaskService(pluginKey);
         TaskRequest taskRequest = new TaskRequest();
-        BeanUtils.copyProperties(requestParam,taskRequest);
+        BeanUtils.copyProperties(requestParam, taskRequest);
         return taskService.runTask(taskRequest);
     }
 }

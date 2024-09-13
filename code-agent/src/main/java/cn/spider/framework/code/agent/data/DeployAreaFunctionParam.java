@@ -19,7 +19,7 @@ public class DeployAreaFunctionParam {
     private String resultClass;
 
     /**
-     * 表明年
+     * 表明名称
      */
     private String tableName;
 

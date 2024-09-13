@@ -1,5 +1,7 @@
 package cn.spider.framework.code.agent.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-
+@Slf4j
 public class ShellUtil {
     public static Map<String,String> runShell(String shell, String shellParam){
         Map<String,String> runResultInfo = new HashMap<>();
@@ -30,10 +32,10 @@ public class ShellUtil {
             // 读取标准输出和错误输出
             String stdout = readStream(process.getInputStream(), "STDOUT");
             String stderr = readStream(process.getErrorStream(), "STDERR");
-
             runResultInfo.put("stdout",stdout);
             runResultInfo.put("stderr",stderr);
             runResultInfo.put("code","200");
+            log.info("执行错误的信为 {}",stderr);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             runResultInfo.put("code","500");

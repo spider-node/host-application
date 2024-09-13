@@ -20,10 +20,10 @@ public class AreaProjectNode {
     // 基于模板项目进行构建项目
 
 
-    public void generateProject(String projectName, String groupId, String artifactId, String finalPath,String version,String javaFilePath) {
+    public Map<String,String> generateProject(String projectName, String groupId, String artifactId, String finalPath,String version,String javaFilePath) {
         String groupPath = groupId.replace('.', '/');
         String shellParam = projectName + " " + groupId + " " + artifactId + " " + version + " " + groupPath + " " + finalPath + " " + javaFilePath;
-        ShellUtil.runShell("generate_project.sh", shellParam);
+        return ShellUtil.runShell("generate_project.sh", shellParam);
     }
 
     // 重新生成pom文件
@@ -151,8 +151,8 @@ public class AreaProjectNode {
 
 
     // 进行mvn install
-    public void mvnInstall(String directory) {
-        ShellUtil.runShell("run_mvn_install.sh", directory);
+    public Map<String,String> mvnInstall(String directory) {
+        return ShellUtil.runShell("run_mvn_install.sh", directory);
     }
 
     // 获取到到.jar的包
