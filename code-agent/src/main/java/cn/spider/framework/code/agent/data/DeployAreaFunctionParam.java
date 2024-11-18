@@ -32,4 +32,9 @@ public class DeployAreaFunctionParam {
      * 数据源
      */
     private String datasource;
+
+    /**
+     * 领域功能版本的id
+     */
+    private Integer baseInfoId;
 }

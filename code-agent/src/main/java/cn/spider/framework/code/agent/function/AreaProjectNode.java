@@ -170,7 +170,7 @@ public class AreaProjectNode {
     // 获取到到.jar的包
     public Path readJarFilesInDirectory(String directoryPath) throws IOException {
         Path dirPath = Paths.get(directoryPath);
-
+        log.info("加载文件的路径 {}",directoryPath);
         // 列出目录中的所有文件
         List<Path> jarFiles = Files.walk(dirPath)
                 .filter(p -> p.toString().endsWith("-ark-biz.jar"))

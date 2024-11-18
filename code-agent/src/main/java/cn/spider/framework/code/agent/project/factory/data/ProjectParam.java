@@ -47,4 +47,11 @@ public class ProjectParam {
      * 组件功能
      */
     private String taskService;
+
+    /**
+     * 版本
+     */
+    private String version;
+
+    private Integer baseInfoId;
 }

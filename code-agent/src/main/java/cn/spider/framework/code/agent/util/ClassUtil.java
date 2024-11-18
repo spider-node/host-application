@@ -1,5 +1,7 @@
 package cn.spider.framework.code.agent.util;
 
+import cn.spider.framework.code.agent.areabase.modules.domaininfo.entity.DomainFieldInfo;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -109,6 +111,32 @@ public class ClassUtil {
         return String.join(".", parts);
     }
 
+    public static String getNextVersion(String versionStr) {
+        Pattern pattern = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
+        Matcher matcher = pattern.matcher(versionStr);
+
+        if (matcher.matches()) {
+            int major = Integer.parseInt(matcher.group(1));
+            int minor = Integer.parseInt(matcher.group(2));
+            int patch = Integer.parseInt(matcher.group(3));
+
+            if (patch < 9) {
+                patch++;
+            } else if (minor < 9) {
+                minor++;
+                patch = 0;
+            } else {
+                major++;
+                minor = 0;
+                patch = 0;
+            }
+
+            return String.format("%d.%d.%d", major, minor, patch);
+        } else {
+            throw new IllegalArgumentException("Invalid version string format");
+        }
+    }
+
 
     public static String updateVersion(String version, UpgradeType upgradeType) {
         String[] parts = version.split("\\.");
@@ -159,34 +187,32 @@ public class ClassUtil {
      * @param classDefinition 包含类定义的字符串
      * @return 字段名和类型/描述的映射
      */
-    public static Set<String> parseFieldInfo(String classDefinition) {
-        Map<String, Map<String, String>> fieldInfo = new HashMap<>();
-        Pattern pattern = Pattern.compile(
-                "(?m)^\\s*private\\s+(\\w+)\\s+(\\w+)\\s*;.*?" + // 匹配私有字段声明
-                        "\\s*\\/\\*\\*\\s*(.*?)\\s*\\*\\/"
-                , Pattern.DOTALL);
+    public static List<DomainFieldInfo> parseFieldInfo(String classDefinition) {
+        Pattern classCommentPattern = Pattern.compile("/\\*\\*.*?\\*/\\s*", Pattern.DOTALL);
+        Matcher classCommentMatcher = classCommentPattern.matcher(classDefinition);
+        classDefinition = classCommentMatcher.replaceFirst("");
 
-        Matcher matcher = pattern.matcher(classDefinition);
+        // 正则表达式匹配字段信息
+        Pattern fieldPattern = Pattern.compile(
+                "\\s*\\/\\*\\*\\s*\\*\\s*(.*?)\\s*\\*\\/\\s*" + // 注释
+                        "(?:@TableId\\(value = \"(.*?)\"(?:, type = (.*?))?\\))?\\s*" + // @TableId 注解
+                        "(?:@TableField\\(\"(.*?)\"\\))?\\s*" + // @TableField 注解
+                        "private\\s+(\\w+)\\s+(\\w+);", // 字段声明
+                Pattern.DOTALL
+        );
 
+        Matcher matcher = fieldPattern.matcher(classDefinition);
+        List<DomainFieldInfo> domainFieldInfos = new ArrayList<>();
         while (matcher.find()) {
-            String fieldType = matcher.group(1); // 字段类型
-            String fieldName = matcher.group(2); // 字段名
-            String description = matcher.group(3).trim(); // 字段描述
-
-            Map<String, String> info = new HashMap<>();
-            info.put("type", fieldType);
-            info.put("description", description);
-
-            fieldInfo.put(fieldName, info);
+            String description = matcher.group(1).trim();
+            String tableIdValue = matcher.group(2);
+            String tableFieldName = matcher.group(4);
+            String fieldType = matcher.group(5);
+            String fieldName = matcher.group(6);
+            String tableFieldNameNew = tableFieldName != null ? tableFieldName : tableIdValue != null ? tableIdValue : "";
+            DomainFieldInfo domainFieldInfo = new DomainFieldInfo(fieldName, fieldType, description, tableFieldNameNew);
+            domainFieldInfos.add(domainFieldInfo);
         }
-        Set<String> fileds = new HashSet<>();
-        // 打印结果
-        for (Map.Entry<String, Map<String, String>> entry : fieldInfo.entrySet()) {
-            String fieldName = entry.getKey();
-            Map<String, String> info = entry.getValue();
-            fileds.add("字段: " + fieldName + ", 类型: " + info.get("type") + ", 描述: " + info.get("description"));
-        }
-
-        return fileds;
+        return domainFieldInfos;
     }
 }

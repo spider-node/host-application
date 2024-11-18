@@ -1,5 +1,7 @@
 package cn.spider.framework.host.application.base.plugin.data;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Map;
 
 public class TaskRequest {
@@ -99,6 +101,10 @@ public class TaskRequest {
     }
 
     public String getDomainFunctionKey() {
-        return this.componentName + this.serviceName;
+        String base = this.componentName + "@" +  this.serviceName;
+        if(StringUtils.isEmpty(this.version)){
+            return base;
+        }
+        return base + "@" +  version;
     }
 }

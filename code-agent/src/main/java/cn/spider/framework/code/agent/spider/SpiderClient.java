@@ -9,6 +9,7 @@ import cn.spider.framework.code.agent.spider.data.UploadFileResult;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
+import io.vertx.core.json.JsonObject;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -32,11 +33,13 @@ public class SpiderClient {
     }
 
     public String uploadFile(Path jarFile) throws IOException {
-        // 创建RequestBody对象
-        RequestBody requestBody = RequestBody.create(
-                MediaType.parse("application/octet-stream"),
-                Files.readAllBytes(jarFile)
-        );
+
+        // 创建RequestBody，用于描述我们要上传的文件
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("file", jarFile.getFileName().toString(), // 使用文件名作为表单的一部分
+                        RequestBody.create(MediaType.parse("application/octet-stream"), Files.readAllBytes(jarFile)))
+                .build();
 
         // 创建Request对象
         Request request = new Request.Builder()
@@ -52,20 +55,24 @@ public class SpiderClient {
             throw new IOException("Unexpected code " + response);
         }
         String uploadFileUrl = response.body().string();
-        UploadFileResult patch = JSONObject.parseObject(uploadFileUrl, UploadFileResult.class);
-        return patch.getPatch();
+        JsonObject result = new JsonObject(uploadFileUrl);
+        if (result.getInteger("code") == 400) {
+            Preconditions.checkArgument(false, "功能上传失败");
+        }
+        return result.getJsonObject("data").getString("patch");
     }
 
     /**
      * 部署插件
+     *
      * @param param 部署插件需要的信息
      * @return 部署的结果
      */
     public DeployPluginResult deployPluginToApplication(DeployPluginParam param) {
-        return sendJsonData(JSON.toJSONString(param),this.deployUrl, DeployPluginResult.class);
+        return sendJsonData(JSON.toJSONString(param), this.deployUrl, DeployPluginResult.class);
     }
 
-    public <R> R sendJsonData(String param,String url,Class<R> resutClass) {
+    public <R> R sendJsonData(String param, String url, Class<R> resutClass) {
         OkHttpClient client = new OkHttpClient();
 
         // 创建RequestBody对象
@@ -106,6 +113,6 @@ public class SpiderClient {
         }
         JSONObject response = JSONObject.parseObject(buffer.clone().readString(charset));
 
-        return response.getObject("data",resutClass);
+        return response.getObject("data", resutClass);
     }
 }

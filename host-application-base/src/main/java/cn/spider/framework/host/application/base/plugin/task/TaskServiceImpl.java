@@ -1,8 +1,9 @@
 package cn.spider.framework.host.application.base.plugin.task;
 
-import cn.spider.framework.host.application.base.plugin.task.data.SpiderPlugin;
 import cn.spider.framework.host.application.base.plugin.TaskService;
 import cn.spider.framework.host.application.base.plugin.data.TaskRequest;
+import cn.spider.framework.param.result.build.analysis.SpiderPluginManager;
+import cn.spider.framework.param.result.build.model.SpiderPlugin;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;

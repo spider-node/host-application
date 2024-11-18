@@ -34,4 +34,6 @@ public class AreaDomainInitParam {
      * 领域id
      */
     private String areaId;
+
+    private Integer sonDomainId;
 }

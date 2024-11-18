@@ -3,8 +3,8 @@ import cn.spider.framework.host.application.base.host.heart.HostService;
 import cn.spider.framework.host.application.base.host.mysql.DataSourceService;
 import cn.spider.framework.host.application.base.plugin.TaskService;
 import cn.spider.framework.host.application.base.plugin.heart.AreaPluginEscalation;
-import cn.spider.framework.host.application.base.plugin.task.SpiderPluginManager;
 import cn.spider.framework.host.application.base.plugin.task.TaskServiceImpl;
+import cn.spider.framework.param.result.build.analysis.SpiderPluginManager;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -18,7 +18,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
-
 import javax.sql.DataSource;
 import static com.alipay.sofa.koupleless.common.api.SpringBeanFinder.getBaseBean;
 
@@ -56,6 +55,13 @@ public class HostApplicationCenterConfig {
         return mysqlSqlFactory.getObject();
     }
 
+    @Bean
+    public SpiderPluginManager spiderPluginManager(ApplicationContext applicationContext, @Value("${spring.application.name}") String bizName,
+                                                   @Value("${spider.pom.version}") String version,
+                                                   @Value("${spider.taskId}") String taskId) {
+        return new SpiderPluginManager(applicationContext, bizName, version, taskId);
+    }
+
     /**
      * 构造插件层发布的实现类
      * @param pluginManager
@@ -64,17 +70,6 @@ public class HostApplicationCenterConfig {
     @Bean
     public TaskService buildTaskService(SpiderPluginManager pluginManager){
         return new TaskServiceImpl(pluginManager);
-    }
-
-    /**
-     * 注入插件的管理
-     * @return
-     */
-    @Bean
-    public SpiderPluginManager buildSpiderPluginManager(ApplicationContext applicationContext,@Value("${spring.application.name}") String bizName,
-                                                        @Value("${spider.pom.version}") String version,
-                                                        @Value("${spider.area.id}")String areaId){
-        return new SpiderPluginManager(applicationContext,bizName,version,areaId);
     }
 
     /**
@@ -103,7 +98,7 @@ public class HostApplicationCenterConfig {
             @Override
             public void run(ApplicationArguments args){
                 // 在这里执行你的初始化代码
-                spiderPluginManager.init();
+                spiderPluginManager.buildPlugin();
                 areaPluginEscalation.escalationAreaPluginToBase();
             }
         };

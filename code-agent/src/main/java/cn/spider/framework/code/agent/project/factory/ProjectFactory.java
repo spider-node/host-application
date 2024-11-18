@@ -21,7 +21,6 @@ import cn.spider.framework.code.agent.project.path.ProjectPathService;
 import cn.spider.framework.code.agent.project.path.data.ProjectPath;
 import cn.spider.framework.code.agent.spider.SpiderClient;
 import cn.spider.framework.code.agent.util.ClassUtil;
-import cn.spider.framework.code.agent.util.UpgradeType;
 import cn.spider.node.framework.code.agent.sdk.data.CreateProjectResult;
 import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
@@ -70,18 +69,7 @@ public class ProjectFactory {
      */
     public InitAreaBaseResult initBaseProject(AreaDomainInitParam param) {
         InitAreaBaseResult initAreaBaseResult = new InitAreaBaseResult();
-        SpiderSonArea sonArea = spiderSonAreaService.lambdaQuery()
-                .eq(SpiderSonArea::getAreaName, param.getAreaName())
-                .eq(SpiderSonArea::getSonAreaName, param.getSonAreaName()).one();
-        if (Objects.isNull(sonArea)) {
-            sonArea = new SpiderSonArea();
-            sonArea.setAreaId(param.getAreaId());
-            sonArea.setAreaName(param.getAreaName());
-            sonArea.setSonAreaName(param.getSonAreaName());
-            sonArea.setTableName(param.getTableName());
-            sonArea.setDatasource(param.getDatasource());
-            spiderSonAreaService.save(sonArea);
-        }
+        SpiderSonArea sonArea = spiderSonAreaService.getById(param.getSonDomainId());
         initAreaBaseResult.setSonArea(sonArea);
         param.setTableName(sonArea.getTableName());
         // 获取各种路径
@@ -95,7 +83,7 @@ public class ProjectFactory {
                 .last(" order by create_time desc limit 1").one();
 
         if (Objects.nonNull(areaDomain)) {
-            String finalVersion = ClassUtil.updateVersion(areaDomain.getVersion(), UpgradeType.MINOR);
+            String finalVersion = ClassUtil.getNextVersion(areaDomain.getVersion());
             projectPath = projectPathService.buildBaseProjectPath(areaDatasourceInfo.getDatasource(), param.getTableName(), finalVersion);
         }
         log.info("createAreaProject {}", JSON.toJSONString(projectPath));
@@ -123,6 +111,7 @@ public class ProjectFactory {
             areaDomainInfo.setAreaId(sonArea.getAreaId());
             areaDomainInfo.setAreaName(sonArea.getAreaName());
             areaDomainInfo.setSonAreaName(sonArea.getSonAreaName());
+            areaDomainInfo.setSonAreaId(sonArea.getId());
             areaDomainInfoService.save(areaDomainInfo);
             initAreaBaseResult.setAreaDomainInfo(areaDomainInfo);
             initAreaBaseResult.setInitCode("200");
@@ -142,25 +131,21 @@ public class ProjectFactory {
     public CreateProjectResult createAreaProject(ProjectParam param) {
         // 使用最新的基础版本
         AreaDomainInfo areaDomain = areaDomainInfoService.lambdaQuery()
-                .eq(AreaDomainInfo::getDatasourceName, param.getDatasource())
-                .eq(AreaDomainInfo::getTableName, param.getTableName())
-                .last(" order by create_time desc limit 1").one();
+                .eq(AreaDomainInfo::getId, param.getBaseInfoId())
+                .one();
 
         Preconditions.checkArgument(Objects.nonNull(areaDomain), "没有领域基础信息,请初始化领域基础信息");
         String serviceClass = param.getServiceClass();
         String className = ClassUtil.extractClassName(serviceClass);
         String mapperPath = areaDomain.getDomainObjectServicePackage().replaceAll("service$", "mapper").replaceAll("^package\\s+", "");
-        ProjectPath projectPath = projectPathService.buildAreaProjectPath(param.getDatasource(), param.getTableName(), "", className);
+        // 版本号由外部指定
+        ProjectPath projectPath = projectPathService.buildAreaProjectPath(param.getDatasource(), param.getTableName(), param.getVersion(), className);
         AreaDomainFunctionInfo areaDomainFunctionInfo = areaDomainFunctionInfoService.lambdaQuery()
                 .eq(AreaDomainFunctionInfo::getDatasourceName, param.getDatasource())
                 .eq(AreaDomainFunctionInfo::getFunctionName, className)
                 .eq(AreaDomainFunctionInfo::getVersion, projectPath.getVersion())
-                .last("order by create_time limit 1").one();
-        // 存在就升级版本
-        if (Objects.nonNull(areaDomainFunctionInfo)) {
-            String finalVersion = ClassUtil.incrementVersion(projectPath.getVersion());
-            projectPath = projectPathService.buildAreaProjectPath(param.getDatasource(), param.getTableName(), finalVersion, className);
-        }
+                .last("order by create_time desc limit 1").one();
+
         AreaDomainFunctionInfo areaDomainFunctionInfoNew = new AreaDomainFunctionInfo();
         areaDomainFunctionInfoNew.setAreaFunctionClass(param.getServiceClass());
         areaDomainFunctionInfoNew.setAreaFunctionParamClass(param.getParamClass());
@@ -181,6 +166,7 @@ public class ProjectFactory {
         areaDomainFunctionInfoNew.setSonAreaName(areaDomain.getSonAreaName());
         areaDomainFunctionInfoNew.setTaskComponent(param.getTaskComponent());
         areaDomainFunctionInfoNew.setTaskService(param.getTaskService());
+        areaDomainFunctionInfoNew.setId(Objects.nonNull(areaDomainFunctionInfo) ? areaDomainFunctionInfo.getId() : null);
         CreateProjectResult projectResult = new CreateProjectResult();
         try {
             log.info("createAreaProject {}", JSON.toJSONString(projectPath));
@@ -217,6 +203,8 @@ public class ProjectFactory {
             projectResult.setBizName(projectPath.getArtifactId());
             projectResult.setBizVersion(projectPath.getVersion());
             projectResult.setBizUrl(url);
+            areaDomainFunctionInfoNew.setBizUrl(url);
+            areaDomainFunctionInfoNew.setInstance_num(1);
             // 进行部署到宿主应用中
             areaDomainFunctionInfoNew.setStatus(AreaFunctionStatus.INIT_SUSS);
             if (Objects.nonNull(areaDomainFunctionInfo)) {
@@ -228,7 +216,7 @@ public class ProjectFactory {
             projectResult.setStatus(CreateProjectStatus.INIT_FAIL.name());
             projectResult.setErrorStackTrace(e.getMessage());
         }
-        areaDomainFunctionInfoService.save(areaDomainFunctionInfoNew);
+        areaDomainFunctionInfoService.saveOrUpdate(areaDomainFunctionInfoNew);
         projectResult.setId(areaDomainFunctionInfoNew.getId());
         // 调用spider-加载数据
         return projectResult;

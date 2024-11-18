@@ -92,4 +92,10 @@ public class AreaDomainInfo implements Serializable {
      */
     @TableField("area_name")
     private String areaName;
+
+    /**
+     * 子领域id
+     */
+    @TableField("son_area_Id")
+    private Integer sonAreaId;
 }

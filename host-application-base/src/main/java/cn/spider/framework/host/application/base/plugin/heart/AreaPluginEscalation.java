@@ -2,9 +2,9 @@ package cn.spider.framework.host.application.base.plugin.heart;
 
 import cn.spider.framework.host.application.base.heart.EscalationInfo;
 import cn.spider.framework.host.application.base.host.heart.HostService;
-import cn.spider.framework.host.application.base.plugin.param.RefreshAreaParam;
-import cn.spider.framework.host.application.base.plugin.task.SpiderPluginManager;
-import cn.spider.framework.host.application.base.plugin.task.data.SpiderPlugin;
+import cn.spider.framework.param.result.build.analysis.SpiderPluginManager;
+import cn.spider.framework.param.result.build.model.NodeParamInfoBath;
+import cn.spider.framework.param.result.build.model.SpiderPlugin;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ public class AreaPluginEscalation {
             hostService.escalationPlugInInfo(escalationInfo);
         }
         // 上传参数信息
-        RefreshAreaParam refreshAreaParam = spiderPluginManager.queryRefreshAreaParam();
+        NodeParamInfoBath refreshAreaParam = spiderPluginManager.getNodeParamInfoBath();
         hostService.escalationPlugInParam(refreshAreaParam);
     }
 }

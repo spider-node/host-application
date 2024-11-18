@@ -32,6 +32,7 @@ public class FunctionManager {
             projectParam.setDatasource(param.getDatasource());
             projectParam.setAreaName(param.getAreaName());
             projectParam.setTableName(param.getTableName());
+            projectParam.setBaseInfoId(param.getBaseInfoId());
             return projectFactory.createAreaProject(projectParam);
         } catch (Exception e) {
             throw new RuntimeException(e);

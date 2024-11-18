@@ -40,7 +40,7 @@ public class ProjectPathService {
         String propertiesPath = pomPath + "src/main/resources";
         String startClassPackagePath = defaultGroupId + "." + artifactId.replace("_", ".");
         String configPackage = startClassPackagePath + ".config";
-        String jarFilePath = pomPath + this.directorySegmentation + "target/";
+        String jarFilePath = pomPath + "target/";
         String jarFileName = artifactId + "-" + version + "-ark-biz.jar";
         return ProjectPath.builder()
                 .projectAreaPath(projectFinalPath)
