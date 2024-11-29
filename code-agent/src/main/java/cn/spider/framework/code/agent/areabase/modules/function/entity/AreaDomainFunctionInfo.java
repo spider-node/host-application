@@ -1,12 +1,9 @@
 package cn.spider.framework.code.agent.areabase.modules.function.entity;
-
 import cn.spider.framework.code.agent.areabase.modules.function.entity.enums.AreaFunctionStatus;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import org.apache.tomcat.util.net.jsse.PEMFile;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -130,4 +127,8 @@ public class AreaDomainFunctionInfo implements Serializable {
     private Integer instance_num;
 
     private String bizUrl;
+    /**
+     * 领域功能版本id
+     */
+    private String domainFunctionVersionId;
 }

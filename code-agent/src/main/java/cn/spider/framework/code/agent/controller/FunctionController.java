@@ -8,6 +8,7 @@ import cn.spider.framework.code.agent.function.FunctionManager;
 import cn.spider.framework.code.agent.project.factory.data.InitAreaBaseResult;
 import cn.spider.framework.code.agent.spider.SpiderClient;
 import cn.spider.node.framework.code.agent.sdk.data.CreateProjectResult;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ public class FunctionController {
     @PostMapping("/build_area_plugin")
     public Wrapper<CreateProjectResult> deployAreaFunction(@RequestBody DeployAreaFunctionParam param) {
         try {
+            log.info("请求的参数为-deployAreaFunction {}", JSON.toJSONString(param));
             CreateProjectResult result = functionManager.buildProject(param);
             return WrapMapper.ok(result);
         } catch (Exception e) {

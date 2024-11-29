@@ -34,7 +34,34 @@ public class DeployAreaFunctionParam {
     private String datasource;
 
     /**
-     * 领域功能版本的id
+     * 子域的版本baseId
      */
     private Integer baseInfoId;
+
+    /**
+     * 任务id ai编码的任务id
+     */
+    private Integer taskId;
+
+    /**
+     * 领域功能的版本id
+     */
+    private String domainFunctionVersionId;
+
+    /**
+     * 组件
+     */
+    private String taskComponent;
+
+    /**
+     * 组件功能
+     */
+    private String taskService;
+
+    /**
+     * 版本
+     */
+    private String version;
+
+    private String mavenPom;
 }

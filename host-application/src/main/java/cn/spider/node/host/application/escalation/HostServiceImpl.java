@@ -3,6 +3,7 @@ package cn.spider.node.host.application.escalation;
 import cn.spider.framework.host.application.base.heart.EscalationInfo;
 import cn.spider.framework.host.application.base.host.heart.HostService;
 import cn.spider.framework.host.application.base.plugin.TaskService;
+import cn.spider.framework.host.application.base.util.ComponentUtil;
 import cn.spider.framework.linker.client.socket.SocketManager;
 import cn.spider.framework.linker.sdk.data.emuns.FunctionEscalationType;
 import cn.spider.framework.param.result.build.model.NodeParamInfoBath;
@@ -54,7 +55,9 @@ public class HostServiceImpl implements HostService {
         TaskService taskService = SpringServiceFinder.getModuleService(escalationInfo.getModuleName(), escalationInfo.getModuleVersion(),
                 "taskService", TaskService.class);
         PluginInfo pluginInfo = new PluginInfo(escalationInfo, taskService);
-        escalationManager.registerPluginInfo(escalationInfo.getUniqueId(), pluginInfo);
+        log.info("插件上报的信息为 {}", JSON.toJSONString(pluginInfo));
+        String pluginKey = ComponentUtil.buildComponentKey(escalationInfo.getComponentName(), escalationInfo.getServiceName(),escalationInfo.getModuleVersion());
+        escalationManager.registerPluginInfo(pluginKey, pluginInfo);
     }
 
     /**
@@ -67,7 +70,8 @@ public class HostServiceImpl implements HostService {
         areaFunctionMap.put(areaFunctionParam.getPluginKey(), areaFunctionParam);
         // 告知spider
         log.info("notify_spider_info {}", JSON.toJSONString(areaFunctionParam));
-        ReportParamInfo reportParamInfo = new ReportParamInfo(Lists.newArrayList(areaFunctionParam));
+        ReportParamInfo reportParamInfo = new ReportParamInfo();
+        reportParamInfo.setNodeParamInfoBathList(Lists.newArrayList(areaFunctionParam));
         socketManager.escalationAreaFunctionInfo(JsonObject.mapFrom(reportParamInfo), FunctionEscalationType.DEPLOY);
     }
 
@@ -82,7 +86,8 @@ public class HostServiceImpl implements HostService {
             return;
         }
         NodeParamInfoBath areaParam = this.areaFunctionMap.get(key);
-        ReportParamInfo reportParamInfo = new ReportParamInfo(Lists.newArrayList(areaParam));
+        ReportParamInfo reportParamInfo = new ReportParamInfo();
+        reportParamInfo.setNodeParamInfoBathList(Lists.newArrayList(areaParam));
         socketManager.escalationAreaFunctionInfo(JsonObject.mapFrom(reportParamInfo), FunctionEscalationType.DEPLOY);
         areaFunctionMap.remove(key);
     }
@@ -90,7 +95,8 @@ public class HostServiceImpl implements HostService {
     @Override
     public void escalationPlugInAll() {
         // 改造成全部上报
-        ReportParamInfo reportParamInfo = new ReportParamInfo(Lists.newArrayList(areaFunctionMap.values()));
+        ReportParamInfo reportParamInfo = new ReportParamInfo();
+        reportParamInfo.setNodeParamInfoBathList(Lists.newArrayList(areaFunctionMap.values()));
         socketManager.escalationAreaFunctionInfo(JsonObject.mapFrom(reportParamInfo), FunctionEscalationType.DEPLOY);
     }
 }

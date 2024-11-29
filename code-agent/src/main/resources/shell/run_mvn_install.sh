@@ -8,7 +8,7 @@ project_dir="$1"
 cd $project_dir
 
 # 执行mvn install并捕获输出
-mvn install > install.log 2>&1
+mvn clean install > install.log 2>&1
 
 # 显示执行结果
 if [ $? -eq 0 ]; then

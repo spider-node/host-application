@@ -54,4 +54,10 @@ public class ProjectParam {
     private String version;
 
     private Integer baseInfoId;
+
+    private Integer taskId;
+
+    private String domainFunctionVersionId;
+
+    private String mavenPom;
 }

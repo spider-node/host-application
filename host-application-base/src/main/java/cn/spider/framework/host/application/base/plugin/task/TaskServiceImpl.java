@@ -33,10 +33,13 @@ public class TaskServiceImpl implements TaskService {
     public Object runTask(TaskRequest request) {
         String domainFunctionKey = request.getDomainFunctionKey();
         SpiderPlugin plugin = pluginManager.get(domainFunctionKey);
+        // 获取到插件
+        log.info("获取到的插件信息:{}", JSON.toJSONString(plugin));
         if (Objects.isNull(plugin)) {
             Preconditions.checkArgument(false, "没有找打对应的业务方法请检查");
         }
         Object[] params = buildParam(request.getParam(), plugin.getMethod());
+        log.info("开始执行:{}", JSON.toJSONString(params));
         return ReflectionUtils.invokeMethod(plugin.getMethod(), plugin.getTagertObject(), params);
     }
 

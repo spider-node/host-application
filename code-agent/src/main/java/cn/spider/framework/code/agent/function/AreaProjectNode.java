@@ -30,7 +30,7 @@ public class AreaProjectNode {
     }
 
     // 重新生成pom文件
-    public void buildAreaPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription, String baseGroupId, String baseArtifactId, String baseVersion) {
+    public void buildAreaPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription, String baseGroupId, String baseArtifactId, String baseVersion,String mavenPom) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("groupId", groupId);
         dataModel.put("artifactId", artifactId);
@@ -40,6 +40,7 @@ public class AreaProjectNode {
         dataModel.put("baseGroupId", baseGroupId);
         dataModel.put("baseArtifactId", baseArtifactId);
         dataModel.put("baseVersion", baseVersion);
+        dataModel.put("mavenPom", mavenPom);
         try {
             FltlUtil.generateFile(outPath, dataModel, "function_pom.ftl", "pom.xml");
         } catch (IOException e) {
@@ -65,7 +66,7 @@ public class AreaProjectNode {
     }
 
     // 重新生成yml文件
-    public void buildYml(String outPath, String artifactId, String version, String datasourceName, String areaName, String areaId) {
+    public void buildYml(String outPath, String artifactId, String version, String datasourceName, String areaName, String areaId, Integer taskId) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("applicationName", artifactId);
         dataModel.put("artifactId", artifactId);
@@ -73,6 +74,7 @@ public class AreaProjectNode {
         dataModel.put("datasourceName", datasourceName);
         dataModel.put("areaId", areaId);
         dataModel.put("areaName", areaName);
+        dataModel.put("taskId", taskId + "");
         try {
             FltlUtil.generateFile(outPath, dataModel, "application.properties.ftl", "application.properties");
         } catch (IOException e) {
@@ -161,16 +163,16 @@ public class AreaProjectNode {
         }
         // 读取 mvn install后的文件，提示已经mvn install失败
         String mvnInstallError = readMvnInstall(directory);
-        log.error("mvn install fail {}",mvnInstallError);
+        log.error("mvn install fail {}", mvnInstallError);
         // 把异常信息添加进去
-        mvnInstallRunResult.put("mvnInstallError",mvnInstallError);
+        mvnInstallRunResult.put("mvnInstallError", mvnInstallError);
         return mvnInstallRunResult;
     }
 
     // 获取到到.jar的包
     public Path readJarFilesInDirectory(String directoryPath) throws IOException {
         Path dirPath = Paths.get(directoryPath);
-        log.info("加载文件的路径 {}",directoryPath);
+        log.info("加载文件的路径 {}", directoryPath);
         // 列出目录中的所有文件
         List<Path> jarFiles = Files.walk(dirPath)
                 .filter(p -> p.toString().endsWith("-ark-biz.jar"))

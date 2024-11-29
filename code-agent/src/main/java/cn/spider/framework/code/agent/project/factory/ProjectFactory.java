@@ -141,9 +141,7 @@ public class ProjectFactory {
         // 版本号由外部指定
         ProjectPath projectPath = projectPathService.buildAreaProjectPath(param.getDatasource(), param.getTableName(), param.getVersion(), className);
         AreaDomainFunctionInfo areaDomainFunctionInfo = areaDomainFunctionInfoService.lambdaQuery()
-                .eq(AreaDomainFunctionInfo::getDatasourceName, param.getDatasource())
-                .eq(AreaDomainFunctionInfo::getFunctionName, className)
-                .eq(AreaDomainFunctionInfo::getVersion, projectPath.getVersion())
+                .eq(AreaDomainFunctionInfo :: getDomainFunctionVersionId, param.getDomainFunctionVersionId())
                 .last("order by create_time desc limit 1").one();
 
         AreaDomainFunctionInfo areaDomainFunctionInfoNew = new AreaDomainFunctionInfo();
@@ -166,6 +164,7 @@ public class ProjectFactory {
         areaDomainFunctionInfoNew.setSonAreaName(areaDomain.getSonAreaName());
         areaDomainFunctionInfoNew.setTaskComponent(param.getTaskComponent());
         areaDomainFunctionInfoNew.setTaskService(param.getTaskService());
+        areaDomainFunctionInfoNew.setDomainFunctionVersionId(param.getDomainFunctionVersionId());
         areaDomainFunctionInfoNew.setId(Objects.nonNull(areaDomainFunctionInfo) ? areaDomainFunctionInfo.getId() : null);
         CreateProjectResult projectResult = new CreateProjectResult();
         try {
@@ -179,9 +178,9 @@ public class ProjectFactory {
             // 现在配置类- 配置 扫描base的路径,
             areaProjectNode.buildConfig(projectPath.getConfigPath(), projectPath.getConfigPackage(), areaDomain.getDomainObjectServicePackage(), projectPath.getStartClassPackagePath());
             // 更新pom文件
-            areaProjectNode.buildAreaPom(projectPath.getPomPath(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getVersion(), className, "", areaDomain.getGroupId(), areaDomain.getArtifactId(), areaDomain.getVersion());
+            areaProjectNode.buildAreaPom(projectPath.getPomPath(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getVersion(), className, "", areaDomain.getGroupId(), areaDomain.getArtifactId(), areaDomain.getVersion(),param.getMavenPom());
             // 新增yml配置
-            areaProjectNode.buildYml(projectPath.getPropertiesPath(), projectPath.getArtifactId(), projectPath.getVersion(), param.getDatasource(), areaDomain.getAreaName(), areaDomain.getAreaId());
+            areaProjectNode.buildYml(projectPath.getPropertiesPath(), projectPath.getArtifactId(), projectPath.getVersion(), param.getDatasource(), areaDomain.getAreaName(), areaDomain.getAreaId(),param.getTaskId());
             // 生成参数类
             if (!StringUtils.isEmpty(param.getParamClass())) {
                 String paramClassName = ClassUtil.extractClassName(param.getParamClass());

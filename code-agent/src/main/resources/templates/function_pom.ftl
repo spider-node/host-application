@@ -40,6 +40,12 @@
             <artifactId>${baseArtifactId}</artifactId>
             <version>${baseVersion}</version>
         </dependency>
+
+        <#if mavenPom??>
+            ${mavenPom}
+        </#if>
+
+
     </dependencies>
 
     <build>

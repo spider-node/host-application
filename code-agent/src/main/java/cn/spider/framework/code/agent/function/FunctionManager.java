@@ -33,6 +33,12 @@ public class FunctionManager {
             projectParam.setAreaName(param.getAreaName());
             projectParam.setTableName(param.getTableName());
             projectParam.setBaseInfoId(param.getBaseInfoId());
+            projectParam.setTaskId(param.getTaskId());
+            projectParam.setTaskService(param.getTaskService());
+            projectParam.setTaskComponent(param.getTaskComponent());
+            projectParam.setVersion(param.getVersion());
+            projectParam.setDomainFunctionVersionId(param.getDomainFunctionVersionId());
+            projectParam.setMavenPom(param.getMavenPom());
             return projectFactory.createAreaProject(projectParam);
         } catch (Exception e) {
             throw new RuntimeException(e);

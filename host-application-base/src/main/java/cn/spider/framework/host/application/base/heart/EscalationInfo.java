@@ -68,7 +68,7 @@ public class EscalationInfo {
     }
 
     public String getUniqueId() {
-        return this.componentName + this.serviceName;
+        return this.componentName + this.serviceName + this.moduleVersion;
     }
 
 }

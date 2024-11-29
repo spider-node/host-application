@@ -38,7 +38,7 @@
         <project.encoding>UTF-8</project.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-jar-plugin-version>3.1.0</maven-jar-plugin-version>
-        <grpc.version>1.50.2</grpc.version>
+        <grpc.version>1.61.0</grpc.version>
     </properties>
 
     <modules>

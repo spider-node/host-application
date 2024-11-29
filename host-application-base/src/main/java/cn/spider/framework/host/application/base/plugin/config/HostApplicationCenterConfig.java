@@ -6,6 +6,7 @@ import cn.spider.framework.host.application.base.plugin.heart.AreaPluginEscalati
 import cn.spider.framework.host.application.base.plugin.task.TaskServiceImpl;
 import cn.spider.framework.param.result.build.analysis.SpiderPluginManager;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import static com.alipay.sofa.koupleless.common.api.SpringBeanFinder.getBaseBean
 /**
  * 获取宿主容器的上下文data
  */
+@Slf4j
 @Configuration
 @EnableTransactionManagement
 public class HostApplicationCenterConfig {
@@ -67,8 +69,9 @@ public class HostApplicationCenterConfig {
      * @param pluginManager
      * @return
      */
-    @Bean
+    @Bean("taskService")
     public TaskService buildTaskService(SpiderPluginManager pluginManager){
+        log.info("TaskService-插件已经启动");
         return new TaskServiceImpl(pluginManager);
     }
 
