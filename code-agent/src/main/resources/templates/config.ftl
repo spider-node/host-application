@@ -5,7 +5,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.*;
 
 @Import({HostApplicationCenterConfig.class})
-@ComponentScan(basePackages = {"${baseScanPackage}.*","${bizScanPackage}.spider.*"})
+@ComponentScan(basePackages = {<#list baseScanPackage as item>
+                                    "${item}",
+                                </#list>})
 @Configuration
 public class AreaApplicationConfig {
 }

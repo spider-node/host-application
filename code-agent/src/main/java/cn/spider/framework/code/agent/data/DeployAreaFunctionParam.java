@@ -2,6 +2,8 @@ package cn.spider.framework.code.agent.data;
 
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 public class DeployAreaFunctionParam {
     /**
@@ -36,7 +38,7 @@ public class DeployAreaFunctionParam {
     /**
      * 子域的版本baseId
      */
-    private Integer baseInfoId;
+    private Set<Integer> baseInfoId;
 
     /**
      * 任务id ai编码的任务id

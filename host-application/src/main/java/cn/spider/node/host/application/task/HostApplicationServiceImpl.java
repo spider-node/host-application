@@ -32,7 +32,6 @@ public class HostApplicationServiceImpl implements HostApplicationService {
         TaskService taskService = escalationManager.queryTaskService(pluginKey);
         TaskRequest taskRequest = new TaskRequest();
         BeanUtils.copyProperties(requestParam, taskRequest);
-        log.info("runFunction-宿主应用开始执行 {}", JSON.toJSONString(taskRequest));
         return taskService.runTask(taskRequest);
     }
 }

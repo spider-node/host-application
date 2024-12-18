@@ -82,7 +82,6 @@ public class BaseConfig {
         dataSource.setInitialSize(datasourceInfo.getInitialSize());
         dataSource.setMinIdle(datasourceInfo.getMinIdle());
         dataSource.setMaxActive(datasourceInfo.getMaxActive());
-
         // 配置获取连接等待超时的时间
         dataSource.setMaxWait(60000);
 

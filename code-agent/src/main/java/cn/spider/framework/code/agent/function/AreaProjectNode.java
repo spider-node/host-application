@@ -1,5 +1,6 @@
 package cn.spider.framework.code.agent.function;
 
+import cn.spider.framework.code.agent.data.SonDomainPomModel;
 import cn.spider.framework.code.agent.util.FltlUtil;
 import cn.spider.framework.code.agent.util.ShellUtil;
 import com.google.common.base.Preconditions;
@@ -16,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,17 +32,16 @@ public class AreaProjectNode {
     }
 
     // 重新生成pom文件
-    public void buildAreaPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription, String baseGroupId, String baseArtifactId, String baseVersion,String mavenPom) {
+    public void buildAreaPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription, List<SonDomainPomModel> sonDomainPomModels, String mavenPom) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("groupId", groupId);
         dataModel.put("artifactId", artifactId);
         dataModel.put("version", version);
         dataModel.put("projectName", projectName);
         dataModel.put("projectDescription", projectDescription);
-        dataModel.put("baseGroupId", baseGroupId);
-        dataModel.put("baseArtifactId", baseArtifactId);
-        dataModel.put("baseVersion", baseVersion);
+        dataModel.put("basePoms", sonDomainPomModels);
         dataModel.put("mavenPom", mavenPom);
+        dataModel.put("webContextPath", artifactId+version);
         try {
             FltlUtil.generateFile(outPath, dataModel, "function_pom.ftl", "pom.xml");
         } catch (IOException e) {
@@ -85,11 +86,11 @@ public class AreaProjectNode {
     }
 
     // 构建启动类
-    public void buildStart(String outPath, String className, String classPath, String mapperPath) {
+    public void buildStart(String outPath, String className, String classPath, Set<String> mapperPaths) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("startPath", classPath);
         dataModel.put("startClassName", className);
-        dataModel.put("mapperPath", mapperPath);
+        dataModel.put("mapperPath", mapperPaths);
         try {
             FltlUtil.generateFile(outPath, dataModel, "startClass.ftl", className + ".java");
         } catch (IOException e) {
@@ -100,11 +101,10 @@ public class AreaProjectNode {
     }
 
     // 构建配置类
-    public void buildConfig(String outPath, String classPath, String baseScanPath, String bizScanPath) {
+    public void buildConfig(String outPath, String classPath, Set<String> baseScanPaths) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("configPath", classPath);
-        dataModel.put("baseScanPackage", baseScanPath);
-        dataModel.put("bizScanPackage", baseScanPath);
+        dataModel.put("baseScanPackage", baseScanPaths);
         try {
             FltlUtil.generateFile(outPath, dataModel, "config.ftl", "AreaApplicationConfig.java");
         } catch (IOException e) {

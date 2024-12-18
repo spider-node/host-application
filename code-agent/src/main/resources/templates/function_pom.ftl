@@ -35,11 +35,15 @@
         </dependency>
 
         <!-- 归属问题 -->
-        <dependency>
-            <groupId>${baseGroupId}</groupId>
-            <artifactId>${baseArtifactId}</artifactId>
-            <version>${baseVersion}</version>
-        </dependency>
+        <#list basePoms as item>
+
+            <dependency>
+                <groupId>${item.groupId}</groupId>
+                <artifactId>${item.artifactId}</artifactId>
+                <version>${item.version}</version>
+            </dependency>
+        </#list>
+
 
         <#if mavenPom??>
             ${mavenPom}
@@ -67,7 +71,7 @@
                     <skipArkExecutable>true</skipArkExecutable>
                     <outputDirectory>./target</outputDirectory>
                     <bizName>${artifactId}</bizName>
-                    <webContextPath>provider</webContextPath>
+                    <webContextPath>${webContextPath}</webContextPath>
                     <declaredMode>true</declaredMode>
                     <packExcludesConfig>rules.txt</packExcludesConfig>
                 </configuration>

@@ -202,6 +202,13 @@
                     <artifactId>redisson</artifactId>
                 </exclusion>
 
+                <exclusion>
+                    <groupId>org.springframework.data</groupId>
+                    <artifactId>spring-data-redis</artifactId>
+                </exclusion>
+
+
+
             </exclusions>
         </dependency>
 
@@ -223,8 +230,6 @@
             <version>4.4.9</version>
         </dependency>
     </dependencies>
-
-
 
     <build>
         <resources>

@@ -2,6 +2,8 @@ package cn.spider.framework.code.agent.project.factory.data;
 
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 public class ProjectParam {
     /**
@@ -53,7 +55,7 @@ public class ProjectParam {
      */
     private String version;
 
-    private Integer baseInfoId;
+    private Set<Integer> baseInfoId;
 
     private Integer taskId;
 

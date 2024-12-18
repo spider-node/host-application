@@ -1,8 +1,11 @@
 package cn.spider.framework.code.agent.areabase.modules.function.entity;
 import cn.spider.framework.code.agent.areabase.modules.function.entity.enums.AreaFunctionStatus;
+import cn.spider.framework.code.agent.data.SonDomainModelInfo;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.FastjsonTypeHandler;
 import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,7 +19,7 @@ import java.time.LocalDateTime;
  * @since 2024-08-06
  */
 @Data
-@TableName("area_domain_function_info")
+@TableName(value = "area_domain_function_info", autoResultMap = true)
 public class AreaDomainFunctionInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -54,10 +57,6 @@ public class AreaDomainFunctionInfo implements Serializable {
      */
     private String areaFunctionResultClass;
 
-    /**
-     * 使用的基础版本
-     */
-    private String baseVersion;
 
     /**
      * 状态-init,init_fail,init_suss
@@ -101,15 +100,8 @@ public class AreaDomainFunctionInfo implements Serializable {
      */
     private String areaName;
 
-    /**
-     * 子域id
-     */
-    private Integer sonAreaId;
-
-    /**
-     * 子域名称
-     */
-    private String sonAreaName;
+    @TableField(value = "son_domain_info", typeHandler = FastjsonTypeHandler.class)
+    private SonDomainModelInfo sonDomainModelInfo;
 
     /**
      * 组件
@@ -131,4 +123,6 @@ public class AreaDomainFunctionInfo implements Serializable {
      * 领域功能版本id
      */
     private String domainFunctionVersionId;
+
+    private Integer taskId;
 }

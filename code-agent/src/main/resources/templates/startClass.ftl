@@ -6,7 +6,9 @@ import org.mybatis.spring.annotation.MapperScan;
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
-@MapperScan(basePackages = {"${mapperPath}"},
+@MapperScan(basePackages = {<#list mapperPath as item>
+                                "${item}",
+                            </#list>},
 sqlSessionTemplateRef = "sqlSessionTemplate")
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class, DruidDataSourceAutoConfigure.class})
 public class ${startClassName}{
