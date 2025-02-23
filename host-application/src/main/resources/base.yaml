@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spider-base
+  namespace: spider-vertx
+  labels:
+    app: spider-base
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spider-base
+  template:
+    metadata:
+      labels:
+        app: spider-base
+    spec:
+      containers:
+        - name: spider-base
+          image: docker.io/library/host-application:2.0-02
+          ports:
+            - name: base
+              containerPort: 8080
+            - name: arklet
+              containerPort: 1238
+          env:
+            - name: MODULE_CONTROLLER_ADDRESS
+              value: module-controller-service.spider-vertx:80
+            - name: SPIDER_WORKER_MAME
+              value: host_application
+            - name: SPIDER_WORKER_RPC_PORT
+              value: "9675"
+            - name: SPIDER_SERVER_IP
+              value: spider-node-service.spider-vertx
+            - name: SPIDER_SERVER_PORT
+              value: "80"
+            - name: SPIDER_WORKER_TYPE
+              value: HOST
+
+
+

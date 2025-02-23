@@ -6,6 +6,7 @@ import cn.spider.framework.code.agent.data.DeployAreaFunctionParam;
 import cn.spider.framework.code.agent.function.AreaProjectNode;
 import cn.spider.framework.code.agent.function.FunctionManager;
 import cn.spider.framework.code.agent.project.factory.data.InitAreaBaseResult;
+import cn.spider.framework.code.agent.project.factory.data.UpdateCoderInfoParam;
 import cn.spider.framework.code.agent.spider.SpiderClient;
 import cn.spider.node.framework.code.agent.sdk.data.CreateProjectResult;
 import com.alibaba.fastjson.JSON;
@@ -33,7 +34,6 @@ public class FunctionController {
     @PostMapping("/build_area_plugin")
     public Wrapper<CreateProjectResult> deployAreaFunction(@RequestBody DeployAreaFunctionParam param) {
         try {
-            log.info("请求的参数为-deployAreaFunction {}", JSON.toJSONString(param));
             CreateProjectResult result = functionManager.buildProject(param);
             return WrapMapper.ok(result);
         } catch (Exception e) {
@@ -44,6 +44,11 @@ public class FunctionController {
     @PostMapping("/init_area_base")
     public Wrapper<InitAreaBaseResult> initAreaBase(@RequestBody AreaDomainInitParam param) {
         return WrapMapper.ok(functionManager.initBaseProject(param));
+    }
+
+    @PostMapping("/update_function_coder")
+    public Wrapper<CreateProjectResult> initAreaBase(@RequestBody UpdateCoderInfoParam param) {
+        return WrapMapper.ok(functionManager.updateDomainFunctionCoder(param));
     }
     @Resource
     private AreaProjectNode areaProjectNode;

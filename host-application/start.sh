@@ -3,7 +3,7 @@
 # 定义一些变量
 SERVER_NAME='host-application'
 JAR_FILE="$SERVER_NAME.jar"
-JAVA_OPTS="  -server -Xmx2048m -Xms1024m -Xmn718m -Xss256k -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseCMSCompactAtFullCollection -XX:LargePageSizeInBytes=128m -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/data/applogs/system/error.dump" # 你的 JVM 参数
+JAVA_OPTS=" -server -Xmx2048m -Xms1024m -Xmn718m -Xss256k -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:+UseCMSCompactAtFullCollection -XX:LargePageSizeInBytes=128m -XX:+UseFastAccessorMethods -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/data/applogs/system/error.dump" # 你的 JVM 参数
 
 DEPLOY_DIR=`pwd`
 

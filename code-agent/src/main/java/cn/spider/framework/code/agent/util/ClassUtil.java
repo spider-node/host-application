@@ -51,7 +51,7 @@ public class ClassUtil {
             // If current character is uppercase and it's not the first character,
             // append an underscore before it and change it to lowercase.
             if (Character.isUpperCase(ch) && i > 0) {
-                snakeCaseStr.append('_');
+                snakeCaseStr.append('-');
                 snakeCaseStr.append(Character.toLowerCase(ch));
             } else {
                 snakeCaseStr.append(ch);
@@ -83,12 +83,12 @@ public class ClassUtil {
         }
 
         // Remove trailing underscore if present
-        if (input.endsWith("_")) {
+        if (input.endsWith("-")) {
             input = input.substring(0, input.length() - 1);
         }
 
         // Replace underscores with slashes
-        return input.replace('_', '/');
+        return input.replace('-', '/');
     }
 
     public static String incrementVersion(String version) {

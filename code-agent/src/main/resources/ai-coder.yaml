@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-coder
+  namespace: spider-vertx
+  labels:
+    app: ai-coder
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-coder
+  template:
+    metadata:
+      labels:
+        app: ai-coder
+    spec:
+      containers:
+        - name: ai-coder
+          image: docker.io/library/ai-coder:2.0
+          ports:
+            - containerPort: 5000
+            - containerPort: 8084

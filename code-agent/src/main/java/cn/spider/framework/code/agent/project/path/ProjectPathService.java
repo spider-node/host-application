@@ -2,12 +2,15 @@ package cn.spider.framework.code.agent.project.path;
 
 import cn.spider.framework.code.agent.project.path.data.ProjectPath;
 import cn.spider.framework.code.agent.util.ClassUtil;
+import cn.spider.framework.code.agent.util.NumberUtil;
 import com.alibaba.druid.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+@Slf4j
 @Component
 public class ProjectPathService {
     // 根据datasource+table 得出项目路径, 通过功能
@@ -27,8 +30,9 @@ public class ProjectPathService {
 
     public ProjectPath buildAreaProjectPath(String database, String table, String version, String className) {
         version = StringUtils.isEmpty(version) ? defaultVersion : version;
+        String tableName = table.replace("_", "-");
         String projectRootPath = this.rootPath + this.directorySegmentation + database + this.directorySegmentation + table + this.directorySegmentation;
-        String artifactId = table + "_" + ClassUtil.camelToSnake(className);
+        String artifactId = tableName + "-" + ClassUtil.camelToSnake(className);
         String projectFinalPath = projectRootPath + className + this.directorySegmentation + version + this.directorySegmentation;
         String pomPath = projectFinalPath + artifactId + this.directorySegmentation;
         String groupIdPath = this.defaultGroupId.replace(".", "/");
@@ -36,9 +40,13 @@ public class ProjectPathService {
         String mainPath = pomPath + this.startClassPath + this.directorySegmentation + groupIdPath + this.directorySegmentation + artifactIdPath;
         String servicePath = mainPath + this.directorySegmentation + "spider/service";
         String dataPath = mainPath + this.directorySegmentation + "spider/data";
+        String otherCodePath = mainPath + this.directorySegmentation + "spider/other";
         String configPath = mainPath + this.directorySegmentation + "config";
         String propertiesPath = pomPath + "src/main/resources";
-        String startClassPackagePath = defaultGroupId + "." + artifactId.replace("_", ".");
+        String deploymentYamlPath = pomPath + "src/main/resources/yaml";
+        String bizName = artifactId  + "-" + NumberUtil.versionToEnglish(version);
+        String bizVersion = version;
+        String startClassPackagePath = defaultGroupId + "." + artifactId.replace("-", ".");
         String configPackage = startClassPackagePath + ".config";
         String jarFilePath = pomPath + "target/";
         String jarFileName = artifactId + "-" + version + "-ark-biz.jar";
@@ -59,6 +67,10 @@ public class ProjectPathService {
                 .mainPath(mainPath)
                 .jarFilePath(jarFilePath)
                 .jarFileName(jarFileName)
+                .bizName(bizName)
+                .bizVersion(bizVersion)
+                .deploymentYamlPath(deploymentYamlPath)
+                .otherCodePath(otherCodePath)
                 .build();
     }
 

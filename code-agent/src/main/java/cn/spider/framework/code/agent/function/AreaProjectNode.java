@@ -2,6 +2,7 @@ package cn.spider.framework.code.agent.function;
 
 import cn.spider.framework.code.agent.data.SonDomainPomModel;
 import cn.spider.framework.code.agent.util.FltlUtil;
+import cn.spider.framework.code.agent.util.K8sDeployUtil;
 import cn.spider.framework.code.agent.util.ShellUtil;
 import com.google.common.base.Preconditions;
 import freemarker.template.TemplateException;
@@ -32,7 +33,7 @@ public class AreaProjectNode {
     }
 
     // 重新生成pom文件
-    public void buildAreaPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription, List<SonDomainPomModel> sonDomainPomModels, String mavenPom) {
+    public void buildAreaPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription, List<SonDomainPomModel> sonDomainPomModels, String mavenPom,String bizName) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("groupId", groupId);
         dataModel.put("artifactId", artifactId);
@@ -41,7 +42,7 @@ public class AreaProjectNode {
         dataModel.put("projectDescription", projectDescription);
         dataModel.put("basePoms", sonDomainPomModels);
         dataModel.put("mavenPom", mavenPom);
-        dataModel.put("webContextPath", artifactId+version);
+        dataModel.put("bizName", bizName);
         try {
             FltlUtil.generateFile(outPath, dataModel, "function_pom.ftl", "pom.xml");
         } catch (IOException e) {
@@ -83,6 +84,15 @@ public class AreaProjectNode {
         } catch (TemplateException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String buildDeploymentYaml(String version, String imageUrl, String namespace,String bizName) {
+        Map<String, Object> dataModel = new HashMap<>();
+        dataModel.put("imageUrl", imageUrl);
+        dataModel.put("namespace", namespace);
+        dataModel.put("bizVersion", version);
+        dataModel.put("bizName", bizName);
+        return K8sDeployUtil.buildDeployYaml(dataModel);
     }
 
     // 构建启动类
@@ -150,6 +160,18 @@ public class AreaProjectNode {
         }
     }
 
+    public void buildOtherCode(String outPath, String resultClass, String className) {
+        Map<String, Object> dataModel = new HashMap<>();
+        dataModel.put("otherCode", resultClass);
+        try {
+            FltlUtil.generateFile(outPath, dataModel, "other_code.ftl", className + ".java");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (TemplateException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void mkdirPath(String path) {
         ShellUtil.runShell("mkdir_area_base_path.sh", path);
     }
@@ -179,6 +201,23 @@ public class AreaProjectNode {
                 .collect(Collectors.toList());
         if (CollectionUtils.isEmpty(jarFiles)) {
             Preconditions.checkArgument(false, "mvn-install后没有找到对应的jar文件，请检查");
+        }
+        return jarFiles.get(0);
+    }
+
+    /**
+     *
+     * @param directoryPath yaml配置
+     * @return 部署的yaml配置
+     * @throws IOException io异常
+     */
+    public Path readDeploymentYaml(String directoryPath) throws IOException {
+        Path dirPath = Paths.get(directoryPath);
+        List<Path> jarFiles = Files.walk(dirPath)
+                .filter(p -> p.toString().endsWith(".yaml"))
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(jarFiles)) {
+            Preconditions.checkArgument(false, "没有找到部署文件-请检查");
         }
         return jarFiles.get(0);
     }

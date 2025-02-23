@@ -26,7 +26,7 @@ public class AfterBizStopEventHandler implements EventHandler<AfterBizStopEvent>
         // 获取到model的版本信息等
         String bizName = source.getBizName();
         String bizVersion = source.getBizVersion();
-        log.info("bizName {},bizVersion {}",bizName,bizVersion);
+        log.info("bizName {},bizVersion {}", bizName,bizVersion);
         // 进行宿主机卸载，并且上报spider-node
         hostService.unloadPlugin(PluginKeyUtil.buildPluginKey(bizName,bizVersion));
     }

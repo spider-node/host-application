@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spider-node-service
+  namespace: spider-vertx
+spec:
+  selector:
+    app: spider-node
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8081

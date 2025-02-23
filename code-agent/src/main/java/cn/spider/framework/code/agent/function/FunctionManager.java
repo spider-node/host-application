@@ -5,6 +5,7 @@ import cn.spider.framework.code.agent.data.DeployAreaFunctionParam;
 import cn.spider.framework.code.agent.project.factory.ProjectFactory;
 import cn.spider.framework.code.agent.project.factory.data.InitAreaBaseResult;
 import cn.spider.framework.code.agent.project.factory.data.ProjectParam;
+import cn.spider.framework.code.agent.project.factory.data.UpdateCoderInfoParam;
 import cn.spider.node.framework.code.agent.sdk.data.CreateProjectResult;
 import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
@@ -28,7 +29,7 @@ public class FunctionManager {
             projectParam.setParamClass(param.getParamClass());
             projectParam.setResultClass(param.getResultClass());
             projectParam.setServiceClass(param.getServiceClass());
-            projectParam.setDatasource(param.getDatasource());
+            projectParam.setOtherCode(param.getOtherCode());
             projectParam.setAreaName(param.getAreaName());
             projectParam.setTableName(param.getTableName());
             projectParam.setBaseInfoId(param.getBaseInfoId());
@@ -47,5 +48,9 @@ public class FunctionManager {
 
     public InitAreaBaseResult initBaseProject(AreaDomainInitParam param) {
         return projectFactory.initBaseProject(param);
+    }
+
+    public CreateProjectResult updateDomainFunctionCoder(UpdateCoderInfoParam param) {
+        return projectFactory.updateDomainFunctionCoder(param);
     }
 }

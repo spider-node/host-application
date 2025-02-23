@@ -2,6 +2,7 @@ package cn.spider.framework.code.agent.project.factory.data;
 
 import lombok.Data;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -13,13 +14,17 @@ public class ProjectParam {
     /**
      * 入参类
      */
-    private String paramClass;
+    private List<String> paramClass;
 
     /**
      * 返回参数类
      */
-    private String resultClass;
+    private List<String> resultClass;
 
+    /**
+     * 其他类
+     */
+    private List<String> otherCode;
     /**
      * 表明年
      */

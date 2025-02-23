@@ -26,7 +26,7 @@ public class SpiderClient {
     private OkHttpClient client;
 
     public SpiderClient(String spiderHost, int spiderPort, String requestFileUrl, OkHttpClient client, String deployUrl) {
-        String httpPrefix = "http://" + spiderHost + ":" + spiderPort + "/";
+        String httpPrefix = "http://" + spiderHost + ":" + spiderPort;
         this.requestFileUrl = httpPrefix + requestFileUrl;
         this.deployUrl = httpPrefix + deployUrl;
         this.client = client;

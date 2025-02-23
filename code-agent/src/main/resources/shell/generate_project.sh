@@ -49,10 +49,13 @@ mvn archetype:generate \
 mkdir -p "$PROJECT_FINAL/$PROJECT_DIR/src/main/java/$GROUP_PATH/$JAVA_FILE_PATH/spider/service"
 # 创建spider方法的入参，出参方法路径
 mkdir -p "$PROJECT_FINAL/$PROJECT_DIR/src/main/java/$GROUP_PATH/$JAVA_FILE_PATH/spider/data"
+mkdir -p "$PROJECT_FINAL/$PROJECT_DIR/src/main/java/$GROUP_PATH/$JAVA_FILE_PATH/spider/other"
 # 创建 spider配置类路径
 mkdir -p "$PROJECT_FINAL/$PROJECT_DIR/src/main/java/$GROUP_PATH/$JAVA_FILE_PATH/config"
 # 创建spider的resource中的，配置文件路口
 mkdir -p "$PROJECT_FINAL/$PROJECT_DIR/src/main/resources"
+# 创建 yaml文件存放路径
+mkdir -p "$PROJECT_FINAL/$PROJECT_DIR/src/main/resources/yaml"
 # 进入
 cd "$PROJECT_FINAL/$ARTIFACT_ID/src"
 # 删除test

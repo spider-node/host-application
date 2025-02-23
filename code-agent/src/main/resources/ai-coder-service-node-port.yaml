@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spider-ai-coder-service-node
+  namespace: spider-vertx
+  labels:
+    app: ai-coder
+spec:
+  type: NodePort # 设置Service类型为NodePort
+  selector:
+    app: ai-coder
+  ports:
+    - protocol: TCP
+      port: 80          # 服务内部监听的端口
+      targetPort: 8084  # 容器内部应用监听的端口
+      nodePort: 30084   # (可选) 指定NodePort端口号, 范围通常为30000-32767

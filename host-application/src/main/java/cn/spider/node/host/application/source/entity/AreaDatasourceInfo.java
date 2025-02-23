@@ -22,6 +22,8 @@ public class AreaDatasourceInfo implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
+    private String datasource;
+
     private String url;
 
     private String name;
@@ -108,5 +110,13 @@ public class AreaDatasourceInfo implements Serializable {
 
     public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
+    }
+
+    public String getDatasource() {
+        return datasource;
+    }
+
+    public void setDatasource(String datasource) {
+        this.datasource = datasource;
     }
 }

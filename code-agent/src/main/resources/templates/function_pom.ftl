@@ -70,8 +70,8 @@
                 <configuration>
                     <skipArkExecutable>true</skipArkExecutable>
                     <outputDirectory>./target</outputDirectory>
-                    <bizName>${artifactId}</bizName>
-                    <webContextPath>${webContextPath}</webContextPath>
+                    <bizName>${bizName}</bizName>
+                    <webContextPath>${bizName}</webContextPath>
                     <declaredMode>true</declaredMode>
                     <packExcludesConfig>rules.txt</packExcludesConfig>
                 </configuration>

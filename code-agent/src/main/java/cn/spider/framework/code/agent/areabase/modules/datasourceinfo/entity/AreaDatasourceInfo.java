@@ -37,7 +37,7 @@ public class AreaDatasourceInfo implements Serializable {
     @TableField("password")
     private String password;
 
-    @TableField("password")
+    @TableField("datasource")
     private String datasource;
 
     @TableField("create_time")

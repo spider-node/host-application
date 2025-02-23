@@ -61,6 +61,11 @@ public class ProjectPath {
     private String dataPath;
 
     /**
+     * 其他类的路径path
+     */
+    private String otherCodePath;
+
+    /**
      * 配置类的路径
      */
     private String propertiesPath;
@@ -93,4 +98,38 @@ public class ProjectPath {
     private String jarFilePath;
 
     private String jarFileName;
+
+    /**
+     * yaml文件路径
+     */
+    private String yamlPath;
+
+    /**
+     * 业务名称
+     */
+    private String bizName;
+
+    /**
+     * 业务版本
+     */
+    private String bizVersion;
+
+    /**
+     * 镜像地址
+     */
+    private String imageUrl;
+
+    /**
+     * 命名空间
+     */
+    private String namespace;
+
+    /**
+     * 基础base名称
+     */
+    private String baseName;
+
+    private String deploymentYamlPath;
+
+
 }

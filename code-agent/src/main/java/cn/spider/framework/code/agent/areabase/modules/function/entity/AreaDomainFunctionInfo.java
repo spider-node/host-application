@@ -1,6 +1,7 @@
 package cn.spider.framework.code.agent.areabase.modules.function.entity;
 import cn.spider.framework.code.agent.areabase.modules.function.entity.enums.AreaFunctionStatus;
 import cn.spider.framework.code.agent.data.SonDomainModelInfo;
+import cn.spider.framework.code.agent.project.factory.data.ProjectParam;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -125,4 +126,11 @@ public class AreaDomainFunctionInfo implements Serializable {
     private String domainFunctionVersionId;
 
     private Integer taskId;
+
+    private String deployYaml;
+
+    @TableField(value = "project_param", typeHandler = FastjsonTypeHandler.class)
+    private ProjectParam buildProjectParam;
+    // 其他类
+    private String otherCode;
 }

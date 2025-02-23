@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stock-stock-lock-component-one-zero-one
+  namespace: spider-vertx
+  labels:
+    virtual-kubelet.koupleless.io/component: module-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      module: stock-stock-lock-component-one-zero-one
+  template:
+    metadata:
+      labels:
+        module: stock-stock-lock-component-one-zero-one
+        virtual-kubelet.koupleless.io/component: module
+    spec:
+      containers:
+        - name: stock-stock-lock-component-one-zero-one
+          image: http://47.109.67.130:1026/spider-node/1739774532394stock-stock-lock-component-1.01-ark-biz.jar?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s6ycDmJoFu7Y2nbDhJ9R%2F20250217%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250217T064212Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=b9a3cf9f4502daf1e96d1b1ef8e1547c27fe32acceee9b87084665a5f49f6bcd
+          env:
+            - name: BIZ_VERSION
+              value: "1.01"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  # these labels in vnode generated in base `https://github.com/koupleless/runtime/blob/main/arklet-core/src/main/java/com/alipay/sofa/koupleless/arklet/core/hook/base/BaseMetadataHookImpl.java`
+                  # you can define your own labels by implementing your own BaseMetadataHookImpl
+                  - key: base.koupleless.io/name
+                    operator: In
+                    values:
+                      - TO_BE_IMPLEMENTED
+                  - key: base.koupleless.io/cluster-name
+                    operator: In
+                    values:
+                      - default
+      tolerations:
+        - key: "schedule.koupleless.io/virtual-node"
+          operator: "Equal"
+          value: "True"
+          effect: "NoExecute"
+        - key: "schedule.koupleless.io/node-env"
+          operator: "Equal"
+          value: "dev"
+          effect: "NoExecute"

@@ -19,8 +19,6 @@
         <curator.version>2.9.1</curator.version>
         <mybatis.version>3.5.2</mybatis.version>
         <java.version>1.8</java.version>
-        <koupleless.runtime.version>1.2.3</koupleless.runtime.version>
-        <sofa.ark.version>2.2.12</sofa.ark.version>
         <guice.version>6.0.0</guice.version>
         <guava.version>32.1.3-jre</guava.version>
         <curator.version>2.9.1</curator.version>
@@ -39,15 +37,11 @@
     </properties>
     <dependencies>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
         <!--        引入 sofaboot 基础依赖      -->
         <dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>runtime-sofa-boot-starter</artifactId>
+            <version>${sofa.boot.version}</version>
         </dependency>
 
         <!-- 引入 基于 Koupleless 动态模块基础依赖 -->
@@ -62,36 +56,34 @@
             <version>${koupleless.runtime.version}</version>
         </dependency>
 
-
-        <!-- 引用ark web插件-->
         <dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>web-ark-plugin</artifactId>
-            <version>${ark.version}</version>
+            <version>${sofa.ark.version}</version>
         </dependency>
 
         <!-- 引用ark 配置推送扩展插件-->
-       <!-- <dependency>
-            <groupId>com.alipay.sofa</groupId>
-            <artifactId>config-ark-plugin</artifactId>
-            <version>${ark.version}</version>
-        </dependency>-->
+        <!-- <dependency>
+             <groupId>com.alipay.sofa</groupId>
+             <artifactId>config-ark-plugin</artifactId>
+             <version>${ark.version}</version>
+         </dependency>-->
 
-       <!-- <dependency>
-            <artifactId>curator-client</artifactId>
-            <groupId>org.apache.curator</groupId>
-            <version>${curator.version}</version>
-        </dependency>
+        <!-- <dependency>
+             <artifactId>curator-client</artifactId>
+             <groupId>org.apache.curator</groupId>
+             <version>${curator.version}</version>
+         </dependency>
 
-        <dependency>
-            <artifactId>curator-framework</artifactId>
-            <groupId>org.apache.curator</groupId>
-        </dependency>-->
+         <dependency>
+             <artifactId>curator-framework</artifactId>
+             <groupId>org.apache.curator</groupId>
+         </dependency>-->
 
-        <dependency>
+        <!--<dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>sofa-ark-springboot-starter</artifactId>
-        </dependency>
+        </dependency>-->
 
         <!-- spider -->
         <dependency>
@@ -206,9 +198,6 @@
                     <groupId>org.springframework.data</groupId>
                     <artifactId>spring-data-redis</artifactId>
                 </exclusion>
-
-
-
             </exclusions>
         </dependency>
 
@@ -229,6 +218,33 @@
             <artifactId>vertx-web-client</artifactId>
             <version>4.4.9</version>
         </dependency>
+
+        <!-- 确保只使用 Logback -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version> <!-- 使用最新稳定版本 -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.11</version> <!-- 使用最新稳定版本 -->
+        </dependency>
+        <!-- 排除 slf4j-simple -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.36</version>
+            <scope>provided</scope> <!-- 或者直接排除 -->
+        </dependency>
+
+
     </dependencies>
 
     <build>

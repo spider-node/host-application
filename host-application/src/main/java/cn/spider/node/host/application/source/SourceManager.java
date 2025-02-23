@@ -27,10 +27,10 @@ public class SourceManager {
     public void initDataSource() {
         List<AreaDatasourceInfo> areaDatasourceInfos = datasourceInfoService.lambdaQuery().ge(AreaDatasourceInfo :: getId,0).list();
         for (AreaDatasourceInfo datasourceInfo : areaDatasourceInfos) {
-            if(dataSourceMap.containsKey(datasourceInfo.getUrl())){
+            if(dataSourceMap.containsKey(datasourceInfo.getDatasource())){
                 continue;
             }
-            dataSourceMap.put(JdbcUtil.queryDatabaseName(datasourceInfo.getUrl()),dataSource(datasourceInfo));
+            dataSourceMap.put(JdbcUtil.queryDatabaseName(datasourceInfo.getDatasource()),dataSource(datasourceInfo));
         }
     }
     // 提供获取 mysql数据源的能力

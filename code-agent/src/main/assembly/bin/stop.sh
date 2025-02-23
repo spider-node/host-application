@@ -1,6 +1,6 @@
 #!/bin/bash
 # 定义一些变量
-APP_NAME=code-agent
+APP_NAME=code-agent-1.0.0-SNAPSHOT
 PID_FILE=./logs/${APP_NAME}.pid
 
 # 检查进程是否已经在运行

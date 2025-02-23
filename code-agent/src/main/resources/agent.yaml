@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: biz1-web-single-host
+  namespace: spider-vertx
+  labels:
+    virtual-kubelet.koupleless.io/component: module-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      module: biz1-web-single-host
+  template:
+    metadata:
+      labels:
+        module: biz1-web-single-host
+        virtual-kubelet.koupleless.io/component: module
+    spec:
+      containers:
+        - name: biz1-web-single-host  # this name must same with the biz name defined in the jar
+          image: https://koupleless-dosc.oss-cn-hongkong.aliyuncs.com/biz1-web-single-host-0.0.1-SNAPSHOT-ark-biz.jar
+          env:
+            - name: BIZ_VERSION
+              value: 0.0.1-SNAPSHOT
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  # these labels in vnode generated in base `https://github.com/koupleless/runtime/blob/main/arklet-core/src/main/java/com/alipay/sofa/koupleless/arklet/core/hook/base/BaseMetadataHookImpl.java`
+                  # you can define your own labels by implementing your own BaseMetadataHookImpl
+                  - key: base.koupleless.io/name
+                    operator: In
+                    values:
+                      - TO_BE_IMPLEMENTED
+                  - key: base.koupleless.io/cluster-name
+                    operator: In
+                    values:
+                      - default
+      tolerations:
+        - key: "schedule.koupleless.io/virtual-node"
+          operator: "Equal"
+          value: "True"
+          effect: "NoExecute"
+        - key: "schedule.koupleless.io/node-env"
+          operator: "Equal"
+          value: "dev"
+          effect: "NoExecute"

@@ -36,4 +36,14 @@ public class AreaDomainInitParam {
     private String areaId;
 
     private Integer sonDomainId;
+
+    /**
+     * 是否升级
+     */
+    private Boolean upgrade;
+
+    /**
+     * 基于原版本升级
+     */
+    private String version;
 }
