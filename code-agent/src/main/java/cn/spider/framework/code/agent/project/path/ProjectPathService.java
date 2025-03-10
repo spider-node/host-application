@@ -32,7 +32,7 @@ public class ProjectPathService {
         version = StringUtils.isEmpty(version) ? defaultVersion : version;
         String tableName = table.replace("_", "-");
         String projectRootPath = this.rootPath + this.directorySegmentation + database + this.directorySegmentation + table + this.directorySegmentation;
-        String artifactId = tableName + "-" + ClassUtil.camelToSnake(className);
+        String artifactId = tableName + "-" + ClassUtil.camelToSnake(className) + NumberUtil.versionToEnglish(version);
         String projectFinalPath = projectRootPath + className + this.directorySegmentation + version + this.directorySegmentation;
         String pomPath = projectFinalPath + artifactId + this.directorySegmentation;
         String groupIdPath = this.defaultGroupId.replace(".", "/");
@@ -44,7 +44,7 @@ public class ProjectPathService {
         String configPath = mainPath + this.directorySegmentation + "config";
         String propertiesPath = pomPath + "src/main/resources";
         String deploymentYamlPath = pomPath + "src/main/resources/yaml";
-        String bizName = artifactId  + "-" + NumberUtil.versionToEnglish(version);
+        String bizName = artifactId;
         String bizVersion = version;
         String startClassPackagePath = defaultGroupId + "." + artifactId.replace("-", ".");
         String configPackage = startClassPackagePath + ".config";

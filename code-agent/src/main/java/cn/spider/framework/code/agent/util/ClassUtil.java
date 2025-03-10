@@ -33,6 +33,12 @@ public class ClassUtil {
         return classString.substring(start, end).trim();
     }
 
+    /**
+     * 获取 一个类中 方法上面带
+     * @param camelCaseStr
+     * @return
+     */
+
     public static String camelToSnake(String camelCaseStr) {
         if (camelCaseStr == null || camelCaseStr.isEmpty()) {
             return camelCaseStr;

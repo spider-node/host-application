@@ -6,7 +6,7 @@ metadata:
   labels:
     app: spider-node
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: spider-node
@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: spider-node
-          image: docker.io/library/spider-node:2.0-20250105-3
+          image: docker.io/library/spider-node:2.0-20250105-11
           ports:
             - containerPort: 8081
           env:

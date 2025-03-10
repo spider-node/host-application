@@ -115,9 +115,9 @@ public class AreaDomainFunctionInfo implements Serializable {
     private String taskService;
 
     /**
-     * 文件 地址
+     * 实例数量
      */
-    private Integer instance_num;
+    private Integer instanceNum;
 
     private String bizUrl;
     /**

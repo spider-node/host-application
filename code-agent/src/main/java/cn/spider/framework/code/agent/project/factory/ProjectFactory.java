@@ -38,10 +38,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -179,10 +176,7 @@ public class ProjectFactory {
 
         AreaDomainFunctionInfo areaDomainFunctionInfoNew = new AreaDomainFunctionInfo();
         areaDomainFunctionInfoNew.setAreaFunctionClass(param.getServiceClass());
-        areaDomainFunctionInfoNew.setAreaFunctionParamClass(JSON.toJSONString(param.getParamClass()));
-        if (CollectionUtils.isNotEmpty(param.getResultClass())) {
-            areaDomainFunctionInfoNew.setAreaFunctionResultClass(JSON.toJSONString(param.getResultClass()));
-        }
+
         areaDomainFunctionInfoNew.setDatasourceName(areaDomain.getDatasourceName());
         areaDomainFunctionInfoNew.setTableName(param.getTableName());
         areaDomainFunctionInfoNew.setFunctionName(className);
@@ -230,17 +224,25 @@ public class ProjectFactory {
             areaProjectNode.buildYml(projectPath.getPropertiesPath(), projectPath.getArtifactId(), projectPath.getVersion(), areaDomain.getDatasourceName(), areaDomain.getAreaName(), areaDomain.getAreaId(), param.getTaskId());
             log.info("pom更新完成");
             // 生成参数类
+            List<String> paramClassList = new ArrayList<>();
+            List<String> resultClassList = new ArrayList<>();
             if (CollectionUtils.isNotEmpty(param.getParamClass())) {
                 for (String paramClass : param.getParamClass()) {
                     String paramClassName = ClassUtil.extractClassName(paramClass);
+                    // 判断 paramClass包含@StaTaskField
+                    if (paramClass.contains("@StaTaskField")) {
+                        paramClassList.add(paramClass);
+                    }else if (paramClass.contains("@NoticeSta")){
+                        resultClassList.add(paramClass);
+                    }
                     areaProjectNode.buildParamClass(projectPath.getDataPath(), paramClass, paramClassName);
                 }
             }
+            param.setParamClass(paramClassList);
+            param.setResultClass(resultClassList);
+            areaDomainFunctionInfoNew.setAreaFunctionParamClass(JSON.toJSONString(param.getParamClass()));
             if (CollectionUtils.isNotEmpty(param.getResultClass())) {
-                for (String resultClass : param.getResultClass()) {
-                    String resultClassName = ClassUtil.extractClassName(resultClass);
-                    areaProjectNode.buildParamResult(projectPath.getDataPath(), resultClass, resultClassName);
-                }
+                areaDomainFunctionInfoNew.setAreaFunctionResultClass(JSON.toJSONString(param.getResultClass()));
             }
 
             if (CollectionUtils.isNotEmpty(param.getOtherCode())) {
@@ -267,7 +269,7 @@ public class ProjectFactory {
             projectResult.setBizVersion(projectPath.getVersion());
             projectResult.setBizUrl(url);
             areaDomainFunctionInfoNew.setBizUrl(url);
-            areaDomainFunctionInfoNew.setInstance_num(1);
+            areaDomainFunctionInfoNew.setInstanceNum(1);
             // 进行部署到宿主应用中
             areaDomainFunctionInfoNew.setStatus(AreaFunctionStatus.INIT_SUSS);
         } catch (Exception e) {

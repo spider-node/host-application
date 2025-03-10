@@ -1,0 +1,21 @@
+# nanomq-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mqtt
+  labels:
+    app: mqtt
+spec:
+  containers:
+    - name: mqtt
+      image: emqx/nanomq:latest  # 使用 Docker Hub 官方镜像
+      command: ["nanomq"]        # 启动命令
+      args: ["start", "--conf", "/etc/nanomq/nanomq.conf"]  # 显式指定配置路径
+      volumeMounts:
+        - name: nanomq-config
+          mountPath: /etc/nanomq/nanomq.conf  # 覆盖默认配置文件
+          subPath: nanomq.conf
+  volumes:
+    - name: nanomq-config
+      configMap:
+        name: nanomq-config

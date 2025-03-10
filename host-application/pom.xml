@@ -56,6 +56,12 @@
             <version>${koupleless.runtime.version}</version>
         </dependency>
 
+        <!--<dependency>
+            <groupId>com.alipay.sofa.koupleless</groupId>
+            <artifactId>arklet-tunnel-mqtt</artifactId>
+            <version>${koupleless.runtime.version}</version>
+        </dependency>-->
+
         <dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>web-ark-plugin</artifactId>
