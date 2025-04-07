@@ -52,7 +52,7 @@ public class HostServiceImpl implements HostService {
 
     @Override
     public void escalationPlugInInfo(EscalationInfo escalationInfo) {
-        TaskService taskService = SpringServiceFinder.getModuleService(escalationInfo.getModuleName(), escalationInfo.getModuleVersion(),
+        TaskService taskService = SpringServiceFinder.getModuleService(escalationInfo.getModuleName(), escalationInfo.getBizVersion(),
                 "taskService", TaskService.class);
         PluginInfo pluginInfo = new PluginInfo(escalationInfo, taskService);
         log.info("插件上报的信息为 {}", JSON.toJSONString(pluginInfo));
@@ -88,7 +88,7 @@ public class HostServiceImpl implements HostService {
         NodeParamInfoBath areaParam = this.areaFunctionMap.get(key);
         ReportParamInfo reportParamInfo = new ReportParamInfo();
         reportParamInfo.setNodeParamInfoBathList(Lists.newArrayList(areaParam));
-        socketManager.escalationAreaFunctionInfo(JsonObject.mapFrom(reportParamInfo), FunctionEscalationType.DEPLOY);
+        socketManager.escalationAreaFunctionInfo(JsonObject.mapFrom(reportParamInfo), FunctionEscalationType.UNLOCK);
         areaFunctionMap.remove(key);
     }
 

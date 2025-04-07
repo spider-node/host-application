@@ -27,6 +27,8 @@ public class EscalationInfo {
      */
     String moduleVersion;
 
+    private String bizVersion;
+
     public String getModuleName() {
         return moduleName;
     }
@@ -71,4 +73,11 @@ public class EscalationInfo {
         return this.componentName + this.serviceName + this.moduleVersion;
     }
 
+    public String getBizVersion() {
+        return bizVersion;
+    }
+
+    public void setBizVersion(String bizVersion) {
+        this.bizVersion = bizVersion;
+    }
 }

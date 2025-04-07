@@ -72,4 +72,6 @@ public class DeployAreaFunctionParam {
     private String version;
 
     private String mavenPom;
+
+    private Integer instance;
 }

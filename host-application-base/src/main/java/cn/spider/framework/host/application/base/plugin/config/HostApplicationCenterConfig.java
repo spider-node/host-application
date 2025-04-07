@@ -70,9 +70,9 @@ public class HostApplicationCenterConfig {
      * @return
      */
     @Bean("taskService")
-    public TaskService buildTaskService(SpiderPluginManager pluginManager){
+    public TaskService buildTaskService(SpiderPluginManager pluginManager,PlatformTransactionManager transactionManager){
         log.info("TaskService-插件已经启动");
-        return new TaskServiceImpl(pluginManager);
+        return new TaskServiceImpl(pluginManager,transactionManager);
     }
 
     /**
@@ -84,9 +84,9 @@ public class HostApplicationCenterConfig {
      */
     @Bean
     public AreaPluginEscalation buildAreaPluginEscalation(SpiderPluginManager spiderPluginManager, @Value("${spider.pom.artifactId}") String moduleName,
-                                                          @Value("${spider.pom.version}")String moduleVersion){
+                                                          @Value("${spider.pom.version}")String moduleVersion,@Value("${spider.biz.version}")String bizVersion){
         HostService hostService = (HostService)getBaseBean("hostService");
-        return new AreaPluginEscalation(hostService,spiderPluginManager,moduleName,moduleVersion);
+        return new AreaPluginEscalation(hostService,spiderPluginManager,moduleName,moduleVersion,bizVersion);
     }
 
     /**

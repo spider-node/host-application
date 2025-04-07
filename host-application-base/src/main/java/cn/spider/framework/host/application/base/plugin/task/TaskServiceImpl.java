@@ -4,11 +4,16 @@ import cn.spider.framework.host.application.base.plugin.TaskService;
 import cn.spider.framework.host.application.base.plugin.data.TaskRequest;
 import cn.spider.framework.param.result.build.analysis.SpiderPluginManager;
 import cn.spider.framework.param.result.build.model.SpiderPlugin;
+import cn.spider.framework.transaction.sdk.context.RootContext;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.core.ParameterNameDiscoverer;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -20,12 +25,15 @@ import java.util.Objects;
 public class TaskServiceImpl implements TaskService {
     private SpiderPluginManager pluginManager;
 
-    private final String heart_info = "Heartbeat detection";
-
     private final ParameterNameDiscoverer parameterNameDiscoverer = new DefaultParameterNameDiscoverer();
 
-    public TaskServiceImpl(SpiderPluginManager pluginManager) {
+    private PlatformTransactionManager transactionManager;
+
+    private final String TRANSACTION_DEFAULT_NAME = "spider-transaction";
+
+    public TaskServiceImpl(SpiderPluginManager pluginManager, PlatformTransactionManager transactionManager) {
         this.pluginManager = pluginManager;
+        this.transactionManager = transactionManager;
     }
 
     // 注意,需要后续新增事务功能
@@ -34,13 +42,39 @@ public class TaskServiceImpl implements TaskService {
         String domainFunctionKey = request.getDomainFunctionKey();
         SpiderPlugin plugin = pluginManager.get(domainFunctionKey);
         // 获取到插件
-        log.info("获取到的插件信息:{}", JSON.toJSONString(plugin));
         if (Objects.isNull(plugin)) {
-            Preconditions.checkArgument(false, "没有找打对应的业务方法请检查");
+            Preconditions.checkArgument(false, "没有找到对应的业务方法请检查");
         }
         Object[] params = buildParam(request.getParam(), plugin.getMethod());
-        log.info("开始执行:{}", JSON.toJSONString(params));
-        return ReflectionUtils.invokeMethod(plugin.getMethod(), plugin.getTagertObject(), params);
+        if (Objects.isNull(request.getBranchId())) {
+            return ReflectionUtils.invokeMethod(plugin.getMethod(), plugin.getTagertObject(), params);
+        }
+
+        return executeInTransaction(request, plugin, params);
+    }
+
+    private Object executeInTransaction(TaskRequest request, SpiderPlugin plugin, Object[] params) {
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        // 设置默认的事务名称
+        def.setName(this.TRANSACTION_DEFAULT_NAME);
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+
+        RootContext.bind(request.getXid());
+        RootContext.bindBranchId(request.getBranchId() + "");
+
+        TransactionStatus status = transactionManager.getTransaction(def);
+        try {
+            Object result = ReflectionUtils.invokeMethod(plugin.getMethod(), plugin.getTagertObject(), params);
+            transactionManager.commit(status);
+            RootContext.unbind();
+            return result;
+        } catch (Exception e) {
+            log.error("Transaction failed for request: {}, plugin: {}", request, plugin, e);
+            transactionManager.rollback(status);
+            RootContext.unbind();
+            throw new RuntimeException(e);
+        }
+
     }
 
     public Object[] buildParam(Map<String, Object> paramMap, Method method) {

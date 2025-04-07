@@ -24,4 +24,12 @@ public class NumberUtil {
         }
         return result.toString().replaceAll("-$", "");
     }
+
+    public static String upgradeVersion(String version) {
+        String[] parts = version.split("\\.");
+        int lastPart = Integer.parseInt(parts[parts.length - 1]);
+        lastPart++;
+        parts[parts.length - 1] = String.valueOf(lastPart);
+        return String.join(".", parts);
+    }
 }

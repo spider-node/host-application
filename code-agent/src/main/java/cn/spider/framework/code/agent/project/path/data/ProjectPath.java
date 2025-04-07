@@ -110,11 +110,6 @@ public class ProjectPath {
     private String bizName;
 
     /**
-     * 业务版本
-     */
-    private String bizVersion;
-
-    /**
      * 镜像地址
      */
     private String imageUrl;

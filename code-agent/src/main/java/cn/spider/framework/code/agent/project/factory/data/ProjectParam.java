@@ -67,4 +67,9 @@ public class ProjectParam {
     private String domainFunctionVersionId;
 
     private String mavenPom;
+
+    /**
+     * 实例数量
+     */
+    private Integer instance;
 }

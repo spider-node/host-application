@@ -17,12 +17,20 @@ spec:
     spec:
       containers:
         - name: spider-base
-          image: docker.io/library/host-application:2.0-13
+          image: docker.io/library/host-application:2.0-18
           ports:
             - name: base
               containerPort: 8080
             - name: arklet
               containerPort: 1238
+          # 新增资源配额配置
+          resources:
+            requests:
+              cpu: "500m"         # 初始请求 0.5 核 CPU
+              memory: "512Mi"     # 初始请求 512MB 内存
+            limits:
+              cpu: "2000m"        # 最大限制 2 核 CPU
+              memory: "2048Mi"    # 最大限制 2GB 内存
           env:
             - name: MODULE_CONTROLLER_ADDRESS
               value: module-controller-service.spider-vertx:80
@@ -36,6 +44,3 @@ spec:
               value: "80"
             - name: SPIDER_WORKER_TYPE
               value: HOST
-
-
-

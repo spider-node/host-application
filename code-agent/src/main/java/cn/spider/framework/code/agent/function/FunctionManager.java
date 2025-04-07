@@ -6,11 +6,14 @@ import cn.spider.framework.code.agent.project.factory.ProjectFactory;
 import cn.spider.framework.code.agent.project.factory.data.InitAreaBaseResult;
 import cn.spider.framework.code.agent.project.factory.data.ProjectParam;
 import cn.spider.framework.code.agent.project.factory.data.UpdateCoderInfoParam;
+import cn.spider.framework.common.utils.ExceptionMessage;
 import cn.spider.node.framework.code.agent.sdk.data.CreateProjectResult;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 
+@Slf4j
 @Component
 public class FunctionManager {
     @Resource
@@ -39,8 +42,10 @@ public class FunctionManager {
             projectParam.setVersion(param.getVersion());
             projectParam.setDomainFunctionVersionId(param.getDomainFunctionVersionId());
             projectParam.setMavenPom(param.getMavenPom());
+            projectParam.setInstance(param.getInstance());
             return projectFactory.createAreaProject(projectParam);
         } catch (Exception e) {
+            log.info("创建项目失败 {}", ExceptionMessage.getStackTrace(e));
             throw new RuntimeException(e);
         }
         // 通过url进行部署到宿主机

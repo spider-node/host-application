@@ -20,12 +20,14 @@ public class AreaPluginEscalation {
 
     private String moduleVersion;
 
+    private String bizVersion;
 
-    public AreaPluginEscalation(HostService hostService, SpiderPluginManager spiderPluginManager, String moduleName, String moduleVersion) {
+    public AreaPluginEscalation(HostService hostService, SpiderPluginManager spiderPluginManager, String moduleName, String moduleVersion,String bizVersion) {
         this.hostService = hostService;
         this.spiderPluginManager = spiderPluginManager;
         this.moduleName = moduleName;
         this.moduleVersion = moduleVersion;
+        this.bizVersion = bizVersion;
     }
 
     /**
@@ -40,6 +42,7 @@ public class AreaPluginEscalation {
             escalationInfo.setComponentName(spiderPlugin.getComponentName());
             escalationInfo.setServiceName(spiderPlugin.getServiceName());
             escalationInfo.setMethodName(spiderPlugin.getMethodName());
+            escalationInfo.setBizVersion(this.bizVersion);
             // 调用宿主的service进行注册
             hostService.escalationPlugInInfo(escalationInfo);
         }

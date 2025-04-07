@@ -33,7 +33,7 @@ public class AreaProjectNode {
     }
 
     // 重新生成pom文件
-    public void buildAreaPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription, List<SonDomainPomModel> sonDomainPomModels, String mavenPom,String bizName) {
+    public void buildAreaPom(String outPath, String groupId, String artifactId, String version, String projectName, String projectDescription, List<SonDomainPomModel> sonDomainPomModels, String mavenPom, String bizName) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("groupId", groupId);
         dataModel.put("artifactId", artifactId);
@@ -43,6 +43,7 @@ public class AreaProjectNode {
         dataModel.put("basePoms", sonDomainPomModels);
         dataModel.put("mavenPom", mavenPom);
         dataModel.put("bizName", bizName);
+
         try {
             FltlUtil.generateFile(outPath, dataModel, "function_pom.ftl", "pom.xml");
         } catch (IOException e) {
@@ -68,7 +69,7 @@ public class AreaProjectNode {
     }
 
     // 重新生成yml文件
-    public void buildYml(String outPath, String artifactId, String version, String datasourceName, String areaName, String areaId, Integer taskId) {
+    public void buildYml(String outPath, String artifactId, String version, String datasourceName, String areaName, String areaId, Integer taskId,String bizVersion) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("applicationName", artifactId);
         dataModel.put("artifactId", artifactId);
@@ -77,6 +78,7 @@ public class AreaProjectNode {
         dataModel.put("areaId", areaId);
         dataModel.put("areaName", areaName);
         dataModel.put("taskId", taskId + "");
+        dataModel.put("bizVersion", bizVersion);
         try {
             FltlUtil.generateFile(outPath, dataModel, "application.properties.ftl", "application.properties");
         } catch (IOException e) {
@@ -86,12 +88,13 @@ public class AreaProjectNode {
         }
     }
 
-    public String buildDeploymentYaml(String version, String imageUrl, String namespace,String bizName) {
+    public String buildDeploymentYaml(String version, String imageUrl, String namespace, String bizName,Integer instanceNum) {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("imageUrl", imageUrl);
         dataModel.put("namespace", namespace);
         dataModel.put("bizVersion", version);
         dataModel.put("bizName", bizName);
+        dataModel.put("instanceNum", instanceNum);
         return K8sDeployUtil.buildDeployYaml(dataModel);
     }
 
@@ -206,7 +209,6 @@ public class AreaProjectNode {
     }
 
     /**
-     *
      * @param directoryPath yaml配置
      * @return 部署的yaml配置
      * @throws IOException io异常

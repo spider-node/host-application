@@ -17,7 +17,14 @@ spec:
     spec:
       containers:
         - name: ai-coder
-          image: docker.io/library/ai-coder:2.0
+          image: docker.io/library/ai-coder:2.0-13
           ports:
             - containerPort: 5000
             - containerPort: 8084
+          env:
+            - name: SPIDER_URL
+              value: "http://spider-node-service.spider-vertx:80"  # 请将此值替换为实际的 URL
+            - name: DASHSCOPE_API_KEY
+              value: "sk-66188116bb914e6784374de3bb394908"
+            - name: GEMINI_API_KEY
+              value: "sk-jYeDNNYFe9lbBNsMjbR8ZIGYNltlF2Kc0dqpUlTAkvE3o6YL"

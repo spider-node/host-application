@@ -22,9 +22,15 @@ public class TaskRequest {
      */
     private String requestId;
 
+    /**
+     * 事务id
+     */
     private String xid;
 
-    private String branchId;
+    /**
+     * 事务组id
+     */
+    private Long branchId;
 
     /**
      * 插件版本
@@ -52,11 +58,11 @@ public class TaskRequest {
         this.xid = xid;
     }
 
-    public String getBranchId() {
+    public Long getBranchId() {
         return branchId;
     }
 
-    public void setBranchId(String branchId) {
+    public void setBranchId(Long branchId) {
         this.branchId = branchId;
     }
 

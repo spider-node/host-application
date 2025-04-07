@@ -6,7 +6,7 @@ metadata:
   labels:
     app: spider-node
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: spider-node
@@ -20,19 +20,115 @@ spec:
       labels:
         app: spider-node
     spec:
+      serviceAccountName: spider-deploy  # 替换为你的 ServiceAccount 名称
       containers:
         - name: spider-node
-          image: docker.io/library/spider-node:2.0-20250105-11
+          image: docker.io/library/spider-node:2.0-20250105-53
           ports:
             - containerPort: 8081
+            - containerPort: 6140
           env:
-            - name: K8S_BASE_URL
-              value: http://47.109.67.130:8444
-            - name: K8S_TOKEN_KEY
-              value: eyJhbGciOiJSUzI1NiIsImtpZCI6IjhHcHN0bEh6TlFXc05FOEotQVFVTXlFbUQ1UldiMU9Qczlnd010SjZwS3MifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJzcGlkZXItdmVydHgiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoic3BpZGVyLWFkbWluLXRva2VuIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6InNwaWRlci1hZG1pbiIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImMyODNlY2U0LWE0YzktNGM0OS05OGFiLTNlMjYwNTM5MWRlYyIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpzcGlkZXItdmVydHg6c3BpZGVyLWFkbWluIn0.OJ9Pa_DO8c2YznxKLjprEELwk6j-qIUfGGwN6ywkvy-RiThFZ3s6hDdV43WTT2kBbqB09fF9vwTeVxL-5TKluLWqYePH_62rCCXLQoZmBlxhF0btDXy9FTb5eWpuocgzheEArS3oY2WY886KdqSzXU9lTmKGOhPdUPzUBOPlqkjD3utgCnVYwQ2Y7dRjvQINRtvGvT4jPphIbc1q6VhVbndzfS8r4p8n26nI1Kr006bJ_5UMfvBK7HqvrKrU8kCYBESNdPk-GjKHwnGlQXstCEjblJWU7N8HHxnvm2rkx15LkTk_myTfHCNZVbimhl1sKQeAHbIMcL7_9kNkpiQhww
-            - name: K8S_NAMESPACE
-              value: spider-vertx
+            - name: ROLE
+              value: "broker,gateway,ui"
+            - name: ZK_ADDR
+              value: "47.109.67.130:2181"
+            # 日志类型 es相关配置
+            - name: LOG_TYPE
+              value: esx
+            - name: ES_CLUSTER_NAME
+              value: elasticsearch
+            # ES_IP_ADDR
+            - name: ES_IP_ADDR
+              value: "47.109.67.130:9200"
+            # HTTPS_CREDIT
+            - name: HTTPS_CREDIT
+              value: "false"
+            # ES_USERNAME
+            - name: ES_USERNAME
+              value: "elastic"
+            # ES_PASSWORD
+            - name: ES_PASSWORD
+              value: "aB.967426"
+            # 文件存储相关配置
+            # FILE_SERVER_TYPE
+            - name: FILE_SERVER_TYPE
+              value: "MINIO"
+            # MINIO_URL
+            - name: MINIO_URL
+              value: "http://47.109.67.130:1026"
+            # MINIO_ACCESS_KEY
+            - name: MINIO_ACCESS_KEY
+              value: "s6ycDmJoFu7Y2nbDhJ9R"
+            # MINIO_SECRET_KEY
+            - name: MINIO_SECRET_KEY
+              value: "CHlubXwEhPSb0E9LkOLmgmrSa943pXEIGHtnWLPw"
+            # MINIO_BUCKET_NAME
+            - name: MINIO_BUCKET_NAME
+              value: "spider-node"
+            # OSS_ENDPOINT
+            - name: OSS_ENDPOINT
+              value: "oss-cn-beijing.aliyuncs.com"
+            # OSS_ACCESS_KEY
+            - name: OSS_KEYID
+              value: "444444"
+            # OSS_KEYSECRET
+            - name: OSS_KEYSECRET
+              value: "444444"
+            # OSS_BUCKETNAME
+            - name: OSS_BUCKETNAME
+              value: "spider-node"
+            # BPMN_PATH
+            - name: BPMN_PATH
+              value: "bpmn"
+            # SDK_PATH
+            - name: SDK_PATH
+              value: "sdk"
+            # 新增的配置项
+            - name: BROKER_TRANSCRIPT_NUM
+              value: "1"
+            # mysql相关配置
+            - name: MYSQL_HOST
+              value: "47.109.67.130"
+            - name: MYSQL_PASSWORD
+              value: "aB.967426"
+            - name: MYSQL_USER
+              value: "spider"
+            - name: MYSQL_PORT
+              value: "3306"
+            - name: MYSQL_DATABASE
+              value: "spider"
+            - name: MYSQL_URL
+              value: "jdbc:mysql://47.109.67.130:3306/spider"
+            - name: MYSQL_DRIVER_CLASS_NAME
+              value: "com.mysql.cj.jdbc.Driver"
+            - name: MYSQL_INIT_SIZE
+              value: "20"
+            - name: MYSQL_MIN_IDLE
+              value: "20"
+            - name: LIMITATION_INTERVAL
+              value: "20"
+            - name: LIMITATION_NUMBER
+              value: "500"
+            - name: CLUSTER_MODE
+              value: "N0_CENTER_MODE"
+              # rpc配置
+            - name: RPC_TYPE
+              value: "grpc"
+              # ui端口配置
+            - name: UI_PORT
+              value: "6140"
+              # 函数端口配置
+            - name: FUNCTION_PORT
+              value: "8081"
+            - name: INSTANCE_NUMBER
+              value: "1"
+            - name: START_SPIDER_NODE_IS_NEW
+              value: "true"
             - name: SPIDER_AGENT_URL_HOST
-              value: 47.109.67.130:8082
+              value: "http://47.109.67.130:8082"
             - name: SPIDER_CODE_AI_URL
-              value: ai-coder-service.spider-vertx:80
+              value: "http://ai-coder-service.spider-vertx:80"
+            - name: HOST_APPLICATION_PORT
+              value: "1238"
+            - name: K8S_NAMESPACE
+              value: "spider-vertx"

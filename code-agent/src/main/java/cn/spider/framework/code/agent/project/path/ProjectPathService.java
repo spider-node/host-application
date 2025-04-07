@@ -1,5 +1,6 @@
 package cn.spider.framework.code.agent.project.path;
 
+import cn.hutool.crypto.SecureUtil;
 import cn.spider.framework.code.agent.project.path.data.ProjectPath;
 import cn.spider.framework.code.agent.util.ClassUtil;
 import cn.spider.framework.code.agent.util.NumberUtil;
@@ -28,13 +29,18 @@ public class ProjectPathService {
     private final String startClassPath = "src/main/java";
 
 
-    public ProjectPath buildAreaProjectPath(String database, String table, String version, String className) {
+    public ProjectPath buildAreaProjectPath(String database, String table, String version, String className,String functionVersion,String taskService,String taskComponent) {
         version = StringUtils.isEmpty(version) ? defaultVersion : version;
         String tableName = table.replace("_", "-");
-        String projectRootPath = this.rootPath + this.directorySegmentation + database + this.directorySegmentation + table + this.directorySegmentation;
-        String artifactId = tableName + "-" + ClassUtil.camelToSnake(className) + NumberUtil.versionToEnglish(version);
+
+
+        String bizName = taskComponent + "-" + taskService + NumberUtil.versionToEnglish(functionVersion);
+        String md5BizName = SecureUtil.md5(bizName);
+
+        String projectRootPath = this.rootPath + this.directorySegmentation + database + this.directorySegmentation + table + this.directorySegmentation + ClassUtil.camelToSnake(taskService)+ this.directorySegmentation;
+        String artifactId = tableName + "-" + ClassUtil.camelToSnake(className);
         String projectFinalPath = projectRootPath + className + this.directorySegmentation + version + this.directorySegmentation;
-        String pomPath = projectFinalPath + artifactId + this.directorySegmentation;
+        String pomPath = projectFinalPath + md5BizName + this.directorySegmentation;
         String groupIdPath = this.defaultGroupId.replace(".", "/");
         String artifactIdPath = ClassUtil.replaceUnderscoresWithSlashes(artifactId);
         String mainPath = pomPath + this.startClassPath + this.directorySegmentation + groupIdPath + this.directorySegmentation + artifactIdPath;
@@ -44,16 +50,16 @@ public class ProjectPathService {
         String configPath = mainPath + this.directorySegmentation + "config";
         String propertiesPath = pomPath + "src/main/resources";
         String deploymentYamlPath = pomPath + "src/main/resources/yaml";
-        String bizName = artifactId;
-        String bizVersion = version;
+
         String startClassPackagePath = defaultGroupId + "." + artifactId.replace("-", ".");
         String configPackage = startClassPackagePath + ".config";
         String jarFilePath = pomPath + "target/";
-        String jarFileName = artifactId + "-" + version + "-ark-biz.jar";
+        String jarFileName = bizName + "-" + version + "-ark-biz.jar";
+
         return ProjectPath.builder()
                 .projectAreaPath(projectFinalPath)
                 .projectRootPath(projectRootPath)
-                .artifactId(artifactId)
+                .artifactId(md5BizName)
                 .groupId(this.defaultGroupId)
                 .version(version)
                 .javaFilePath(artifactIdPath)
@@ -67,8 +73,7 @@ public class ProjectPathService {
                 .mainPath(mainPath)
                 .jarFilePath(jarFilePath)
                 .jarFileName(jarFileName)
-                .bizName(bizName)
-                .bizVersion(bizVersion)
+                .bizName(md5BizName)
                 .deploymentYamlPath(deploymentYamlPath)
                 .otherCodePath(otherCodePath)
                 .build();

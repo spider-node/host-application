@@ -31,7 +31,15 @@ public class HostApplicationServiceImpl implements HostApplicationService {
         String pluginKey = ComponentUtil.buildComponentKey(requestParam.getComponentName(), requestParam.getServiceName(),requestParam.getVersion());
         TaskService taskService = escalationManager.queryTaskService(pluginKey);
         TaskRequest taskRequest = new TaskRequest();
-        BeanUtils.copyProperties(requestParam, taskRequest);
+        // TODO 重新构建插件信息
+        taskRequest.setParam(requestParam.getParam());
+        taskRequest.setRequestId(requestParam.getRequestId());
+        taskRequest.setXid(requestParam.getXid());
+        taskRequest.setBranchId(requestParam.getBranchId());
+        taskRequest.setComponentName(requestParam.getComponentName());
+        taskRequest.setServiceName(requestParam.getServiceName());
+        taskRequest.setMethodName(requestParam.getMethodName());
+        taskRequest.setVersion(requestParam.getVersion());
         return taskService.runTask(taskRequest);
     }
 }

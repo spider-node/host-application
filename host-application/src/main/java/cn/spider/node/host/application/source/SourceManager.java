@@ -1,5 +1,6 @@
 package cn.spider.node.host.application.source;
 
+import cn.spider.framework.transaction.sdk.datasource.DataSourceProxy;
 import cn.spider.node.host.application.source.entity.AreaDatasourceInfo;
 import cn.spider.node.host.application.source.service.IAreaDatasourceInfoService;
 import cn.spider.node.host.application.util.JdbcUtil;
@@ -16,7 +17,7 @@ public class SourceManager {
 
     private IAreaDatasourceInfoService datasourceInfoService;
 
-    private Map<String,DataSource> dataSourceMap;
+    private Map<String, DataSource> dataSourceMap;
 
     public SourceManager(IAreaDatasourceInfoService datasourceInfoService) {
         this.datasourceInfoService = datasourceInfoService;
@@ -25,12 +26,12 @@ public class SourceManager {
 
     // 初始化数据源mysql
     public void initDataSource() {
-        List<AreaDatasourceInfo> areaDatasourceInfos = datasourceInfoService.lambdaQuery().ge(AreaDatasourceInfo :: getId,0).list();
+        List<AreaDatasourceInfo> areaDatasourceInfos = datasourceInfoService.lambdaQuery().ge(AreaDatasourceInfo::getId, 0).list();
         for (AreaDatasourceInfo datasourceInfo : areaDatasourceInfos) {
-            if(dataSourceMap.containsKey(datasourceInfo.getDatasource())){
+            if (dataSourceMap.containsKey(datasourceInfo.getDatasource())) {
                 continue;
             }
-            dataSourceMap.put(JdbcUtil.queryDatabaseName(datasourceInfo.getDatasource()),dataSource(datasourceInfo));
+            dataSourceMap.put(JdbcUtil.queryDatabaseName(datasourceInfo.getDatasource()), dataSource(datasourceInfo));
         }
     }
     // 提供获取 mysql数据源的能力
@@ -61,10 +62,11 @@ public class SourceManager {
         // 打开PSCache，并且指定每个连接上PSCache的大小
         dataSource.setPoolPreparedStatements(true);
         dataSource.setMaxPoolPreparedStatementPerConnectionSize(20);
-        return dataSource;
+        // 设置spider-datasource-manager,对datasource进行代理
+        return new DataSourceProxy(dataSource);
     }
 
-    public DataSource queryDataSource(String sourceKey){
+    public DataSource queryDataSource(String sourceKey) {
         return dataSourceMap.get(sourceKey);
     }
 }

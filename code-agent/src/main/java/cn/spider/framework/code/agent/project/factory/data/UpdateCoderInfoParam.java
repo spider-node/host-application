@@ -24,6 +24,11 @@ public class UpdateCoderInfoParam {
      */
     private List<String> areaFunctionResultClass;
 
+    /**
+     * 实例数量
+     */
+    private Integer instanceNum;
+
     public String getDomainFunctionVersionId() {
         return domainFunctionVersionId;
     }
@@ -54,5 +59,13 @@ public class UpdateCoderInfoParam {
 
     public void setAreaFunctionResultClass(List<String> areaFunctionResultClass) {
         this.areaFunctionResultClass = areaFunctionResultClass;
+    }
+
+    public Integer getInstanceNum() {
+        return instanceNum;
+    }
+
+    public void setInstanceNum(Integer instanceNum) {
+        this.instanceNum = instanceNum;
     }
 }

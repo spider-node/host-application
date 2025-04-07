@@ -133,4 +133,6 @@ public class AreaDomainFunctionInfo implements Serializable {
     private ProjectParam buildProjectParam;
     // 其他类
     private String otherCode;
+
+    private String bizVersion;
 }

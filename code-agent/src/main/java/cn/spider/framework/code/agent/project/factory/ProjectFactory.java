@@ -26,12 +26,13 @@ import cn.spider.framework.code.agent.project.path.ProjectPathService;
 import cn.spider.framework.code.agent.project.path.data.ProjectPath;
 import cn.spider.framework.code.agent.spider.SpiderClient;
 import cn.spider.framework.code.agent.util.ClassUtil;
+import cn.spider.framework.code.agent.util.NumberUtil;
 import cn.spider.node.framework.code.agent.sdk.data.CreateProjectResult;
-import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -168,11 +169,15 @@ public class ProjectFactory {
         String className = ClassUtil.extractClassName(serviceClass);
         Set<String> mapperPaths = areaDomains.stream().map(item -> item.getDomainObjectServicePackage().replaceAll("service$", "mapper").replaceAll("^package\\s+", "")).collect(Collectors.toSet());
         Set<String> servicePaths = areaDomains.stream().map(item -> item.getDomainObjectServicePackage()).collect(Collectors.toSet());
-        // 版本号由外部指定
-        ProjectPath projectPath = projectPathService.buildAreaProjectPath(datasourceName, param.getTableName(), param.getVersion(), className);
+
         AreaDomainFunctionInfo areaDomainFunctionInfo = areaDomainFunctionInfoService.lambdaQuery()
                 .eq(AreaDomainFunctionInfo::getDomainFunctionVersionId, param.getDomainFunctionVersionId())
-                .last("order by create_time desc limit 1").one();
+                .eq(AreaDomainFunctionInfo::getVersion, param.getVersion()).one();
+        String bizVersion = Objects.isNull(areaDomainFunctionInfo) ? null : StringUtils.isEmpty(areaDomainFunctionInfo.getBizVersion()) ? "1.0.0" : NumberUtil.upgradeVersion(areaDomainFunctionInfo.getBizVersion());
+
+        // 版本号由外部指定
+        ProjectPath projectPath = projectPathService.buildAreaProjectPath(datasourceName, param.getTableName(), bizVersion, className, param.getVersion(), param.getTaskService(), param.getTaskComponent());
+
 
         AreaDomainFunctionInfo areaDomainFunctionInfoNew = new AreaDomainFunctionInfo();
         areaDomainFunctionInfoNew.setAreaFunctionClass(param.getServiceClass());
@@ -181,11 +186,16 @@ public class ProjectFactory {
         areaDomainFunctionInfoNew.setTableName(param.getTableName());
         areaDomainFunctionInfoNew.setFunctionName(className);
         areaDomainFunctionInfoNew.setFunctionDesc(param.getDesc());
-        areaDomainFunctionInfoNew.setVersion(projectPath.getVersion());
+        areaDomainFunctionInfoNew.setVersion(param.getVersion());
         areaDomainFunctionInfoNew.setStatus(AreaFunctionStatus.INIT);
         areaDomainFunctionInfoNew.setGroupId(projectPath.getGroupId());
         areaDomainFunctionInfoNew.setDatasourceId(areaDomain.getDatasourceId());
         areaDomainFunctionInfoNew.setArtifactId(projectPath.getArtifactId());
+        if (Objects.nonNull(param.getInstance())) {
+            areaDomainFunctionInfoNew.setInstanceNum(param.getInstance());
+        } else {
+            areaDomainFunctionInfoNew.setInstanceNum(1);
+        }
         if (CollectionUtils.isNotEmpty(param.getOtherCode())) {
             areaDomainFunctionInfoNew.setOtherCode(JSON.toJSONString(param.getOtherCode()));
         }
@@ -201,6 +211,7 @@ public class ProjectFactory {
         areaDomainFunctionInfoNew.setTaskId(param.getTaskId());
         areaDomainFunctionInfoNew.setTaskService(param.getTaskService());
         areaDomainFunctionInfoNew.setDomainFunctionVersionId(param.getDomainFunctionVersionId());
+        areaDomainFunctionInfoNew.setBizVersion(bizVersion);
 
         areaDomainFunctionInfoNew.setId(Objects.nonNull(areaDomainFunctionInfo) ? areaDomainFunctionInfo.getId() : null);
         CreateProjectResult projectResult = new CreateProjectResult();
@@ -221,23 +232,38 @@ public class ProjectFactory {
             areaProjectNode.buildAreaPom(projectPath.getPomPath(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getVersion(), className, "", sonDomainPomModels, param.getMavenPom(), projectPath.getBizName());
             log.info("pom更新完成");
             // 新增yml配置
-            areaProjectNode.buildYml(projectPath.getPropertiesPath(), projectPath.getArtifactId(), projectPath.getVersion(), areaDomain.getDatasourceName(), areaDomain.getAreaName(), areaDomain.getAreaId(), param.getTaskId());
+            areaProjectNode.buildYml(projectPath.getPropertiesPath(), projectPath.getArtifactId(), areaDomainFunctionInfoNew.getVersion(), areaDomain.getDatasourceName(), areaDomain.getAreaName(), areaDomain.getAreaId(), param.getTaskId(), areaDomainFunctionInfoNew.getBizVersion());
             log.info("pom更新完成");
             // 生成参数类
             List<String> paramClassList = new ArrayList<>();
             List<String> resultClassList = new ArrayList<>();
             if (CollectionUtils.isNotEmpty(param.getParamClass())) {
                 for (String paramClass : param.getParamClass()) {
-                    String paramClassName = ClassUtil.extractClassName(paramClass);
                     // 判断 paramClass包含@StaTaskField
                     if (paramClass.contains("@StaTaskField")) {
                         paramClassList.add(paramClass);
-                    }else if (paramClass.contains("@NoticeSta")){
+                    } else if (paramClass.contains("@NoticeSta")) {
                         resultClassList.add(paramClass);
                     }
+                }
+            }
+            // 写入，入参
+            if (CollectionUtils.isNotEmpty(paramClassList)) {
+                for (String paramClass : paramClassList) {
+                    String paramClassName = ClassUtil.extractClassName(paramClass);
                     areaProjectNode.buildParamClass(projectPath.getDataPath(), paramClass, paramClassName);
                 }
             }
+
+            resultClassList = CollectionUtils.isEmpty(resultClassList) ? param.getResultClass() : resultClassList;
+            // 写出参
+            if (CollectionUtils.isNotEmpty(resultClassList)) {
+                for (String resultClass : resultClassList) {
+                    String resultClassName = ClassUtil.extractClassName(resultClass);
+                    areaProjectNode.buildParamResult(projectPath.getDataPath(), resultClass, resultClassName);
+                }
+            }
+
             param.setParamClass(paramClassList);
             param.setResultClass(resultClassList);
             areaDomainFunctionInfoNew.setAreaFunctionParamClass(JSON.toJSONString(param.getParamClass()));
@@ -262,14 +288,14 @@ public class ProjectFactory {
             Path jar = areaProjectNode.readJarFilesInDirectory(projectPath.getJarFilePath());
             String url = spiderClient.uploadFile(jar);
             // 整理部署的yaml信息
-            String deployYaml = areaProjectNode.buildDeploymentYaml(projectPath.getVersion(), url, baseDeployConfig.getDefaultNamespace(), projectPath.getBizName());
+            String deployYaml = areaProjectNode.buildDeploymentYaml(projectPath.getVersion(), url, baseDeployConfig.getDefaultNamespace(), projectPath.getBizName(), areaDomainFunctionInfoNew.getInstanceNum());
 
             areaDomainFunctionInfoNew.setDeployYaml(deployYaml);
             projectResult.setBizName(projectPath.getArtifactId());
             projectResult.setBizVersion(projectPath.getVersion());
             projectResult.setBizUrl(url);
             areaDomainFunctionInfoNew.setBizUrl(url);
-            areaDomainFunctionInfoNew.setInstanceNum(1);
+
             // 进行部署到宿主应用中
             areaDomainFunctionInfoNew.setStatus(AreaFunctionStatus.INIT_SUSS);
         } catch (Exception e) {
@@ -278,9 +304,9 @@ public class ProjectFactory {
             projectResult.setStatus(CreateProjectStatus.INIT_FAIL.name());
             projectResult.setErrorStackTrace(e.getMessage());
         }
-        param.setServiceClass(null);
+        /*param.setServiceClass(null);
         param.setParamClass(null);
-        param.setResultClass(null);
+        param.setResultClass(null);*/
         areaDomainFunctionInfoNew.setBuildProjectParam(param);
         areaDomainFunctionInfoService.saveOrUpdate(areaDomainFunctionInfoNew);
         projectResult.setId(areaDomainFunctionInfoNew.getId());
@@ -297,9 +323,17 @@ public class ProjectFactory {
             Preconditions.checkArgument(false, "没有找到版本信息");
         }
         ProjectParam projectParam = areaDomainFunctionInfo.getBuildProjectParam();
-        projectParam.setServiceClass(param.getAreaFunctionClass());
-        projectParam.setParamClass(param.getAreaFunctionParamClass());
-        projectParam.setResultClass(param.getAreaFunctionResultClass());
+        if (StringUtils.isNotEmpty(param.getAreaFunctionClass())) {
+            projectParam.setServiceClass(param.getAreaFunctionClass());
+        }
+        if (CollectionUtils.isNotEmpty(param.getAreaFunctionParamClass())) {
+            projectParam.setParamClass(param.getAreaFunctionParamClass());
+        }
+        if (CollectionUtils.isNotEmpty(param.getAreaFunctionResultClass())) {
+            projectParam.setResultClass(param.getAreaFunctionResultClass());
+        }
+
+        projectParam.setInstance(param.getInstanceNum());
         return createAreaProject(projectParam);
     }
 }

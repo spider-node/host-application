@@ -12,7 +12,7 @@ public class K8sDeployUtil {
                 "  labels:\n" +
                 "    virtual-kubelet.koupleless.io/component: module-deployment\n" +
                 "spec:\n" +
-                "  replicas: 1\n" +
+                "  replicas: " + dataModel.get("instanceNum")  + "\n" +
                 "  selector:\n" +
                 "    matchLabels:\n" +
                 "      module: " + dataModel.get("bizName") + "\n" +
