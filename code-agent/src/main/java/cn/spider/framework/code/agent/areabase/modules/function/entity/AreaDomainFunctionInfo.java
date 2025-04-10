@@ -134,5 +134,13 @@ public class AreaDomainFunctionInfo implements Serializable {
     // 其他类
     private String otherCode;
 
+    /**
+     * 当前部署的bizVersion
+     */
     private String bizVersion;
+
+    /**
+     * 当前部署的bizName
+     */
+    private String bizName;
 }

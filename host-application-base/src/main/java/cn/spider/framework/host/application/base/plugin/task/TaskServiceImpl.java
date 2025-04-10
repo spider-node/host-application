@@ -39,6 +39,7 @@ public class TaskServiceImpl implements TaskService {
     // 注意,需要后续新增事务功能
     @Override
     public Object runTask(TaskRequest request) {
+        log.info("runTask-request: {}",JSON.toJSONString(request));
         String domainFunctionKey = request.getDomainFunctionKey();
         SpiderPlugin plugin = pluginManager.get(domainFunctionKey);
         // 获取到插件
@@ -54,6 +55,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private Object executeInTransaction(TaskRequest request, SpiderPlugin plugin, Object[] params) {
+        log.info("executeInTransaction-request: {}, plugin: {}", request, plugin);
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         // 设置默认的事务名称
         def.setName(this.TRANSACTION_DEFAULT_NAME);

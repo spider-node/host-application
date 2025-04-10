@@ -73,12 +73,12 @@ public class AreaProjectNode {
         Map<String, Object> dataModel = new HashMap<>();
         dataModel.put("applicationName", artifactId);
         dataModel.put("artifactId", artifactId);
-        dataModel.put("version", version);
+        dataModel.put("pom_version", bizVersion);
         dataModel.put("datasourceName", datasourceName);
         dataModel.put("areaId", areaId);
         dataModel.put("areaName", areaName);
         dataModel.put("taskId", taskId + "");
-        dataModel.put("bizVersion", bizVersion);
+        dataModel.put("bizVersion", version);
         try {
             FltlUtil.generateFile(outPath, dataModel, "application.properties.ftl", "application.properties");
         } catch (IOException e) {

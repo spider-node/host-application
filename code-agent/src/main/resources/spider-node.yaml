@@ -23,7 +23,7 @@ spec:
       serviceAccountName: spider-deploy  # 替换为你的 ServiceAccount 名称
       containers:
         - name: spider-node
-          image: docker.io/library/spider-node:2.0-20250105-53
+          image: docker.io/library/spider-node:2.0-20250105-61
           ports:
             - containerPort: 8081
             - containerPort: 6140

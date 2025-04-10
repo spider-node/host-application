@@ -14,10 +14,10 @@ public class EscalationManager {
     }
 
     public void registerPluginInfo(String pluginKey, PluginInfo pluginInfo) {
-        this.pluginInfoMap.put(pluginKey,pluginInfo);
+        this.pluginInfoMap.put(pluginKey, pluginInfo);
     }
 
-    public TaskService queryTaskService(String pluginKey){
+    public TaskService queryTaskService(String pluginKey) {
         return this.pluginInfoMap.get(pluginKey).getTaskService();
     }
 }

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: spider-base
-          image: docker.io/library/host-application:2.0-18
+          image: docker.io/library/host-application:2.0-22
           ports:
             - name: base
               containerPort: 8080

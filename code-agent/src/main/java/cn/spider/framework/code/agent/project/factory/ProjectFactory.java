@@ -199,25 +199,23 @@ public class ProjectFactory {
         if (CollectionUtils.isNotEmpty(param.getOtherCode())) {
             areaDomainFunctionInfoNew.setOtherCode(JSON.toJSONString(param.getOtherCode()));
         }
-        //areaDomainFunctionInfoNew.setBaseVersion(areaDomain.getVersion());
         areaDomainFunctionInfoNew.setAreaId(areaDomain.getAreaId());
         areaDomainFunctionInfoNew.setAreaName(areaDomain.getAreaName());
         SonDomainModelInfo sonDomainModelInfo = new SonDomainModelInfo();
         sonDomainModelInfo.setSonDomainModels(sonDomainModels);
         areaDomainFunctionInfoNew.setSonDomainModelInfo(sonDomainModelInfo);
-        //areaDomainFunctionInfoNew.setSonAreaId(areaDomain.getId());
-        //areaDomainFunctionInfoNew.setSonAreaName(areaDomain.getSonAreaName());
         areaDomainFunctionInfoNew.setTaskComponent(param.getTaskComponent());
         areaDomainFunctionInfoNew.setTaskId(param.getTaskId());
         areaDomainFunctionInfoNew.setTaskService(param.getTaskService());
         areaDomainFunctionInfoNew.setDomainFunctionVersionId(param.getDomainFunctionVersionId());
         areaDomainFunctionInfoNew.setBizVersion(bizVersion);
+        areaDomainFunctionInfoNew.setBizName(projectPath.getBizName());
 
         areaDomainFunctionInfoNew.setId(Objects.nonNull(areaDomainFunctionInfo) ? areaDomainFunctionInfo.getId() : null);
         CreateProjectResult projectResult = new CreateProjectResult();
         try {
             // 生成项目
-            areaProjectNode.generateProject(projectPath.getArtifactId(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getProjectAreaPath(), projectPath.getVersion(), projectPath.getJavaFilePath());
+            areaProjectNode.generateProject(projectPath.getArtifactId(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getProjectAreaPath(), areaDomainFunctionInfoNew.getBizVersion(), projectPath.getJavaFilePath());
             log.info("构造项目成功");
             // 生成java启动类
             areaProjectNode.buildStart(projectPath.getMainPath(), className + "Start", projectPath.getStartClassPackagePath(), mapperPaths);
@@ -229,7 +227,7 @@ public class ProjectFactory {
             areaProjectNode.buildConfig(projectPath.getConfigPath(), projectPath.getConfigPackage(), servicePaths);
             log.info("java配置类完成");
             // 更新pom文件
-            areaProjectNode.buildAreaPom(projectPath.getPomPath(), this.defaultGroupId, projectPath.getArtifactId(), projectPath.getVersion(), className, "", sonDomainPomModels, param.getMavenPom(), projectPath.getBizName());
+            areaProjectNode.buildAreaPom(projectPath.getPomPath(), this.defaultGroupId, projectPath.getArtifactId(), areaDomainFunctionInfoNew.getBizVersion(), className, "", sonDomainPomModels, param.getMavenPom(), projectPath.getBizName());
             log.info("pom更新完成");
             // 新增yml配置
             areaProjectNode.buildYml(projectPath.getPropertiesPath(), projectPath.getArtifactId(), areaDomainFunctionInfoNew.getVersion(), areaDomain.getDatasourceName(), areaDomain.getAreaName(), areaDomain.getAreaId(), param.getTaskId(), areaDomainFunctionInfoNew.getBizVersion());
@@ -288,7 +286,7 @@ public class ProjectFactory {
             Path jar = areaProjectNode.readJarFilesInDirectory(projectPath.getJarFilePath());
             String url = spiderClient.uploadFile(jar);
             // 整理部署的yaml信息
-            String deployYaml = areaProjectNode.buildDeploymentYaml(projectPath.getVersion(), url, baseDeployConfig.getDefaultNamespace(), projectPath.getBizName(), areaDomainFunctionInfoNew.getInstanceNum());
+            String deployYaml = areaProjectNode.buildDeploymentYaml(areaDomainFunctionInfoNew.getBizVersion(), url, baseDeployConfig.getDefaultNamespace(), projectPath.getBizName(), areaDomainFunctionInfoNew.getInstanceNum());
 
             areaDomainFunctionInfoNew.setDeployYaml(deployYaml);
             projectResult.setBizName(projectPath.getArtifactId());

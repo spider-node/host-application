@@ -12,7 +12,7 @@ public class K8sDeployUtil {
                 "  labels:\n" +
                 "    virtual-kubelet.koupleless.io/component: module-deployment\n" +
                 "spec:\n" +
-                "  replicas: " + dataModel.get("instanceNum")  + "\n" +
+                "  replicas: " + dataModel.get("instanceNum") + "\n" +
                 "  selector:\n" +
                 "    matchLabels:\n" +
                 "      module: " + dataModel.get("bizName") + "\n" +
@@ -23,7 +23,7 @@ public class K8sDeployUtil {
                 "        virtual-kubelet.koupleless.io/component: module\n" +
                 "    spec:\n" +
                 "      containers:\n" +
-                "        - name: "  + dataModel.get("bizName") + "\n" +
+                "        - name: " + dataModel.get("bizName") + "\n" +
                 "          image: " + dataModel.get("imageUrl") + "\n" +
                 "          env:\n" +
                 "            - name: BIZ_VERSION\n" +
@@ -43,6 +43,13 @@ public class K8sDeployUtil {
                 "                    operator: In\n" +
                 "                    values:\n" +
                 "                      - default\n" +
+                "        podAntiAffinity: # 打散调度核心配置\n" +
+                "          requiredDuringSchedulingIgnoredDuringExecution:\n" +
+                "            - labelSelector:\n" +
+                "                matchLabels:\n" +
+                "                  module.koupleless.io/name: " + dataModel.get("bizName") + "\n" +
+                "                  module.koupleless.io/version: " + dataModel.get("bizVersion") + "\n" +
+                "              topologyKey: topology.kubernetes.io/zone\n" +
                 "      tolerations:\n" +
                 "        - key: \"schedule.koupleless.io/virtual-node\"\n" +
                 "          operator: \"Equal\"\n" +

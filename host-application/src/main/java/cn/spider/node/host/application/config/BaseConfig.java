@@ -1,4 +1,5 @@
 package cn.spider.node.host.application.config;
+import cn.spider.framework.client.config.SpiderClintConfig;
 import cn.spider.framework.host.application.base.host.TaskProxyManager;
 import cn.spider.framework.host.application.base.host.heart.HostService;
 import cn.spider.framework.host.application.base.host.mysql.DataSourceService;
@@ -29,7 +30,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 import javax.sql.DataSource;
 
-@Import({CommonConfig.class, GrpcConfig.class})
+@Import({CommonConfig.class, GrpcConfig.class, SpiderClintConfig.class})
 @Configuration
 public class BaseConfig {
     @Bean("sourceManager")

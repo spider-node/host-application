@@ -71,7 +71,7 @@
                     <skipArkExecutable>true</skipArkExecutable>
                     <outputDirectory>./target</outputDirectory>
                     <bizName>${bizName}</bizName>
-                    <webContextPath>${bizName}</webContextPath>
+<#--                    <webContextPath>${bizName}</webContextPath>-->
                     <declaredMode>true</declaredMode>
                     <packExcludesConfig>rules.txt</packExcludesConfig>
                 </configuration>

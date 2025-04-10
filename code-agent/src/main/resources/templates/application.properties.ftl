@@ -1,6 +1,6 @@
 spring.application.name=${applicationName}
 spider.pom.artifactId=${artifactId}
-spider.pom.version=${version}
+spider.pom.version=${pom_version}
 spider.biz.version=${bizVersion}
 spider.datasource.name=${datasourceName}
 spider.taskId=${taskId}

@@ -43,8 +43,8 @@ public class HostServiceImpl implements HostService {
 
     }
 
-    public void init(){
-        if(Objects.nonNull(socketManager)){
+    public void init() {
+        if (Objects.nonNull(socketManager)) {
             return;
         }
         this.socketManager = context.getBean(SocketManager.class);
@@ -52,11 +52,11 @@ public class HostServiceImpl implements HostService {
 
     @Override
     public void escalationPlugInInfo(EscalationInfo escalationInfo) {
-        TaskService taskService = SpringServiceFinder.getModuleService(escalationInfo.getModuleName(), escalationInfo.getBizVersion(),
+        TaskService taskService = SpringServiceFinder.getModuleService(escalationInfo.getModuleName(), escalationInfo.getModuleVersion(),
                 "taskService", TaskService.class);
         PluginInfo pluginInfo = new PluginInfo(escalationInfo, taskService);
         log.info("插件上报的信息为 {}", JSON.toJSONString(pluginInfo));
-        String pluginKey = ComponentUtil.buildComponentKey(escalationInfo.getComponentName(), escalationInfo.getServiceName(),escalationInfo.getModuleVersion());
+        String pluginKey = ComponentUtil.buildComponentKey(escalationInfo.getComponentName(), escalationInfo.getServiceName(), escalationInfo.getBizVersion());
         escalationManager.registerPluginInfo(pluginKey, pluginInfo);
     }
 
@@ -67,9 +67,9 @@ public class HostServiceImpl implements HostService {
      */
     @Override
     public void escalationPlugInParam(NodeParamInfoBath areaFunctionParam) {
+        log.info("插件参数上报的信息为 {}", JSON.toJSONString(areaFunctionParam));
         areaFunctionMap.put(areaFunctionParam.getPluginKey(), areaFunctionParam);
         // 告知spider
-        log.info("notify_spider_info {}", JSON.toJSONString(areaFunctionParam));
         ReportParamInfo reportParamInfo = new ReportParamInfo();
         reportParamInfo.setNodeParamInfoBathList(Lists.newArrayList(areaFunctionParam));
         socketManager.escalationAreaFunctionInfo(JsonObject.mapFrom(reportParamInfo), FunctionEscalationType.DEPLOY);
@@ -82,12 +82,13 @@ public class HostServiceImpl implements HostService {
      */
     @Override
     public void unloadPlugin(String key) {
-        if (areaFunctionMap.isEmpty()) {
+        if (!areaFunctionMap.containsKey(key)) {
             return;
         }
         NodeParamInfoBath areaParam = this.areaFunctionMap.get(key);
         ReportParamInfo reportParamInfo = new ReportParamInfo();
         reportParamInfo.setNodeParamInfoBathList(Lists.newArrayList(areaParam));
+        log.info("unloadPlugin-info {}", JSON.toJSONString(reportParamInfo));
         socketManager.escalationAreaFunctionInfo(JsonObject.mapFrom(reportParamInfo), FunctionEscalationType.UNLOCK);
         areaFunctionMap.remove(key);
     }

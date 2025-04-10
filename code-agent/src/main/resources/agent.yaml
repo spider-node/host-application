@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: biz1-web-single-host
+  name: d5198cf46133db4813673e555b838dbf
   namespace: spider-vertx
   labels:
     virtual-kubelet.koupleless.io/component: module-deployment
@@ -9,19 +9,19 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      module: biz1-web-single-host
+      module: d5198cf46133db4813673e555b838dbf
   template:
     metadata:
       labels:
-        module: biz1-web-single-host
+        module: d5198cf46133db4813673e555b838dbf
         virtual-kubelet.koupleless.io/component: module
     spec:
       containers:
-        - name: biz1-web-single-host  # this name must same with the biz name defined in the jar
-          image: https://koupleless-dosc.oss-cn-hongkong.aliyuncs.com/biz1-web-single-host-0.0.1-SNAPSHOT-ark-biz.jar
+        - name: d5198cf46133db4813673e555b838dbf
+          image: http://47.109.67.130:1026/spider-node/1744292150435d5198cf46133db4813673e555b838dbf-1.0.55-ark-biz.jar?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=s6ycDmJoFu7Y2nbDhJ9R%2F20250410%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250410T133550Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=dce3b92d3a75e1f7ebcd6c3cc227c059f46d0014431e1100c5914d062b1d6716
           env:
             - name: BIZ_VERSION
-              value: 0.0.1-SNAPSHOT
+              value: 1.0.55
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -37,6 +37,13 @@ spec:
                     operator: In
                     values:
                       - default
+        podAntiAffinity: # 打散调度核心配置
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  module.koupleless.io/name: d5198cf46133db4813673e555b838dbf
+                  module.koupleless.io/version: 1.0.55
+              topologyKey: topology.kubernetes.io/zone
       tolerations:
         - key: "schedule.koupleless.io/virtual-node"
           operator: "Equal"
