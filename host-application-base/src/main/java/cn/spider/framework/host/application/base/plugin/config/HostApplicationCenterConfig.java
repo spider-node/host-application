@@ -26,7 +26,6 @@ import static com.alipay.sofa.koupleless.common.api.SpringBeanFinder.getBaseBean
  * 获取宿主容器的上下文data
  */
 @Slf4j
-@Configuration
 @EnableTransactionManagement
 public class HostApplicationCenterConfig {
 

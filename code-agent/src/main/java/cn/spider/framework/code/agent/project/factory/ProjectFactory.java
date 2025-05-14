@@ -30,6 +30,7 @@ import cn.spider.framework.code.agent.util.NumberUtil;
 import cn.spider.node.framework.code.agent.sdk.data.CreateProjectResult;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -168,12 +169,21 @@ public class ProjectFactory {
         String serviceClass = param.getServiceClass();
         String className = ClassUtil.extractClassName(serviceClass);
         Set<String> mapperPaths = areaDomains.stream().map(item -> item.getDomainObjectServicePackage().replaceAll("service$", "mapper").replaceAll("^package\\s+", "")).collect(Collectors.toSet());
-        Set<String> servicePaths = areaDomains.stream().map(item -> item.getDomainObjectServicePackage()).collect(Collectors.toSet());
+        Set<String> servicePaths = areaDomains.stream().map(item -> item.getDomainObjectServicePackage().replaceAll("^package\\s+", "")).collect(Collectors.toSet());
 
         AreaDomainFunctionInfo areaDomainFunctionInfo = areaDomainFunctionInfoService.lambdaQuery()
                 .eq(AreaDomainFunctionInfo::getDomainFunctionVersionId, param.getDomainFunctionVersionId())
                 .eq(AreaDomainFunctionInfo::getVersion, param.getVersion()).one();
-        String bizVersion = Objects.isNull(areaDomainFunctionInfo) ? null : StringUtils.isEmpty(areaDomainFunctionInfo.getBizVersion()) ? "1.0.0" : NumberUtil.upgradeVersion(areaDomainFunctionInfo.getBizVersion());
+        // 清空其他类的数据
+        if (Objects.nonNull(areaDomainFunctionInfo)) {
+            areaDomainFunctionInfoService.lambdaUpdate()
+                    .eq(AreaDomainFunctionInfo::getId, areaDomainFunctionInfo.getId())
+                    .eq(AreaDomainFunctionInfo::getVersion, param.getVersion())
+                    .set(AreaDomainFunctionInfo::getOtherCode, "[]")
+                    .update();
+        }
+
+        String bizVersion = Objects.isNull(areaDomainFunctionInfo) ? "1.0.0" : StringUtils.isEmpty(areaDomainFunctionInfo.getBizVersion()) ? "1.0.0" : NumberUtil.upgradeVersion(areaDomainFunctionInfo.getBizVersion());
 
         // 版本号由外部指定
         ProjectPath projectPath = projectPathService.buildAreaProjectPath(datasourceName, param.getTableName(), bizVersion, className, param.getVersion(), param.getTaskService(), param.getTaskComponent());
@@ -245,23 +255,36 @@ public class ProjectFactory {
                     }
                 }
             }
+            Set<String> finalParamClassNames = new HashSet<>();
+
+            Map<String, String> finalParamClassMap = new HashMap<>();
             // 写入，入参
             if (CollectionUtils.isNotEmpty(paramClassList)) {
                 for (String paramClass : paramClassList) {
                     String paramClassName = ClassUtil.extractClassName(paramClass);
+                    if (finalParamClassMap.containsKey(paramClassName)) {
+                        continue;
+                    }
+                    finalParamClassMap.put(paramClassName, paramClass);
                     areaProjectNode.buildParamClass(projectPath.getDataPath(), paramClass, paramClassName);
                 }
             }
 
             resultClassList = CollectionUtils.isEmpty(resultClassList) ? param.getResultClass() : resultClassList;
             // 写出参
+            Map<String, String> resultClassMap = new HashMap<>();
             if (CollectionUtils.isNotEmpty(resultClassList)) {
                 for (String resultClass : resultClassList) {
                     String resultClassName = ClassUtil.extractClassName(resultClass);
+                    if (resultClassMap.containsKey(resultClassName)) {
+                        continue;
+                    }
+                    resultClassMap.put(resultClassName, resultClass);
                     areaProjectNode.buildParamResult(projectPath.getDataPath(), resultClass, resultClassName);
                 }
             }
-
+            paramClassList = Lists.newArrayList(finalParamClassMap.values());
+            resultClassList = Lists.newArrayList(resultClassMap.values());
             param.setParamClass(paramClassList);
             param.setResultClass(resultClassList);
             areaDomainFunctionInfoNew.setAreaFunctionParamClass(JSON.toJSONString(param.getParamClass()));

@@ -31,9 +31,15 @@ public class TaskServiceImpl implements TaskService {
 
     private final String TRANSACTION_DEFAULT_NAME = "spider-transaction";
 
+    private DefaultTransactionDefinition def;
+
     public TaskServiceImpl(SpiderPluginManager pluginManager, PlatformTransactionManager transactionManager) {
         this.pluginManager = pluginManager;
         this.transactionManager = transactionManager;
+        this.def = new DefaultTransactionDefinition();
+        // 设置默认的事务名称
+        def.setName(this.TRANSACTION_DEFAULT_NAME);
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
     }
 
     // 注意,需要后续新增事务功能
@@ -56,14 +62,8 @@ public class TaskServiceImpl implements TaskService {
 
     private Object executeInTransaction(TaskRequest request, SpiderPlugin plugin, Object[] params) {
         log.info("executeInTransaction-request: {}, plugin: {}", request, plugin);
-        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
-        // 设置默认的事务名称
-        def.setName(this.TRANSACTION_DEFAULT_NAME);
-        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-
         RootContext.bind(request.getXid());
         RootContext.bindBranchId(request.getBranchId() + "");
-
         TransactionStatus status = transactionManager.getTransaction(def);
         try {
             Object result = ReflectionUtils.invokeMethod(plugin.getMethod(), plugin.getTagertObject(), params);

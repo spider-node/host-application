@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: ai-coder
-          image: docker.io/library/ai-coder:2.0-13
+          image: docker.io/library/ai-coder:2.0-16
           ports:
             - containerPort: 5000
             - containerPort: 8084
@@ -27,4 +27,4 @@ spec:
             - name: DASHSCOPE_API_KEY
               value: "sk-66188116bb914e6784374de3bb394908"
             - name: GEMINI_API_KEY
-              value: "sk-jYeDNNYFe9lbBNsMjbR8ZIGYNltlF2Kc0dqpUlTAkvE3o6YL"
+              value: "sk-RiCpgKbUoF5H57eoaUNogVcML6Kmz2LqGrdyEXhDukm1ueRg"
