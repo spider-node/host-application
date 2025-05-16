@@ -34,7 +34,6 @@ public class SourceManager {
             dataSourceMap.put(JdbcUtil.queryDatabaseName(datasourceInfo.getDatasource()), dataSource(datasourceInfo));
         }
     }
-    // 提供获取 mysql数据源的能力
 
     public DataSource dataSource(AreaDatasourceInfo datasourceInfo) {
         DruidDataSource dataSource = new DruidDataSource();
@@ -61,7 +60,7 @@ public class SourceManager {
         dataSource.setTestOnReturn(false);
         // 打开PSCache，并且指定每个连接上PSCache的大小
         dataSource.setPoolPreparedStatements(true);
-        dataSource.setMaxPoolPreparedStatementPerConnectionSize(20);
+        dataSource.setMaxPoolPreparedStatementPerConnectionSize(40);
         // 设置spider-datasource-manager,对datasource进行代理
         return new DataSourceProxy(dataSource);
     }
